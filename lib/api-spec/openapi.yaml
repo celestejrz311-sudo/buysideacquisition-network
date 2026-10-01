@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: BuySide buyer-request marketplace and private deal-sourcing API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: buyer-requests
+    description: Buyer mandates and opportunity submissions
+  - name: account
+    description: Signed-in member dashboard
 paths:
   /healthz:
     get:
@@ -24,6 +27,220 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /buyer-requests:
+    get:
+      operationId: listBuyerRequests
+      tags: [buyer-requests]
+      summary: Browse public buyer requests
+      parameters:
+        - name: search
+          in: query
+          schema: { type: string }
+        - name: industry
+          in: query
+          schema: { type: string }
+        - name: country
+          in: query
+          schema: { type: string }
+        - name: region
+          in: query
+          schema: { type: string }
+        - name: city
+          in: query
+          schema: { type: string }
+        - name: minBudget
+          in: query
+          schema: { type: number }
+        - name: maxBudget
+          in: query
+          schema: { type: number }
+        - name: verifiedOnly
+          in: query
+          schema: { type: boolean }
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [newest, highest_budget, highest_reward, closing_soon]
+      responses:
+        "200":
+          description: Public and example buyer requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/BuyerRequest" }
+        "400":
+          description: Invalid filters
+    post:
+      operationId: createBuyerRequest
+      tags: [buyer-requests]
+      summary: Publish an acquisition mandate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/BuyerRequestInput" }
+      responses:
+        "201":
+          description: Buyer request created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BuyerRequest" }
+        "400":
+          description: Invalid buyer request
+        "401":
+          description: Sign in required
+  /buyer-requests/{requestId}:
+    get:
+      operationId: getBuyerRequest
+      tags: [buyer-requests]
+      summary: Get a buyer request
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Buyer request
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/BuyerRequest" }
+        "404":
+          description: Buyer request not found
+  /buyer-requests/{requestId}/submissions:
+    post:
+      operationId: submitMatch
+      tags: [buyer-requests]
+      summary: Privately submit a business opportunity
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MatchSubmissionInput" }
+      responses:
+        "201":
+          description: Opportunity submitted
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MatchSubmission" }
+        "400":
+          description: Invalid submission
+        "401":
+          description: Sign in required
+        "404":
+          description: Buyer request not found
+  /buyer-requests/{requestId}/save:
+    post:
+      operationId: saveBuyerRequest
+      tags: [buyer-requests]
+      summary: Save or unsave a buyer request
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SaveBuyerRequestInput" }
+      responses:
+        "200":
+          description: Saved state
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/SaveBuyerRequestResult" }
+        "401":
+          description: Sign in required
+        "404":
+          description: Buyer request not found
+  /buyer-requests/{requestId}/matches:
+    get:
+      operationId: listRequestMatches
+      tags: [buyer-requests]
+      summary: List submissions for a request owned by the signed-in buyer
+      parameters:
+        - name: requestId
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Private matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MatchSubmission" }
+        "401":
+          description: Sign in required
+        "404":
+          description: Buyer request not found
+  /me/buyer-requests:
+    get:
+      operationId: listMyBuyerRequests
+      tags: [account]
+      summary: List the signed-in buyer's requests
+      responses:
+        "200":
+          description: Member's requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/BuyerRequest" }
+        "401":
+          description: Sign in required
+  /me/submissions:
+    get:
+      operationId: listMySubmissions
+      tags: [account]
+      summary: List the signed-in finder's submissions
+      responses:
+        "200":
+          description: Member's submissions
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MatchSubmission" }
+        "401":
+          description: Sign in required
+  /me/saved-requests:
+    get:
+      operationId: listMySavedRequests
+      tags: [account]
+      summary: List saved public buyer requests
+      responses:
+        "200":
+          description: Member's saved requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/BuyerRequest" }
+        "401":
+          description: Sign in required
+  /me/summary:
+    get:
+      operationId: getMySummary
+      tags: [account]
+      summary: Get the signed-in member's dashboard summary
+      responses:
+        "200":
+          description: Dashboard counts and recent activity
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberSummary" }
+        "401":
+          description: Sign in required
 components:
   schemas:
     HealthStatus:
@@ -33,4 +250,181 @@ components:
           type: string
       required:
         - status
+    BuyerRequest:
+      type: object
+      required:
+        - id
+        - title
+        - industry
+        - businessCategory
+        - buyerType
+        - country
+        - remoteAccepted
+        - minimumPurchasePrice
+        - maximumPurchasePrice
+        - minimumRevenue
+        - minimumEbitda
+        - minimumCashFlow
+        - preferredProfile
+        - dealExclusions
+        - timeline
+        - rewardDisclosure
+        - privacy
+        - isVerified
+        - isExample
+        - createdAt
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        industry: { type: string }
+        businessCategory: { type: string }
+        buyerType:
+          type: string
+          enum: [strategic, individual, private_equity, search_fund, other]
+        country: { type: string }
+        region: { type: ["string", "null"] }
+        city: { type: ["string", "null"] }
+        radiusMiles: { type: ["integer", "null"] }
+        remoteAccepted: { type: boolean }
+        minimumPurchasePrice: { type: ["number", "null"] }
+        maximumPurchasePrice: { type: ["number", "null"] }
+        minimumRevenue: { type: ["number", "null"] }
+        minimumEbitda: { type: ["number", "null"] }
+        minimumCashFlow: { type: ["number", "null"] }
+        preferredProfile: { type: string }
+        dealExclusions: { type: string }
+        timeline: { type: string }
+        rewardDisclosure: { type: string }
+        privacy:
+          type: string
+          enum: [public, members_only, nda_required, private]
+        isVerified: { type: boolean }
+        isExample: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    BuyerRequestInput:
+      type: object
+      required:
+        - title
+        - industry
+        - businessCategory
+        - buyerType
+        - country
+        - remoteAccepted
+        - preferredProfile
+        - dealExclusions
+        - timeline
+        - privacy
+      properties:
+        title: { type: string, minLength: 3, maxLength: 120 }
+        industry: { type: string, minLength: 1, maxLength: 80 }
+        businessCategory: { type: string, minLength: 1, maxLength: 100 }
+        buyerType:
+          type: string
+          enum: [strategic, individual, private_equity, search_fund, other]
+        country: { type: string, minLength: 1, maxLength: 100 }
+        region: { type: ["string", "null"], maxLength: 100 }
+        city: { type: ["string", "null"], maxLength: 100 }
+        radiusMiles: { type: ["integer", "null"], minimum: 0, maximum: 5000 }
+        remoteAccepted: { type: boolean }
+        minimumPurchasePrice: { type: ["number", "null"], minimum: 0 }
+        maximumPurchasePrice: { type: ["number", "null"], minimum: 0 }
+        minimumRevenue: { type: ["number", "null"], minimum: 0 }
+        minimumEbitda: { type: ["number", "null"] }
+        minimumCashFlow: { type: ["number", "null"] }
+        preferredProfile: { type: string, maxLength: 3000 }
+        dealExclusions: { type: string, maxLength: 2000 }
+        timeline: { type: string, maxLength: 100 }
+        rewardDisclosure: { type: string, maxLength: 500 }
+        privacy:
+          type: string
+          enum: [public, members_only, nda_required, private]
+    MatchSubmission:
+      type: object
+      required:
+        - id
+        - requestId
+        - industry
+        - location
+        - askingPrice
+        - annualRevenue
+        - ebitda
+        - cashFlow
+        - employeeCount
+        - yearsOperating
+        - shortDescription
+        - matchRationale
+        - relationship
+        - ownerContactStatus
+        - brokerStatus
+        - confidentialIdentity
+        - status
+        - createdAt
+      properties:
+        id: { type: string, format: uuid }
+        requestId: { type: string, format: uuid }
+        businessName: { type: ["string", "null"] }
+        industry: { type: string }
+        location: { type: string }
+        askingPrice: { type: ["number", "null"] }
+        annualRevenue: { type: ["number", "null"] }
+        ebitda: { type: ["number", "null"] }
+        cashFlow: { type: ["number", "null"] }
+        employeeCount: { type: ["integer", "null"] }
+        yearsOperating: { type: ["integer", "null"] }
+        shortDescription: { type: string }
+        matchRationale: { type: string }
+        relationship: { type: string }
+        ownerContactStatus: { type: string }
+        brokerStatus: { type: string }
+        confidentialIdentity: { type: boolean }
+        status:
+          type: string
+          enum: [submitted, under_review, more_information_requested, nda_pending, qualified, buyer_interested, meeting_scheduled, negotiation, loi, due_diligence, closing, closed, declined]
+        createdAt: { type: string, format: date-time }
+    MatchSubmissionInput:
+      type: object
+      required:
+        - industry
+        - location
+        - shortDescription
+        - matchRationale
+        - relationship
+        - ownerContactStatus
+        - brokerStatus
+        - confidentialIdentity
+      properties:
+        businessName: { type: ["string", "null"], maxLength: 200 }
+        industry: { type: string, minLength: 1, maxLength: 100 }
+        location: { type: string, minLength: 1, maxLength: 200 }
+        askingPrice: { type: ["number", "null"], minimum: 0 }
+        annualRevenue: { type: ["number", "null"], minimum: 0 }
+        ebitda: { type: ["number", "null"] }
+        cashFlow: { type: ["number", "null"] }
+        employeeCount: { type: ["integer", "null"], minimum: 0 }
+        yearsOperating: { type: ["integer", "null"], minimum: 0 }
+        shortDescription: { type: string, minLength: 10, maxLength: 3000 }
+        matchRationale: { type: string, minLength: 10, maxLength: 3000 }
+        relationship: { type: string, maxLength: 200 }
+        ownerContactStatus: { type: string, maxLength: 100 }
+        brokerStatus: { type: string, maxLength: 100 }
+        confidentialIdentity: { type: boolean }
+    SaveBuyerRequestInput:
+      type: object
+      required: [saved]
+      properties:
+        saved: { type: boolean }
+    SaveBuyerRequestResult:
+      type: object
+      required: [requestId, saved]
+      properties:
+        requestId: { type: string, format: uuid }
+        saved: { type: boolean }
+    MemberSummary:
+      type: object
+      required: [requestCount, submissionCount, savedCount, reviewCount]
+      properties:
+        requestCount: { type: integer }
+        submissionCount: { type: integer }
+        savedCount: { type: integer }
+        reviewCount: { type: integer }
 

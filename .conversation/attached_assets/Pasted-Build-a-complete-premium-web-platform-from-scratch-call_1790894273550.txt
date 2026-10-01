@@ -1,0 +1,495 @@
+Build a complete premium web platform from scratch called BuySide.
+BuySide is a global private business acquisition marketplace.
+The core idea is simple:
+Buyers publish exactly what type of business they want to acquire. Brokers, business owners, M&A advisors, and deal finders can browse those buyer requests, find matching businesses, and submit opportunities. If a submitted opportunity leads to a completed acquisition, the finder may earn a success-based reward.
+This is NOT a traditional business-for-sale marketplace.
+The platform should be centered around buyer demand first.
+Instead of waiting for a business to be listed for sale, buyers publish what they want, and the network goes out and finds it.
+The website must make this concept understandable within 5 seconds.
+BRAND POSITIONING
+Brand name:
+BuySide
+Brand category:
+Global private acquisition network / buyer request marketplace / deal sourcing network.
+Brand personality:
+Premium
+Exclusive
+Serious
+Global
+Trustworthy
+Professional
+Institutional
+Private
+Modern
+Sophisticated
+Avoid looking like:
+A generic AI startup
+A crypto website
+A cheap marketplace
+A job board
+A real estate classifieds site
+A generic SaaS landing page
+VISUAL DIRECTION
+Use a premium dark visual identity:
+Charcoal or near-black background
+Warm off-white typography
+Muted gold accents
+Soft gray secondary text
+Thin elegant borders
+Minimal shadows
+Large editorial headlines
+Clean sans-serif body text
+Elegant serif typography for selected headlines
+Generous spacing
+High-end institutional feel
+Avoid:
+Neon colors
+Purple gradients
+Futuristic AI graphics
+Cartoon illustrations
+Fake stock-market charts
+Overly flashy animations
+Fake statistics
+Fake testimonials
+Fake credibility claims
+The design should feel like a private investment network, premium M&A platform, or high-end dealmaking environment.
+HOMEPAGE
+Create a sophisticated homepage.
+At the top, use a clean navigation bar with:
+Buyer Requests
+For Buyers
+For Finders
+How It Works
+Private Network
+Sign In
+Add a premium gold button:
+POST A REQUEST
+HERO SECTION
+Eyebrow text:
+THE GLOBAL BUYER REQUEST NETWORK
+Main headline:
+Tell us what you want to buy. Let the network find it.
+Supporting copy:
+BuySide connects serious buyers with brokers, business owners, advisors, and deal finders who can source businesses that match their acquisition criteria.
+Main CTA:
+POST A BUYER REQUEST
+Secondary CTA:
+FIND A REQUEST TO MATCH
+Add a small supporting line:
+Private opportunities. Qualified introductions. Success-based rewards.
+Do not place fake statistics under the hero.
+ACTIVE BUYER REQUESTS
+Directly under the hero, create a section called:
+ACTIVE BUYER REQUESTS
+This is one of the most important sections of the platform.
+Each request should look like a premium opportunity card.
+Until real users create requests, all demo content must clearly display:
+EXAMPLE REQUEST
+Example card:
+EXAMPLE REQUEST
+Commercial Cleaning Company
+Miami / South Florida
+Acquisition Budget
+$500K – $1.5M
+Minimum Revenue
+$750K
+Preferred Profile
+Recurring commercial contracts
+Buyer Timeline
+3–6 months
+Potential Finder Reward
+Up to $80,000
+Buttons:
+VIEW REQUEST
+SUBMIT A MATCH
+Add additional example buyer requests for:
+Logistics company in Texas
+Boutique hotel in Florida
+E-commerce brand in the United States
+Manufacturing company in Mexico
+Beauty or wellness company in Miami
+Home services company
+Restaurant group
+Technology services company
+Make the cards highly scannable and professional.
+BUYER REQUEST MARKETPLACE
+Create a dedicated marketplace page where users can browse buyer requests.
+Add search and filters for:
+Industry
+Country
+State / region
+City
+Acquisition budget
+Minimum revenue
+EBITDA / cash flow
+Company size
+Buyer timeline
+Finder reward
+Verified buyer only
+Add sorting options such as:
+Newest
+Highest budget
+Highest finder reward
+Closing soon
+Each buyer request should have its own detail page.
+BUYER REQUEST DETAIL PAGE
+Include:
+Request title
+Buyer verification status
+Buyer type
+Industry
+Geographic criteria
+Acquisition budget
+Revenue target
+EBITDA / cash flow target
+Business size
+Preferred characteristics
+Deal exclusions
+Acquisition timeline
+Potential finder reward
+Date posted
+Confidentiality status
+Buttons:
+SUBMIT A MATCH
+SAVE REQUEST
+MESSAGE BUYER
+Sensitive buyer information should only be displayed when appropriate.
+HOW IT WORKS
+Create a premium four-step process:
+01 — Buyer Posts
+A qualified buyer publishes the exact type of business they want to acquire.
+02 — The Network Sources
+Brokers, owners, advisors, and deal finders identify businesses that match the buyer’s criteria.
+03 — Opportunities Are Submitted Privately
+Matching businesses are submitted through BuySide with relevant financial and business information.
+04 — Close & Get Rewarded
+If an eligible introduction results in a completed transaction, the finder may earn a success-based reward.
+FINDER SECTION
+Create a strong section designed specifically to attract deal finders.
+Eyebrow:
+KNOW THE RIGHT BUSINESS?
+Headline:
+Bring the deal. Get rewarded.
+Copy:
+Browse active buyer requests and submit businesses that match their acquisition criteria. Qualified introductions that result in completed transactions may earn a success-based reward of up to 8% of the final transaction value, subject to applicable terms, transaction structure, licensing requirements, and jurisdiction.
+Example:
+Acquisition Value
+$500,000
+Potential Finder Reward
+Up to $40,000
+Add:
+No closing. No finder reward.
+CTAs:
+BROWSE BUYER REQUESTS
+BECOME A DEAL FINDER
+Do not disclose BuySide’s internal fee, revenue split, margin, platform commission, or internal economics anywhere on the public website.
+FOR BUYERS PAGE
+Create a dedicated buyer page explaining that buyers can publish acquisition criteria including:
+Industry
+Geography
+Acquisition budget
+Revenue
+EBITDA / cash flow
+Business size
+Customer profile
+Recurring revenue
+Assets
+Team size
+Desired deal structure
+Timeline
+Additional requirements
+Main headline:
+Stop waiting for the right business to appear. Ask the market for it.
+CTA:
+POST YOUR ACQUISITION CRITERIA
+FOR FINDERS PAGE
+Create a dedicated page for:
+Business brokers
+M&A advisors
+Independent deal finders
+Consultants
+Industry professionals
+Business owners
+Attorneys
+Accountants
+Operators with strong industry networks
+Explain how they can browse active buyer demand and submit matches.
+Include:
+How finder rewards work
+Eligibility
+Submission process
+Confidentiality
+Payment conditions
+Compliance requirements
+CTA:
+BECOME A DEAL FINDER
+PRIVATE NETWORK
+Create a section called:
+THE BUY SIDE NETWORK
+Member types:
+Buyers
+Business Brokers
+M&A Advisors
+Business Owners
+Deal Finders
+Industry Professionals
+Each profile should be able to display:
+Name or company name
+Profile photo or logo
+Role
+Location
+Industries
+Markets covered
+Verification status
+Short professional bio
+Languages
+Years of experience
+Number of submitted opportunities
+Public or private profile preference
+Do not fabricate profile metrics for demo users.
+VERIFICATION
+Create a professional verification workflow.
+Buyers may be asked to provide:
+Identity verification
+Company information
+Buyer profile
+Proof of funds or financing readiness when appropriate
+Acquisition experience
+Contact verification
+Finders may be asked to provide:
+Identity verification
+Company information
+Professional role
+Relevant licenses if applicable
+Markets covered
+Industry experience
+Contact verification
+Clearly distinguish:
+Verified Buyer
+Verified Finder
+Verified Broker
+Verified Advisor
+Do not imply that verification guarantees financial capacity or transaction success.
+POST A BUYER REQUEST
+Create a professional multi-step form.
+STEP 1 — Acquisition Type
+Industry
+Business category
+Buyer type
+Strategic acquisition / individual acquisition / private equity / search fund / other
+STEP 2 — Location
+Country
+State
+City
+Radius
+Remote or location-independent businesses accepted
+STEP 3 — Financial Criteria
+Minimum and maximum purchase price
+Minimum revenue
+Minimum EBITDA
+Minimum cash flow
+Preferred margins
+STEP 4 — Business Profile
+Years in business
+Number of employees
+Recurring revenue preference
+Customer concentration preference
+Assets
+Licenses
+Contracts
+Business model
+STEP 5 — Deal Preferences
+Asset purchase or stock purchase
+Seller financing accepted
+Real estate included or excluded
+Owner transition period
+Preferred closing timeline
+STEP 6 — Additional Notes
+Free text field
+STEP 7 — Finder Reward
+Allow the buyer or platform to display a potential finder reward.
+STEP 8 — Privacy
+Public request
+Private request
+Verified members only
+NDA required
+SUBMIT A DEAL
+Create a matching submission workflow.
+The finder selects the buyer request they are responding to.
+Collect:
+Business name, optional at first stage
+Industry
+Location
+Asking price
+Annual revenue
+EBITDA
+Cash flow
+Number of employees
+Years operating
+Short description
+Why this business matches the buyer request
+Relationship to the business
+Owner contact status
+Broker representation status
+Supporting documents
+Contact information
+Allow the business identity to remain confidential initially.
+Add optional uploads for:
+Teaser
+Financial summary
+CIM
+P&L
+Business overview
+CONFIDENTIALITY
+Create a dedicated confidentiality page.
+Explain:
+Private submissions
+Controlled disclosure
+NDA-gated documents
+Confidential messaging
+Buyer request privacy options
+Hidden company identities
+Limited access to sensitive information
+Do not claim certifications or security standards unless they are actually implemented.
+MESSAGING
+Create private messaging between buyers and approved submitters.
+Include:
+Conversations
+File attachments
+Request references
+Deal references
+Status updates
+Notifications
+DASHBOARD
+Create separate dashboards.
+BUYER DASHBOARD
+My Buyer Requests
+Matches Received
+Saved Deals
+Messages
+Documents
+NDA Requests
+Deal Status
+Profile
+Verification
+Notifications
+FINDER DASHBOARD
+Buyer Requests
+Saved Requests
+My Submissions
+Active Matches
+Potential Rewards
+Messages
+Documents
+Profile
+Verification
+Notifications
+DEAL PIPELINE
+Each submitted opportunity should have a status such as:
+Submitted
+Under Review
+More Information Requested
+NDA Pending
+Qualified
+Buyer Interested
+Meeting Scheduled
+Negotiation
+LOI
+Due Diligence
+Closing
+Closed
+Declined
+REWARD SECTION
+Public-facing language:
+Potential finder rewards of up to 8% may be available on eligible transactions.
+Add a clear note:
+Reward eligibility, amount, payment timing, and legal requirements vary by transaction, structure, jurisdiction, and participant status. Terms must be confirmed before an introduction or submission.
+Do not promise a guaranteed 8%.
+Do not show BuySide’s internal revenue split.
+PRICING
+Keep the initial public pricing simple.
+Possible structure:
+Free account
+Premium buyer features
+Featured buyer requests
+Professional finder membership
+Verification services
+Transaction-related service fees
+Do not display a detailed BuySide closing commission publicly unless specifically configured later.
+LEGAL / COMPLIANCE
+Add:
+Terms of Use
+Privacy Policy
+Confidentiality Policy
+Finder Terms
+Buyer Terms
+Disclaimer
+Contact
+Include a clear professional disclaimer stating:
+BuySide is a technology and introduction platform. Certain activities, transactions, referral compensation, business brokerage, real estate transactions, securities transactions, financing activities, and other regulated activities may require licensed professionals depending on the transaction structure and jurisdiction. BuySide does not represent that every user or transaction is eligible for finder compensation.
+Do not make legal guarantees.
+USER ACCOUNTS
+Create registration options:
+I’m a Buyer
+I’m a Business Broker
+I’m an M&A Advisor
+I’m a Deal Finder
+I’m a Business Owner
+I’m an Industry Professional
+SIGN UP FLOW
+Email
+Password
+Name
+Company
+Role
+Country
+Phone
+Industries
+Markets covered
+Agreement to terms
+Add:
+Email verification
+Forgot password
+Reset password
+Sign in
+Sign out
+NOTIFICATIONS
+Notify users when:
+A new buyer request matches their profile
+A new deal is submitted
+A buyer asks for more information
+A submission changes status
+An NDA is requested
+A message is received
+A deal moves to another stage
+MOBILE EXPERIENCE
+The entire platform must be fully responsive and mobile-first.
+Buyer request cards must look excellent on iPhone.
+Forms should be easy to complete on mobile.
+Navigation should use a premium slide-out menu.
+PERFORMANCE
+Keep animations subtle.
+Prioritize fast loading.
+Avoid excessive video or heavy background effects.
+TRUST
+Do not invent:
+Transaction volume
+Number of users
+Number of countries
+Closing rates
+Average deal time
+Testimonials
+Buyer capital
+Success stories
+Any demo content must clearly say:
+Example Request
+Demo Profile
+Sample Data
+FINAL PRODUCT GOAL
+BuySide should feel like a real global private acquisition network, not a marketing-only website.
+The platform should immediately communicate:
+Buyers publish what they want to acquire.
+The network finds matching businesses.
+Opportunities are submitted privately.
+Successful eligible introductions can generate finder rewards.
+Make the final product visually premium, highly credible, easy to understand, and designed to eventually support real users, real buyer mandates, real deal submissions, messaging, verification, NDA workflows, and transaction tracking.

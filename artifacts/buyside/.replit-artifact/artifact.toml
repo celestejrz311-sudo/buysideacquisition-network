@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "BuySide"
+description = "A global private acquisition network where buyers publish what they want to acquire and brokers, owners, advisors, and deal finders submit privately sourced matches."
+version = "1.0.0"
+id = "artifacts/buyside"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25507
+
+[services.development]
+run = "pnpm --filter @workspace/buyside run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/buyside", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/buyside/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25507"
+BASE_PATH = "/"

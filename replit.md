@@ -1,10 +1,11 @@
-# [Project name]
+# BuySide
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+BuySide is a global private acquisition network where buyers publish what they want to acquire and the network privately submits matching businesses.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/buyside run dev` — run the BuySide web app
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -22,23 +23,33 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/buyside/src/` — web routes, marketplace forms, dashboard, and visual theme
+- `artifacts/api-server/src/routes/buyer-requests.ts` — buyer request, match submission, saved request, and dashboard endpoints
+- `lib/api-spec/openapi.yaml` — source of truth for the API contract
+- `lib/db/src/schema/buyside.ts` — PostgreSQL tables for mandates, submissions, and saved requests
+- `artifacts/api-server/src/app.ts` — shared Express API and Clerk middleware
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Clerk owns user authentication; application records store provider user IDs, not passwords.
+- Public marketplace reads include public and NDA-required mandates; private and members-only mandates are not exposed in public browse results.
+- Every seeded mandate is marked as an example and is not marked verified.
+- Request and match API types are generated from OpenAPI; change the spec first, then run codegen.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+Members can publish acquisition criteria, browse and filter public buyer demand, submit confidential business matches, save requests, and view their request or submission dashboard. Public pages explain the buyer-first model and finder reward conditions.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Keep the brand premium, private, and institutional; use a dark charcoal base, warm off-white text, and restrained muted-gold accents.
+- Never invent marketplace statistics, verification, profiles, testimonials, or transaction outcomes.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- When adding dependencies to a workspace package, use a package-filtered `pnpm add` command rather than adding them at the monorepo root.
+- Run `pnpm --filter @workspace/db run push` after development schema changes.
+- `pnpm run typecheck` is the canonical workspace check; `api-spec` codegen also runs library typechecking.
 
 ## Pointers
 
