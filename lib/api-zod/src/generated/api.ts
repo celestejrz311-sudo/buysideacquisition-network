@@ -392,6 +392,28 @@ export const ListMySavedRequestsResponse = zod.array(ListMySavedRequestsResponse
 
 
 /**
+ * @summary Get the signed-in member's role and plan
+ */
+export const GetMyProfileResponse = zod.object({
+  "role": zod.enum(['unset', 'buyer', 'broker', 'business_owner', 'advisor', 'deal_finder']).describe('Self-selected primary account role.'),
+  "plan": zod.enum(['free', 'pro', 'partner'])
+})
+
+
+/**
+ * @summary Update the signed-in member's primary role
+ */
+export const UpdateMyProfileBody = zod.object({
+  "role": zod.enum(['buyer', 'broker', 'business_owner', 'advisor', 'deal_finder']).describe('The member\'s self-selected primary role.')
+})
+
+export const UpdateMyProfileResponse = zod.object({
+  "role": zod.enum(['unset', 'buyer', 'broker', 'business_owner', 'advisor', 'deal_finder']).describe('Self-selected primary account role.'),
+  "plan": zod.enum(['free', 'pro', 'partner'])
+})
+
+
+/**
  * @summary Get the signed-in member's dashboard summary
  */
 export const GetMySummaryResponse = zod.object({

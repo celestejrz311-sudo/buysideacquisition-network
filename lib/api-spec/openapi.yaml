@@ -228,6 +228,38 @@ paths:
                 items: { $ref: "#/components/schemas/BuyerRequest" }
         "401":
           description: Sign in required
+  /me/profile:
+    get:
+      operationId: getMyProfile
+      tags: [account]
+      summary: Get the signed-in member's role and plan
+      responses:
+        "200":
+          description: Member profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberProfile" }
+        "401":
+          description: Sign in required
+    patch:
+      operationId: updateMyProfile
+      tags: [account]
+      summary: Update the signed-in member's primary role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MemberProfileInput" }
+      responses:
+        "200":
+          description: Updated member profile
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MemberProfile" }
+        "400":
+          description: Invalid primary role
+        "401":
+          description: Sign in required
   /me/summary:
     get:
       operationId: getMySummary
@@ -427,4 +459,23 @@ components:
         submissionCount: { type: integer }
         savedCount: { type: integer }
         reviewCount: { type: integer }
+    MemberProfile:
+      type: object
+      required: [role, plan]
+      properties:
+        role:
+          type: string
+          enum: [unset, buyer, broker, business_owner, advisor, deal_finder]
+          description: Self-selected primary account role.
+        plan:
+          type: string
+          enum: [free, pro, partner]
+    MemberProfileInput:
+      type: object
+      required: [role]
+      properties:
+        role:
+          type: string
+          enum: [buyer, broker, business_owner, advisor, deal_finder]
+          description: The member's self-selected primary role.
 

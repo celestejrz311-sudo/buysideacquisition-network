@@ -277,6 +277,55 @@ export interface MemberSummary {
   reviewCount: number;
 }
 
+/**
+ * Self-selected primary account role.
+ */
+export type MemberProfileRole = typeof MemberProfileRole[keyof typeof MemberProfileRole];
+
+
+export const MemberProfileRole = {
+  unset: 'unset',
+  buyer: 'buyer',
+  broker: 'broker',
+  business_owner: 'business_owner',
+  advisor: 'advisor',
+  deal_finder: 'deal_finder',
+} as const;
+
+export type MemberProfilePlan = typeof MemberProfilePlan[keyof typeof MemberProfilePlan];
+
+
+export const MemberProfilePlan = {
+  free: 'free',
+  pro: 'pro',
+  partner: 'partner',
+} as const;
+
+export interface MemberProfile {
+  /** Self-selected primary account role. */
+  role: MemberProfileRole;
+  plan: MemberProfilePlan;
+}
+
+/**
+ * The member's self-selected primary role.
+ */
+export type MemberProfileInputRole = typeof MemberProfileInputRole[keyof typeof MemberProfileInputRole];
+
+
+export const MemberProfileInputRole = {
+  buyer: 'buyer',
+  broker: 'broker',
+  business_owner: 'business_owner',
+  advisor: 'advisor',
+  deal_finder: 'deal_finder',
+} as const;
+
+export interface MemberProfileInput {
+  /** The member's self-selected primary role. */
+  role: MemberProfileInputRole;
+}
+
 export type ListBuyerRequestsParams = {
 search?: string;
 industry?: string;
