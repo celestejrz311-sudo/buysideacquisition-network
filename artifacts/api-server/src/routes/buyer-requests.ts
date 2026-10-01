@@ -8,6 +8,7 @@ import {
   ilike,
   isNull,
   lte,
+  lt,
   or,
 } from "drizzle-orm";
 import {
@@ -41,10 +42,14 @@ import {
   buyerRequestsTable,
   db,
   matchSubmissionsTable,
+  memberProfilesTable,
+  requestViewEventsTable,
   savedBuyerRequestsTable,
 } from "@workspace/db";
 
 const router: IRouter = Router();
+const FREE_MONTHLY_REQUEST_VIEW_LIMIT = 5;
+const FREE_MONTHLY_SUBMISSION_LIMIT = 1;
 const rewardTerms =
   "Potential finder rewards of up to 8% may be available on eligible transactions. Reward eligibility, amount, payment timing, and legal requirements vary by transaction, structure, jurisdiction, and participant status. Terms must be confirmed before an introduction or submission.";
 
@@ -58,6 +63,12 @@ function requireMember(req: Request, res: Response, next: NextFunction): void {
     return;
   }
   next();
+}
+
+function utcMonthWindow(now = new Date()) {
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1));
+  return { start, end, monthStart: start.toISOString().slice(0, 10) };
 }
 
 function amountInReward(reward: string): number {
@@ -217,6 +228,62 @@ router.get("/buyer-requests/:requestId", async (req, res): Promise<void> => {
     res.status(404).json({ error: "Buyer request not found." });
     return;
   }
+
+  const userId = memberId(req);
+  if (userId && request.createdBy !== userId) {
+    const { monthStart } = utcMonthWindow();
+    const canOpen = await db.transaction(async (tx) => {
+      await tx
+        .insert(memberProfilesTable)
+        .values({ userId })
+        .onConflictDoNothing();
+      const [profile] = await tx
+        .select({ plan: memberProfilesTable.plan })
+        .from(memberProfilesTable)
+        .where(eq(memberProfilesTable.userId, userId))
+        .for("update");
+
+      if (profile?.plan !== "free") return true;
+
+      const [alreadyViewed] = await tx
+        .select({ requestId: requestViewEventsTable.requestId })
+        .from(requestViewEventsTable)
+        .where(
+          and(
+            eq(requestViewEventsTable.userId, userId),
+            eq(requestViewEventsTable.requestId, request.id),
+            eq(requestViewEventsTable.monthStart, monthStart),
+          ),
+        );
+      if (alreadyViewed) return true;
+
+      const [usage] = await tx
+        .select({ value: count() })
+        .from(requestViewEventsTable)
+        .where(
+          and(
+            eq(requestViewEventsTable.userId, userId),
+            eq(requestViewEventsTable.monthStart, monthStart),
+          ),
+        );
+      if (usage.value >= FREE_MONTHLY_REQUEST_VIEW_LIMIT) return false;
+
+      await tx
+        .insert(requestViewEventsTable)
+        .values({ userId, requestId: request.id, monthStart })
+        .onConflictDoNothing();
+      return true;
+    });
+
+    if (!canOpen) {
+      res.status(429).json({
+        error:
+          "You have reached the Free plan limit of 5 distinct buyer request views this month.",
+      });
+      return;
+    }
+  }
+
   res.json(GetBuyerRequestResponse.parse(request));
 });
 
@@ -245,28 +312,65 @@ router.post(
     }
 
     const body = parsed.data;
-    const [submission] = await db
-      .insert(matchSubmissionsTable)
-      .values({
-        requestId: request.id,
-        submittedBy: memberId(req)!,
-        businessName: body.businessName ?? null,
-        industry: body.industry,
-        location: body.location,
-        askingPrice: body.askingPrice ?? null,
-        annualRevenue: body.annualRevenue ?? null,
-        ebitda: body.ebitda ?? null,
-        cashFlow: body.cashFlow ?? null,
-        employeeCount: body.employeeCount ?? null,
-        yearsOperating: body.yearsOperating ?? null,
-        shortDescription: body.shortDescription,
-        matchRationale: body.matchRationale,
-        relationship: body.relationship,
-        ownerContactStatus: body.ownerContactStatus,
-        brokerStatus: body.brokerStatus,
-        confidentialIdentity: body.confidentialIdentity,
-      })
-      .returning();
+    const userId = memberId(req)!;
+    const { start, end } = utcMonthWindow();
+    const submission = await db.transaction(async (tx) => {
+      await tx
+        .insert(memberProfilesTable)
+        .values({ userId })
+        .onConflictDoNothing();
+      const [profile] = await tx
+        .select({ plan: memberProfilesTable.plan })
+        .from(memberProfilesTable)
+        .where(eq(memberProfilesTable.userId, userId))
+        .for("update");
+
+      if (profile?.plan === "free") {
+        const [usage] = await tx
+          .select({ value: count() })
+          .from(matchSubmissionsTable)
+          .where(
+            and(
+              eq(matchSubmissionsTable.submittedBy, userId),
+              gte(matchSubmissionsTable.createdAt, start),
+              lt(matchSubmissionsTable.createdAt, end),
+            ),
+          );
+        if (usage.value >= FREE_MONTHLY_SUBMISSION_LIMIT) return null;
+      }
+
+      const [created] = await tx
+        .insert(matchSubmissionsTable)
+        .values({
+          requestId: request.id,
+          submittedBy: userId,
+          businessName: body.businessName ?? null,
+          industry: body.industry,
+          location: body.location,
+          askingPrice: body.askingPrice ?? null,
+          annualRevenue: body.annualRevenue ?? null,
+          ebitda: body.ebitda ?? null,
+          cashFlow: body.cashFlow ?? null,
+          employeeCount: body.employeeCount ?? null,
+          yearsOperating: body.yearsOperating ?? null,
+          shortDescription: body.shortDescription,
+          matchRationale: body.matchRationale,
+          relationship: body.relationship,
+          ownerContactStatus: body.ownerContactStatus,
+          brokerStatus: body.brokerStatus,
+          confidentialIdentity: body.confidentialIdentity,
+        })
+        .returning();
+      return created;
+    });
+
+    if (!submission) {
+      res.status(429).json({
+        error:
+          "You have reached the Free plan limit of 1 matching business submission this month.",
+      });
+      return;
+    }
     res.status(201).json(SubmitMatchResponse.parse(submission));
   },
 );
@@ -411,6 +515,26 @@ router.get("/me/summary", requireMember, async (req, res): Promise<void> => {
     .select({ value: count() })
     .from(savedBuyerRequestsTable)
     .where(eq(savedBuyerRequestsTable.userId, userId));
+  const { start, end, monthStart } = utcMonthWindow();
+  const [requestViewsUsed] = await db
+    .select({ value: count() })
+    .from(requestViewEventsTable)
+    .where(
+      and(
+        eq(requestViewEventsTable.userId, userId),
+        eq(requestViewEventsTable.monthStart, monthStart),
+      ),
+    );
+  const [submissionsUsed] = await db
+    .select({ value: count() })
+    .from(matchSubmissionsTable)
+    .where(
+      and(
+        eq(matchSubmissionsTable.submittedBy, userId),
+        gte(matchSubmissionsTable.createdAt, start),
+        lt(matchSubmissionsTable.createdAt, end),
+      ),
+    );
   const [reviewCount] = await db
     .select({ value: count() })
     .from(matchSubmissionsTable)
@@ -430,6 +554,8 @@ router.get("/me/summary", requireMember, async (req, res): Promise<void> => {
       submissionCount: submissionCount.value,
       savedCount: savedCount.value,
       reviewCount: reviewCount.value,
+      requestViewsUsedThisMonth: requestViewsUsed.value,
+      submissionsUsedThisMonth: submissionsUsed.value,
     }),
   );
 });

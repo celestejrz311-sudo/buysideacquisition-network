@@ -8,6 +8,7 @@ import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
+import { PricingPage } from '@/pages/PricingPage';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
@@ -162,6 +163,7 @@ function RoutedPages() {
       <Route path="/for-buyers" component={ForBuyersPage} />
       <Route path="/for-finders" component={ForFindersPage} />
       <Route path="/how-it-works" component={HowItWorksPage} />
+      <Route path="/pricing" component={PricingPage} />
       <Route path="/private-network" component={PrivateNetworkPage} />
       <Route path="/confidentiality" component={ConfidentialityPage} />
       <Route path="/terms-of-use" component={TermsOfUsePage} />

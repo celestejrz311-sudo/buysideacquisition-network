@@ -109,6 +109,8 @@ paths:
               schema: { $ref: "#/components/schemas/BuyerRequest" }
         "404":
           description: Buyer request not found
+        "429":
+          description: Monthly free-plan request-view limit reached
   /buyer-requests/{requestId}/submissions:
     post:
       operationId: submitMatch
@@ -136,6 +138,8 @@ paths:
           description: Sign in required
         "404":
           description: Buyer request not found
+        "429":
+          description: Monthly free-plan submission limit reached
   /buyer-requests/{requestId}/save:
     post:
       operationId: saveBuyerRequest
@@ -453,12 +457,24 @@ components:
         saved: { type: boolean }
     MemberSummary:
       type: object
-      required: [requestCount, submissionCount, savedCount, reviewCount]
+      required:
+        - requestCount
+        - submissionCount
+        - savedCount
+        - reviewCount
+        - requestViewsUsedThisMonth
+        - submissionsUsedThisMonth
       properties:
         requestCount: { type: integer }
         submissionCount: { type: integer }
         savedCount: { type: integer }
         reviewCount: { type: integer }
+        requestViewsUsedThisMonth:
+          type: integer
+          description: Distinct buyer request details opened during the current UTC calendar month.
+        submissionsUsedThisMonth:
+          type: integer
+          description: Opportunity submissions created during the current UTC calendar month.
     MemberProfile:
       type: object
       required: [role, plan]

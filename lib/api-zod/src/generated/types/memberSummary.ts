@@ -11,4 +11,8 @@ export interface MemberSummary {
   submissionCount: number;
   savedCount: number;
   reviewCount: number;
+  /** Distinct buyer request details opened during the current UTC calendar month. */
+  requestViewsUsedThisMonth: number;
+  /** Opportunity submissions created during the current UTC calendar month. */
+  submissionsUsedThisMonth: number;
 }

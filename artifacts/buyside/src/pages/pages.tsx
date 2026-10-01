@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { useQueryClient } from '@tanstack/react-query';
 import { Link, useLocation, useRoute } from 'wouter';
@@ -13,6 +13,7 @@ import {
   getGetBuyerRequestQueryKey, type BuyerRequest, type BuyerRequestInput, type MatchSubmissionInput,
 } from '@workspace/api-client-react';
 import { Form } from '@/components/ui/form';
+import { AccountPlanPanel } from '@/components/account-plan';
 import {
   ButtonLink, EmptyState, ErrorState, Eyebrow, LoadingRows,
   PrivacyNote, PublicLayout, RequestCard, SectionTitle, money,
@@ -121,8 +122,16 @@ export function RequestDetail() {
   const save = useSaveBuyerRequest();
   const client = useQueryClient();
   const request = query.data;
+  const monthlyViewLimitReached =
+    query.isError &&
+    query.error?.message.includes('Free plan limit of 5 distinct buyer request views');
   const isSaved = savedRequests.data?.some(item => item.id === request?.id) ?? false;
-  return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20"><ErrorState onRetry={() => query.refetch()} /></div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
+  useEffect(() => {
+    if (request && auth.isSignedIn) {
+      void client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() });
+    }
+  }, [request?.id, auth.isSignedIn, client]);
+  return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20">{monthlyViewLimitReached ? <div className="border border-[#85734c] bg-[#242521] p-6 md:p-9"><Eyebrow>Monthly Free limit reached</Eyebrow><h1 className="font-editorial mt-4 text-3xl tracking-[-.025em] md:text-4xl" data-testid="text-request-view-limit">You have opened 5 different buyer requests this month.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-[#b9b5aa]">Your Free allowance is 5 distinct buyer request details per UTC calendar month. It renews at the start of the next month. Paid plans are listed, but checkout is currently unavailable.</p><Link href="/pricing" className="mt-6 inline-flex min-h-11 items-center gap-2 bg-[#b9a16d] px-5 text-[10px] uppercase tracking-wider text-[#25241f]" data-testid="link-request-limit-pricing">View plan options <ArrowRight size={14} /></Link></div> : <ErrorState onRetry={() => query.refetch()} />}</div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
     <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> All buyer demand</Link>
      <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-[1fr_300px] lg:gap-12">
       <article><div className="flex flex-wrap gap-2">{request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">EXAMPLE REQUEST</span>}{request.isVerified && <span className="inline-flex items-center gap-1 font-mono-label text-[9px] tracking-wider text-[#557165]"><ShieldCheck size={12} /> VERIFIED</span>}</div>
@@ -162,6 +171,9 @@ export function SubmitMatchPage() {
   const submit = useSubmitMatch();
   const queryClient = useQueryClient();
   const [sent, setSent] = useState(false);
+  const submissionLimitReached =
+    submit.isError &&
+    submit.error?.message.includes('Free plan limit of 1 matching business submission');
   const form = useForm<MatchSubmissionInput>({ defaultValues: { businessName: '', industry: '', location: '', askingPrice: null, annualRevenue: null, ebitda: null, cashFlow: null, employeeCount: null, yearsOperating: null, shortDescription: '', matchRationale: '', relationship: '', ownerContactStatus: '', brokerStatus: '', confidentialIdentity: true } });
   const val = form.register;
   const onSubmit = form.handleSubmit(data => {
@@ -186,7 +198,7 @@ export function SubmitMatchPage() {
         <label className="block"><span className={label}>Why this fits the buyer's criteria</span><textarea required minLength={10} className={area} {...val('matchRationale', { required: true, minLength: 10 })} data-testid="input-match-rationale" /></label>
         <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Your relationship</legend><label><span className={label}>Your relationship to the opportunity</span><input className={field} placeholder="Broker, advisor, owner, other" {...val('relationship')} data-testid="input-relationship" /></label><label><span className={label}>Owner contact status</span><input className={field} placeholder="Describe current contact" {...val('ownerContactStatus')} data-testid="input-owner-contact" /></label><label><span className={label}>Broker status</span><input className={field} placeholder="Describe representation, if any" {...val('brokerStatus')} data-testid="input-broker-status" /></label></fieldset>
         <label className="flex items-start gap-3 text-[12px] leading-5 text-[#625d53]"><input type="checkbox" className="mt-1" checked={form.watch('confidentialIdentity')} onChange={e => form.setValue('confidentialIdentity', e.target.checked)} data-testid="checkbox-confidential-identity" />Keep the business identity confidential in this initial submission.</label>
-        {submit.isError && <p className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm text-[#815d4f]" role="alert">We could not submit this introduction. Review the form and try again.</p>}
+        {submit.isError && <p className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm leading-6 text-[#815d4f]" role="alert">{submissionLimitReached ? <>The Free plan includes 1 matching business submission per UTC calendar month, and you have used it. Your allowance renews next month. <Link href="/pricing" className="underline underline-offset-2" data-testid="link-submission-limit-pricing">View plan options</Link>. Paid checkout is currently unavailable.</> : 'We could not submit this introduction. Review the form and try again.'}</p>}
         <button disabled={submit.isPending} className="flex h-12 w-full items-center justify-center gap-2 bg-[#38352f] text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50 sm:w-auto sm:px-8" type="submit" data-testid="button-submit-match">{submit.isPending ? 'Submitting securely…' : 'Submit private introduction'} <ArrowRight size={14} /></button>
       </form></Form>
       </div>
@@ -409,7 +421,7 @@ export function PostRequestPage() {
     </div><aside className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 lg:mt-12"><Eyebrow>Mandate notes</Eyebrow><ul className="mt-4 space-y-4 text-xs leading-5 text-[#6b665d]"><li className="flex gap-2"><ShieldCheck size={15} className="shrink-0 text-[#887649]" />Choose a visibility level that fits your search.</li><li className="flex gap-2"><CircleHelp size={15} className="shrink-0 text-[#887649]" />You can leave financial thresholds blank if flexible.</li><li className="flex gap-2"><LockKeyhole size={15} className="shrink-0 text-[#887649]" />Avoid including personal or confidential information.</li></ul><div className="mt-6 border-t border-[#d4cdc1] pt-4 text-[10px] uppercase leading-5 tracking-wider text-[#827968]">Progress is saved when you publish.</div></aside></div></div></PageFrame>;
 }
 
-function Metric({ title, value, note }: { title: string; value?: number; note: string }) {
+function Metric({ title, value, note }: { title: string; value?: number | string; note: string }) {
   return <div className="border-t border-[#d4cdc1] pt-4"><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#8c8475]">{title}</div><div className="font-editorial mt-3 text-4xl">{value ?? '—'}</div><div className="mt-2 text-[11px] text-[#81796c]">{note}</div></div>;
 }
 
@@ -439,7 +451,8 @@ export function DashboardPage() {
   return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-10 md:px-10 md:py-16">
     <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><Eyebrow>Member dashboard</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-6xl">Your workspace.</h1><p className="mt-3 text-sm text-[#6b665d]">Buyer mandates, private introductions and saved criteria.</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">Publish criteria <ArrowRight size={14} /></Link></div>
     {summary.isError && <div className="mt-8"><ErrorState onRetry={() => summary.refetch()} /></div>}
-    <div className="mt-9 grid grid-cols-2 gap-7 border-y border-[#d4cdc1] py-6 md:grid-cols-4">{summary.isLoading ? Array.from({ length: 4 }, (_, i) => <div key={i} className="animate-pulse"><div className="h-2 w-20 bg-[#e4ded3]" /><div className="mt-4 h-8 w-12 bg-[#e4ded3]" /></div>) : <><Metric title="Buyer requests" value={summary.data?.requestCount} note="Published criteria" /><Metric title="Submissions" value={summary.data?.submissionCount} note="Introductions shared" /><Metric title="Saved" value={summary.data?.savedCount} note="Buyer criteria" /><Metric title="Reviews" value={summary.data?.reviewCount} note="Items needing attention" /></>}</div>
+    <div className="mt-9 grid grid-cols-2 gap-7 border-y border-[#d4cdc1] py-6 md:grid-cols-5">{summary.isLoading ? Array.from({ length: 5 }, (_, i) => <div key={i} className="animate-pulse"><div className="h-2 w-20 bg-[#e4ded3]" /><div className="mt-4 h-8 w-12 bg-[#e4ded3]" /></div>) : <><Metric title="Buyer requests" value={summary.data?.requestCount} note="Published criteria" /><Metric title="Submissions" value={summary.data?.submissionCount} note="Introductions shared" /><Metric title="Saved" value={summary.data?.savedCount} note="Buyer criteria" /><Metric title="Reviews" value={summary.data?.reviewCount} note="Items needing attention" /><Metric title="Accepted introductions" value="—" note="Not tracked until billing is active" /></>}</div>
+    <AccountPlanPanel requestViewsUsed={summary.data?.requestViewsUsedThisMonth} submissionsUsed={summary.data?.submissionsUsedThisMonth} />
     <div className="mt-10 flex flex-wrap gap-2 border-b border-[#d4cdc1]">
       {([['buyer', 'Buyer mandates'], ['finder', 'My submissions'], ['saved', 'Saved criteria']] as const).map(([key, text]) => <button type="button" onClick={() => setTab(key)} key={key} className={`border-b-2 px-4 py-3 text-xs uppercase tracking-wider ${tab === key ? 'border-[#a58f5c] text-[#4b453a]' : 'border-transparent text-[#8b8478]'}`} data-testid={`tab-${key}`}>{text}</button>)}
     </div>

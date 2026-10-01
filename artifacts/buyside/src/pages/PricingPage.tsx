@@ -10,8 +10,8 @@ const plans = [
     description: 'A clear first step into the network.',
     benefits: [
       'Post buyer requests',
-      'Browse a limited number of active requests',
-      'Limited opportunity submissions',
+      'Open 5 buyer request details per month',
+      'Submit 1 matching business per month',
       'Basic profile',
     ],
     action: 'Create a free account',
@@ -32,7 +32,6 @@ const plans = [
     ],
     action: 'Start with Pro',
     free: false,
-    featured: true,
   },
   {
     name: 'BuySide Partner',
@@ -50,6 +49,7 @@ const plans = [
     ],
     action: 'Choose Partner',
     free: false,
+    featured: true,
   },
 ];
 
@@ -113,7 +113,7 @@ export function PricingPage() {
               >
                 {plan.featured && (
                   <div className="absolute right-0 top-0 bg-[#b9a16d] px-3 py-2 font-mono-label text-[9px] uppercase tracking-[.14em] text-[#25241f]">
-                    Most access
+                    Fullest access
                   </div>
                 )}
                 <div className="min-h-[110px]">

@@ -1,5 +1,6 @@
 export * from "./buyside";
 export * from "./member-profiles";
+export * from "./request-views";
 
 // Export your models here. Add one export per file
 // export * from "./posts";

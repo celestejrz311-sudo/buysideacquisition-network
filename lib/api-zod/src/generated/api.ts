@@ -420,7 +420,9 @@ export const GetMySummaryResponse = zod.object({
   "requestCount": zod.number().int(),
   "submissionCount": zod.number().int(),
   "savedCount": zod.number().int(),
-  "reviewCount": zod.number().int()
+  "reviewCount": zod.number().int(),
+  "requestViewsUsedThisMonth": zod.number().int().describe('Distinct buyer request details opened during the current UTC calendar month.'),
+  "submissionsUsedThisMonth": zod.number().int().describe('Opportunity submissions created during the current UTC calendar month.')
 })
 
 
