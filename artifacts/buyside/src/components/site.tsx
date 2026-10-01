@@ -77,24 +77,38 @@ export function SectionTitle({ eyebrow, title, description }: { eyebrow: string;
 }
 
 export function RequestCard({ request, compact = false }: { request: BuyerRequest; compact?: boolean }) {
-  const budget = request.maximumPurchasePrice ? `Up to ${money(request.maximumPurchasePrice)}` : request.minimumPurchasePrice ? `From ${money(request.minimumPurchasePrice)}` : 'Flexible acquisition range';
+  const budget = request.minimumPurchasePrice != null && request.maximumPurchasePrice != null
+    ? `${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`
+    : request.maximumPurchasePrice != null
+      ? `Up to ${money(request.maximumPurchasePrice)}`
+      : request.minimumPurchasePrice != null
+        ? `From ${money(request.minimumPurchasePrice)}`
+        : 'Flexible acquisition range';
   const location = [request.city, request.region, request.country].filter(Boolean).join(', ');
   return <article className="group border-t border-[#cfc8bc] py-6 transition-colors hover:border-[#a58f5c]" data-testid={`card-request-${request.id}`}>
     <div className="flex flex-wrap items-center gap-2">
-      {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">EXAMPLE REQUEST</span>}
-      {request.isVerified && <span className="inline-flex items-center gap-1.5 font-mono-label text-[9px] tracking-[.12em] text-[#557165]"><ShieldCheck size={12} /> VERIFIED</span>}
+      {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">SAMPLE BUYER REQUEST</span>}
+      {request.isVerified && !request.isExample && <span className="inline-flex items-center gap-1.5 font-mono-label text-[9px] tracking-[.12em] text-[#557165]"><ShieldCheck size={12} /> VERIFIED</span>}
       <span className="font-mono-label ml-auto text-[10px] uppercase tracking-[.12em] text-[#938c7e]">{request.buyerType.replaceAll('_', ' ')}</span>
     </div>
     <Link href={`/requests/${request.id}`} className="mt-4 block">
       <h3 className="font-editorial max-w-2xl text-[26px] leading-tight transition-colors group-hover:text-[#806c42] md:text-[30px]">{request.title}</h3>
     </Link>
     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-[#706b61]"><span>{request.industry} · {request.businessCategory}</span><span>{location || 'Location flexible'}{request.remoteAccepted ? ' · Remote considered' : ''}</span></div>
-    {!compact && <p className="mt-4 line-clamp-2 max-w-3xl text-[13px] leading-6 text-[#6b665d]">{request.preferredProfile}</p>}
+    {!compact && <div className="mt-4 grid gap-x-6 gap-y-3 border-y border-[#e0d9ce] py-4 text-[12px] sm:grid-cols-2 lg:grid-cols-4">
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Purchase price</div><div className="mt-1 text-[#39362f]">{budget}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Target revenue</div><div className="mt-1 text-[#39362f]">{request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : 'Flexible'}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">EBITDA / SDE requirement</div><div className="mt-1 text-[#39362f]">{request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : 'Not specified'}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Acquisition timeline</div><div className="mt-1 text-[#39362f]">{request.timeline}</div></div>
+    </div>}
+    {!compact && <div className="mt-4 grid gap-4 text-[13px] leading-6 text-[#6b665d] sm:grid-cols-2">
+      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Key acquisition criteria</span>{request.preferredProfile}</p>
+      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Exclusions</span>{request.dealExclusions || 'None specified.'}</p>
+    </div>}
     <div className="mt-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
-      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Purchase parameters</div><div className="mt-1 text-[13px] text-[#39362f]">{budget}{request.minimumRevenue ? ` · Revenue above ${money(request.minimumRevenue)}` : ''}</div></div>
       <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>Review criteria <ArrowUpRight size={14} /></Link>
-        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`Submit a matching business for ${request.title}`}>Submit a Matching Business <ArrowRight size={14} /></Link>
+        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>VIEW FULL BUYER MANDATE <ArrowUpRight size={14} /></Link>
+        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`SUBMIT A MATCHING BUSINESS for ${request.title}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
       </div>
     </div>
   </article>;
