@@ -67,8 +67,8 @@ export function Eyebrow({ children, light = false }: { children: ReactNode; ligh
   return <div className={`font-mono-label text-[10px] uppercase tracking-[.18em] ${light ? 'text-[#c5ad79]' : 'text-[#897649]'}`}>{children}</div>;
 }
 
-export function ButtonLink({ href, children, secondary = false }: { href: string; children: ReactNode; secondary?: boolean }) {
-  return <Link href={href} className={`inline-flex min-h-12 items-center justify-center gap-3 px-5 text-[12px] uppercase tracking-[.1em] transition ${secondary ? 'border border-[#bdb5a6] text-[#38352f] hover:border-[#827652]' : 'bg-[#38352f] text-[#f5f2eb] hover:bg-[#504b40]'}`}>{children}<ArrowRight size={15} /></Link>;
+export function ButtonLink({ href, children, secondary = false, className = '', testId }: { href: string; children: ReactNode; secondary?: boolean; className?: string; testId?: string }) {
+  return <Link href={href} data-testid={testId} className={`inline-flex min-h-12 items-center justify-center gap-3 px-5 text-[12px] uppercase tracking-[.1em] transition ${secondary ? 'border border-[#bdb5a6] text-[#38352f] hover:border-[#827652]' : 'bg-[#38352f] text-[#f5f2eb] hover:bg-[#504b40]'} ${className}`}>{children}<ArrowRight size={15} /></Link>;
 }
 
 export function SectionTitle({ eyebrow, title, description }: { eyebrow: string; title: string; description?: string }) {
@@ -89,9 +89,12 @@ export function RequestCard({ request, compact = false }: { request: BuyerReques
     </Link>
     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-[#706b61]"><span>{request.industry} · {request.businessCategory}</span><span>{location || 'Location flexible'}{request.remoteAccepted ? ' · Remote considered' : ''}</span></div>
     {!compact && <p className="mt-4 line-clamp-2 max-w-3xl text-[13px] leading-6 text-[#6b665d]">{request.preferredProfile}</p>}
-    <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
+    <div className="mt-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
       <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Purchase parameters</div><div className="mt-1 text-[13px] text-[#39362f]">{budget}{request.minimumRevenue ? ` · Revenue above ${money(request.minimumRevenue)}` : ''}</div></div>
-      <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]">Review criteria <ArrowUpRight size={14} /></Link>
+      <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>Review criteria <ArrowUpRight size={14} /></Link>
+        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`Submit a matching business for ${request.title}`}>Submit a Matching Business <ArrowRight size={14} /></Link>
+      </div>
     </div>
   </article>;
 }

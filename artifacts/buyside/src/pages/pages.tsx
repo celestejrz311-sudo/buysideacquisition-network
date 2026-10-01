@@ -27,10 +27,10 @@ function PageFrame({ children, dark = false }: { children: ReactNode; dark?: boo
 }
 
 function HeroVisual() {
-  return <div className="relative min-h-[360px] overflow-hidden bg-[#36352f] md:min-h-[500px]">
+  return <div className="relative min-h-[180px] overflow-hidden bg-[#36352f] sm:min-h-[220px] md:min-h-[300px] lg:min-h-[500px]">
     <div className="absolute inset-0 opacity-80" style={{ background: 'radial-gradient(ellipse at 56% 48%, rgba(185,161,109,.15), transparent 43%), linear-gradient(135deg,#393932 0%,#2c2d28 68%,#454239 100%)' }} />
     <div className="absolute inset-0 flex items-center justify-center">
-      <div className="relative aspect-square w-[75%] max-w-[370px]">
+      <div className="relative aspect-square w-[54%] max-w-[200px] sm:w-[62%] sm:max-w-[260px] md:w-[70%] md:max-w-[320px] lg:w-[75%] lg:max-w-[370px]">
         <div className="absolute inset-[8%] rotate-45 border border-[#b9a16d]/50" />
         <div className="absolute inset-[21%] rotate-45 border border-[#b9a16d]/35" />
         <div className="absolute inset-[34%] rotate-45 border border-[#b9a16d]/25" />
@@ -48,22 +48,26 @@ export function HomePage() {
   const requests = useListBuyerRequests({ sort: 'newest' });
   const list = (requests.data || []).slice(0, 3);
   return <PageFrame>
-    <section className="mx-auto grid max-w-[1280px] lg:min-h-[660px] lg:grid-cols-[1.08fr_.92fr]">
-      <div className="flex flex-col justify-center px-5 py-16 md:px-10 md:py-24 lg:py-28">
+    <section className="mx-auto grid max-w-[1280px] lg:min-h-[560px] lg:grid-cols-[1.08fr_.92fr]">
+      <div className="flex flex-col justify-center px-5 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14 lg:py-16">
         <Eyebrow>THE GLOBAL BUYER REQUEST NETWORK</Eyebrow>
-        <h1 className="font-editorial mt-7 max-w-[780px] text-[46px] leading-[.99] tracking-[-.035em] md:text-[66px] lg:text-[76px]">Tell us what you want to buy. Let the network find it.</h1>
-        <p className="mt-7 max-w-[560px] text-[15px] leading-7 text-[#6e685e]">BuySide connects serious buyers with brokers, business owners, advisors, and deal finders who can source businesses that match their acquisition criteria.</p>
-        <div className="mt-9 flex flex-wrap gap-3"><ButtonLink href="/post-request">POST A BUYER REQUEST</ButtonLink><ButtonLink href="/requests" secondary>FIND A REQUEST TO MATCH</ButtonLink></div>
-        <p className="mt-8 font-mono-label text-[10px] uppercase tracking-[.15em] text-[#918a7c]">Private opportunities. Qualified introductions. Success-based rewards.</p>
+        <h1 className="font-editorial mt-5 max-w-[680px] text-[clamp(2.25rem,7.2vw,4.25rem)] leading-[1.02] tracking-[-.035em]">Tell us what you want to buy. Let the network find it.</h1>
+        <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#6e685e]">Buyers post the businesses they want to acquire. Brokers, owners, advisors and deal finders submit matching opportunities. BuySide connects both sides through clear criteria and private introductions.</p>
+        <div className="mt-6 grid w-full max-w-[620px] grid-cols-1 gap-3 sm:grid-cols-2">
+          <ButtonLink href="/post-request" className="w-full" testId="button-post-buyer-request">Post a Buyer Request</ButtonLink>
+          <ButtonLink href="/requests" secondary className="w-full" testId="button-find-request-to-match">Find a Request to Match</ButtonLink>
+        </div>
+        <p className="mt-5 max-w-[560px] font-mono-label text-[10px] uppercase leading-5 tracking-[.15em] text-[#918a7c]">Private opportunities. Qualified introductions. Success-based rewards.</p>
       </div>
-      <HeroVisual />
+      <div className="hidden lg:block"><HeroVisual /></div>
     </section>
-    <section className="mx-auto max-w-[1280px] px-5 py-20 md:px-10 md:py-28">
-      <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><SectionTitle eyebrow="ACTIVE BUYER REQUESTS" title="What buyers are seeking" description="Current, published acquisition criteria. Example mandates are identified clearly." /><Link href="/requests" className="inline-flex items-center gap-2 pb-2 text-xs uppercase tracking-[.12em] text-[#655d4c] hover:text-[#9a8352]">Browse all demand <ArrowRight size={15} /></Link></div>
-      <div className="mt-10">
+    <section className="mx-auto max-w-[1280px] px-5 py-8 md:px-10 md:py-14">
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><SectionTitle eyebrow="ACTIVE BUYER REQUESTS" title="What buyers are seeking" description="Current, published acquisition criteria. Example mandates are identified clearly." /><Link href="/requests" className="inline-flex items-center gap-2 pb-2 text-xs uppercase tracking-[.12em] text-[#655d4c] hover:text-[#9a8352]">Browse all demand <ArrowRight size={15} /></Link></div>
+      <div className="mt-7">
         {requests.isLoading ? <LoadingRows /> : requests.isError ? <ErrorState onRetry={() => requests.refetch()} /> : list.length ? list.map(r => <RequestCard key={r.id} request={r} />) : <EmptyState title="No public criteria at the moment" body="New mandates appear here when buyers choose to publish them. You can still learn how the private network works." action={<ButtonLink href="/how-it-works" secondary>How it works</ButtonLink>} />}
       </div>
     </section>
+    <div className="lg:hidden"><HeroVisual /></div>
     <section className="border-y border-[#d8d1c5] bg-[#ebe7dd]">
       <div className="mx-auto grid max-w-[1280px] gap-9 px-5 py-10 md:grid-cols-[.85fr_2fr] md:items-center md:px-10 md:py-12">
         <Eyebrow>One clear starting point</Eyebrow><p className="font-editorial max-w-3xl text-[25px] leading-[1.25] md:text-[32px]">BuySide is organized around acquisition criteria—not inventory. Share only what is needed to assess fit, then decide together what comes next.</p>
@@ -92,7 +96,7 @@ export function RequestMarketplace() {
   const query = useListBuyerRequests(params);
   const requests = query.data || [];
   return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
-    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end"><div><Eyebrow>Request marketplace</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Buyer demand</h1><p className="mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">Search public acquisition criteria. Private requests are not listed here.</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">Publish a mandate <ArrowRight size={15} /></Link></div>
+    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end"><div><Eyebrow>Request marketplace</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Buyer demand</h1><p className="mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">Search public acquisition criteria. Private requests are not listed here.</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">Post a Buyer Request <ArrowRight size={15} /></Link></div>
     <div className="mt-10 border-y border-[#d4cdc1] py-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <label className="sm:col-span-2"><span className={label}>Search criteria</span><span className="relative block"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#918a7c]" /><input className={`${field} pl-10`} placeholder="Industry, title or profile" value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} data-testid="input-search-requests" /></span></label>
@@ -120,11 +124,12 @@ export function RequestDetail() {
   const isSaved = savedRequests.data?.some(item => item.id === request?.id) ?? false;
   return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20"><ErrorState onRetry={() => query.refetch()} /></div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
     <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> All buyer demand</Link>
-    <div className="mt-10 grid gap-12 lg:grid-cols-[1fr_300px]">
+     <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-[1fr_300px] lg:gap-12">
       <article><div className="flex flex-wrap gap-2">{request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">EXAMPLE REQUEST</span>}{request.isVerified && <span className="inline-flex items-center gap-1 font-mono-label text-[9px] tracking-wider text-[#557165]"><ShieldCheck size={12} /> VERIFIED</span>}</div>
       <Eyebrow>Acquisition criteria</Eyebrow><h1 className="font-editorial mt-4 text-4xl leading-tight tracking-[-.025em] md:text-6xl">{request.title}</h1>
       <p className="mt-5 text-sm text-[#6b665d]">{request.industry} · {request.businessCategory} · {request.buyerType.replaceAll('_', ' ')}</p>
-      <div className="mt-10 grid grid-cols-2 gap-x-8 gap-y-7 border-y border-[#d4cdc1] py-7">
+       <Link href={`/submit/${request.id}`} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:hidden" data-testid={`link-submit-match-mobile-${request.id}`}>Submit a Matching Business <ArrowRight size={14} /></Link>
+       <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 border-y border-[#d4cdc1] py-6 sm:grid-cols-2 sm:gap-y-7 sm:py-7">
         <DetailValue label="Geography" value={[request.city, request.region, request.country].filter(Boolean).join(', ') || 'Flexible'} /><DetailValue label="Purchase range" value={`${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`} />
         <DetailValue label="Minimum revenue" value={money(request.minimumRevenue)} /><DetailValue label="Minimum EBITDA" value={money(request.minimumEbitda)} />
         <DetailValue label="Cash flow" value={money(request.minimumCashFlow)} /><DetailValue label="Timing" value={request.timeline || 'Not specified'} />
@@ -133,7 +138,7 @@ export function RequestDetail() {
       {request.rewardDisclosure && <section className="mt-8"><Eyebrow>Potential finder reward</Eyebrow><p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#625d53]">{request.rewardDisclosure}</p><p className="mt-2 text-xs leading-5 text-[#81796c]">Any reward is potential only and subject to qualifications, buyer acceptance, applicable law and a separate agreement. It is not guaranteed.</p></section>}
       <DetailText title="Confidentiality" content={`Request privacy: ${request.privacy.replaceAll('_', ' ')}. ${request.remoteAccepted ? 'Remote or location-flexible opportunities may be considered.' : 'Geography should align with the stated criteria.'}`} />
       </article>
-      <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5"><Eyebrow>Have a relevant opportunity?</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">A private introduction starts here.</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">Share the business profile and your relationship to it. Identifying details can remain confidential at submission.</p><Link href={`/submit/${request.id}`} className="mt-6 flex h-12 items-center justify-center gap-2 bg-[#38352f] px-4 text-[11px] uppercase tracking-wider text-[#f5f2eb]">Submit a potential match <ArrowRight size={14} /></Link>
+       <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 sm:p-6"><Eyebrow>Have a relevant opportunity?</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">A private introduction starts here.</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">Share the business profile and your relationship to it. Identifying details can remain confidential at submission.</p><Link href={`/submit/${request.id}`} className="mt-6 hidden min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:flex" data-testid={`link-submit-match-${request.id}`}>Submit a Matching Business <ArrowRight size={14} /></Link>
       <Show when="signed-in"><button disabled={save.isPending} onClick={() => save.mutate({ requestId: request.id, data: { saved: !isSaved } }, { onSuccess: () => { client.invalidateQueries({ queryKey: getListMySavedRequestsQueryKey() }); client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() }); } })} className="mt-3 h-11 w-full border border-[#cfc8bc] text-[11px] uppercase tracking-wider disabled:opacity-50" data-testid="button-save-request">{save.isPending ? 'Saving…' : isSaved ? 'Remove saved criteria' : 'Save criteria'}</button></Show>
       <Show when="signed-out"><Link href="/sign-in" className="mt-3 flex h-11 w-full items-center justify-center border border-[#cfc8bc] text-[11px] uppercase tracking-wider">Sign in to save</Link></Show>
       <div className="mt-5"><PrivacyNote>Do not include identifiable information in an initial submission unless you are authorized to share it and the owner has agreed.</PrivacyNote></div></div></aside>
