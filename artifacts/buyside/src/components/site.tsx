@@ -78,6 +78,26 @@ export function SectionTitle({ eyebrow, title, description }: { eyebrow: string;
   return <div className="max-w-2xl"><Eyebrow>{eyebrow}</Eyebrow><h2 className="font-editorial mt-4 text-4xl leading-[1.08] tracking-[-.025em] md:text-5xl">{title}</h2>{description && <p className="mt-5 max-w-xl text-[15px] leading-7 text-[#6b665d]">{description}</p>}</div>;
 }
 
+export function RequestStatusBadges({ request }: { request: BuyerRequest }) {
+  const isVerifiedBuyer = request.isVerified && !request.isExample;
+  return <>
+    {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">Sample Buyer Request</span>}
+    {isVerifiedBuyer && <>
+      <span className="inline-flex items-center gap-1.5 border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#78643a]"><ShieldCheck size={12} /> Active Buyer Mandate</span>
+      <span className="inline-flex items-center gap-1.5 border border-[#b8c5b8] bg-[#eef2ec] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#557165]"><span className="size-1.5 rounded-full bg-[#557165]" />Actively Searching</span>
+    </>}
+  </>;
+}
+
+export function FinderFeeField({ request, detail = false }: { request: BuyerRequest; detail?: boolean }) {
+  const disclosure = request.rewardDisclosure?.trim()
+    || 'Not specified. Confirm the fee and terms with the buyer before making an introduction.';
+  return <div className={`border-l-2 border-[#b9a16d] bg-[#eeebe3] ${detail ? 'mt-8 p-5' : 'mt-4 px-4 py-3'}`} data-testid={`field-finder-fee-${request.id}`}>
+    <div className="font-mono-label text-[10px] uppercase tracking-[.14em] text-[#8c794d]">Finder Fee</div>
+    <p className={`mt-1 font-semibold text-[#39362f] ${detail ? 'text-sm leading-6' : 'text-[12px] leading-5'}`}>{disclosure}</p>
+  </div>;
+}
+
 export function RequestCard({ request, compact = false }: { request: BuyerRequest; compact?: boolean }) {
   const budget = request.minimumPurchasePrice != null && request.maximumPurchasePrice != null
     ? `${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`
@@ -89,14 +109,14 @@ export function RequestCard({ request, compact = false }: { request: BuyerReques
   const location = [request.city, request.region, request.country].filter(Boolean).join(', ');
   return <article className="group border-t border-[#cfc8bc] py-6 transition-colors hover:border-[#a58f5c]" data-testid={`card-request-${request.id}`}>
     <div className="flex flex-wrap items-center gap-2">
-      {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">SAMPLE BUYER REQUEST</span>}
-      {request.isVerified && !request.isExample && <span className="inline-flex items-center gap-1.5 font-mono-label text-[9px] tracking-[.12em] text-[#557165]"><ShieldCheck size={12} /> VERIFIED</span>}
+      <RequestStatusBadges request={request} />
       <span className="font-mono-label ml-auto text-[10px] uppercase tracking-[.12em] text-[#938c7e]">{request.buyerType.replaceAll('_', ' ')}</span>
     </div>
     <Link href={`/requests/${request.id}`} className="mt-4 block">
       <h3 className="font-editorial max-w-2xl text-[26px] leading-tight transition-colors group-hover:text-[#806c42] md:text-[30px]">{request.title}</h3>
     </Link>
     <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-[#706b61]"><span>{request.industry} · {request.businessCategory}</span><span>{location || 'Location flexible'}{request.remoteAccepted ? ' · Remote considered' : ''}</span></div>
+    <FinderFeeField request={request} />
     {!compact && <div className="mt-4 grid gap-x-6 gap-y-3 border-y border-[#e0d9ce] py-4 text-[12px] sm:grid-cols-2 lg:grid-cols-4">
       <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Purchase price</div><div className="mt-1 text-[#39362f]">{budget}</div></div>
       <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Target revenue</div><div className="mt-1 text-[#39362f]">{request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : 'Flexible'}</div></div>

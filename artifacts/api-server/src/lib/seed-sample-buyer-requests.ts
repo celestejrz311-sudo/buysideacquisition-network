@@ -23,6 +23,8 @@ const sampleRequests = [
     dealExclusions:
       "Residential-only operators; any customer above 25% of revenue; contracts without renewal history; unresolved labor or licensing issues.",
     timeline: "3–6 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 2.0%–3.0% of final transaction value (approximately $13,000–$60,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e02",
@@ -45,6 +47,8 @@ const sampleRequests = [
     dealExclusions:
       "New-construction-only contractors; businesses dependent on one licensed individual; unresolved code, warranty, or environmental matters; excessive customer concentration.",
     timeline: "3–6 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 1.5%–2.5% of final transaction value (approximately $22,500–$150,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e03",
@@ -67,6 +71,8 @@ const sampleRequests = [
     dealExclusions:
       "Unproven or single-product brands; material regulatory or product-safety concerns; more than 60% of new customers from one paid channel; unverifiable supplier or inventory records.",
     timeline: "3–9 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 1.5%–2.5% of final transaction value (approximately $15,000–$175,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e04",
@@ -89,6 +95,8 @@ const sampleRequests = [
     dealExclusions:
       "Any customer above 30% of revenue; distressed fleets or facilities with unresolved environmental liabilities; contracts that cannot be assigned; businesses with incomplete safety records.",
     timeline: "6–12 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 1.0%–2.0% of final transaction value (approximately $30,000–$300,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e05",
@@ -111,6 +119,8 @@ const sampleRequests = [
     dealExclusions:
       "Project-only operators with no repeat base; franchises with non-transferable agreements; unresolved licensing, safety, or tax issues; revenue materially dependent on the owner.",
     timeline: "3–6 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 2.0%–3.0% of final transaction value (approximately $14,000–$90,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e06",
@@ -133,6 +143,8 @@ const sampleRequests = [
     dealExclusions:
       "Single-customer dependency above 30%; obsolete or unserviceable equipment; unresolved environmental or workplace-safety issues; businesses with no transition plan for key operators.",
     timeline: "6–12 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 1.0%–1.75% of final transaction value (approximately $20,000–$210,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e07",
@@ -155,6 +167,8 @@ const sampleRequests = [
     dealExclusions:
       "Franchise-only assets; deferred maintenance without a funded plan; unresolved title, zoning, or life-safety matters; properties whose reported revenue includes unrelated real estate activity.",
     timeline: "6–12 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 0.75%–1.5% of final transaction value (approximately $22,500–$270,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e08",
@@ -177,6 +191,8 @@ const sampleRequests = [
     dealExclusions:
       "Practices dependent on one departing dentist; unresolved licensing, payer, or patient-record compliance issues; material deferred equipment needs; unsupported add-backs.",
     timeline: "3–9 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 0.75%–1.5% of final transaction value (approximately $15,000–$180,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e09",
@@ -199,6 +215,8 @@ const sampleRequests = [
     dealExclusions:
       "Unresolved environmental or hazardous-material issues; salvage-only operations; non-transferable leases; material dependence on one insurer or fleet account.",
     timeline: "3–6 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 2.5%–3.5% of final transaction value (approximately $12,500–$140,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
   {
     id: "8b8dd350-43d1-4d4c-9f77-9bc6628f8e10",
@@ -221,11 +239,11 @@ const sampleRequests = [
     dealExclusions:
       "Revenue that conflates management fees with property-owner rents; any client above 25% of fees; unresolved trust-account or licensing issues; contracts with non-transferable change-of-control terms.",
     timeline: "6–12 months",
+    rewardDisclosure:
+      "SAMPLE ONLY — Illustrative finder fee of 1.0%–2.0% of final transaction value (approximately $15,000–$200,000 across the stated purchase range). No fee is offered or guaranteed; any compensation requires a separate written agreement and remains subject to eligibility, licensing, and applicable law.",
   },
 ].map((request, index) => ({
   ...request,
-  rewardDisclosure:
-    "SAMPLE ONLY: This is illustrative acquisition criteria, not a live or verified buyer mandate. No finder reward is offered or guaranteed.",
   privacy: "public",
   isVerified: false,
   isExample: true,

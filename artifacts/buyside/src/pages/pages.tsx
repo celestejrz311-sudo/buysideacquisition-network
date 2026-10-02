@@ -15,8 +15,8 @@ import {
 import { Form } from '@/components/ui/form';
 import { AccountPlanPanel } from '@/components/account-plan';
 import {
-  ButtonLink, DemoOpportunityCard, EmptyState, ErrorState, Eyebrow, LoadingRows,
-  PrivacyNote, PublicLayout, RequestCard, SectionTitle, money,
+  ButtonLink, DemoOpportunityCard, EmptyState, ErrorState, Eyebrow, FinderFeeField, LoadingRows,
+  PrivacyNote, PublicLayout, RequestCard, RequestStatusBadges, SectionTitle, money,
 } from '@/components/site';
 import { demoOpportunities } from '@/data/demo-opportunities';
 
@@ -118,7 +118,7 @@ export function RequestMarketplace() {
           <label><span className="sr-only">Maximum purchase price</span><input className={field} type="number" min="0" placeholder="Maximum" value={filters.maxBudget} onChange={e => setFilters({ ...filters, maxBudget: e.target.value })} data-testid="input-max-budget" /></label>
         </div></fieldset>
         <label><span className={label}>Buyer type</span><select className={field} value={filters.buyerType} onChange={e => setFilters({ ...filters, buyerType: e.target.value as typeof filters.buyerType })} data-testid="select-filter-buyer-type"><option value="">Any buyer type</option><option value="individual">Individual</option><option value="strategic">Strategic buyer</option><option value="search_fund">Search fund</option><option value="private_equity">Private equity</option><option value="other">Other</option></select></label>
-        <label><span className={label}>Sort by</span><select className={field} value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value as typeof filters.sort })} data-testid="select-sort"><option value="newest">Recently published</option><option value="highest_budget">Highest budget</option><option value="highest_reward">Potential finder reward</option><option value="closing_soon">Closing soon</option></select></label>
+        <label><span className={label}>Sort by</span><select className={field} value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value as typeof filters.sort })} data-testid="select-sort"><option value="newest">Recently published</option><option value="highest_budget">Highest budget</option><option value="highest_reward">Highest finder fee</option><option value="closing_soon">Closing soon</option></select></label>
       </div>
       <label className="mt-4 flex cursor-pointer items-center gap-2 text-xs text-[#5f5a51]"><input type="checkbox" checked={filters.verifiedOnly} onChange={e => setFilters({ ...filters, verifiedOnly: e.target.checked })} data-testid="checkbox-verified" /> Verified buyers only</label>
     </div>
@@ -159,7 +159,7 @@ export function RequestDetail() {
   return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20">{monthlyViewLimitReached ? <div className="border border-[#85734c] bg-[#242521] p-6 md:p-9"><Eyebrow>Monthly Free limit reached</Eyebrow><h1 className="font-editorial mt-4 text-3xl tracking-[-.025em] md:text-4xl" data-testid="text-request-view-limit">You have opened 5 different buyer requests this month.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-[#b9b5aa]">Your Free allowance is 5 distinct buyer request details per UTC calendar month. It renews at the start of the next month. Paid plans are listed, but checkout is currently unavailable.</p><Link href="/pricing" className="mt-6 inline-flex min-h-11 items-center gap-2 bg-[#b9a16d] px-5 text-[10px] uppercase tracking-wider text-[#25241f]" data-testid="link-request-limit-pricing">View plan options <ArrowRight size={14} /></Link></div> : <ErrorState onRetry={() => query.refetch()} />}</div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
     <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> All buyer demand</Link>
      <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-[1fr_300px] lg:gap-12">
-      <article><div className="flex flex-wrap gap-2">{request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">SAMPLE BUYER REQUEST</span>}{request.isVerified && !request.isExample && <span className="inline-flex items-center gap-1 font-mono-label text-[9px] tracking-wider text-[#557165]"><ShieldCheck size={12} /> VERIFIED</span>}</div>
+      <article><div className="flex flex-wrap gap-2"><RequestStatusBadges request={request} /></div>
       <Eyebrow>Acquisition criteria</Eyebrow><h1 className="font-editorial mt-4 text-4xl leading-tight tracking-[-.025em] md:text-6xl">{request.title}</h1>
       <p className="mt-5 text-sm text-[#6b665d]">{request.industry} · {request.businessCategory} · {request.buyerType.replaceAll('_', ' ')}</p>
        <Link href={`/submit/${request.id}`} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:hidden" data-testid={`link-submit-match-mobile-${request.id}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
@@ -169,7 +169,8 @@ export function RequestDetail() {
         <DetailValue label="Cash flow" value={money(request.minimumCashFlow)} /><DetailValue label="Timing" value={request.timeline || 'Not specified'} />
       </div>
        <DetailText title="Key acquisition criteria" content={request.preferredProfile} /><DetailText title="Exclusions" content={request.dealExclusions} />
-      {request.rewardDisclosure && <section className="mt-8"><Eyebrow>Potential finder reward</Eyebrow><p className="mt-3 whitespace-pre-line text-sm leading-7 text-[#625d53]">{request.rewardDisclosure}</p><p className="mt-2 text-xs leading-5 text-[#81796c]">Any reward is potential only and subject to qualifications, buyer acceptance, applicable law and a separate agreement. It is not guaranteed.</p></section>}
+        <FinderFeeField request={request} detail />
+        <p className="mt-3 text-xs leading-5 text-[#81796c]">Any fee is subject to eligibility, buyer acceptance, applicable law and a separate written agreement. It is not guaranteed.</p>
       <DetailText title="Confidentiality" content={`Request privacy: ${request.privacy.replaceAll('_', ' ')}. ${request.remoteAccepted ? 'Remote or location-flexible opportunities may be considered.' : 'Geography should align with the stated criteria.'}`} />
       </article>
        <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 sm:p-6"><Eyebrow>Have a relevant opportunity?</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">A private introduction starts here.</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">Share the business profile and your relationship to it. Identifying details can remain confidential at submission.</p><Link href={`/submit/${request.id}`} className="mt-6 hidden min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:flex" data-testid={`link-submit-match-${request.id}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
