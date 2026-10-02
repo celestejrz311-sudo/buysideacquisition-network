@@ -1,0 +1,1 @@
+- [BuySide visual scope](buyside-visual-scope.md) — preserve the existing visual identity when refining acquisition-listing content.

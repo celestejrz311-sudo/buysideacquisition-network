@@ -15,13 +15,17 @@ import {
 import { Form } from '@/components/ui/form';
 import { AccountPlanPanel } from '@/components/account-plan';
 import {
-  ButtonLink, EmptyState, ErrorState, Eyebrow, LoadingRows,
+  ButtonLink, DemoOpportunityCard, EmptyState, ErrorState, Eyebrow, LoadingRows,
   PrivacyNote, PublicLayout, RequestCard, SectionTitle, money,
 } from '@/components/site';
+import { demoOpportunities } from '@/data/demo-opportunities';
 
 const field = 'h-12 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
 const area = 'min-h-28 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 py-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
 const label = 'mb-2 block font-mono-label text-[10px] uppercase tracking-[.12em] text-[#625d53]';
+const homepageFeaturedOpportunities = demoOpportunities.filter(({ id }) =>
+  ['commercial-cleaning-south-florida', 'saas-compliance-denver', 'healthcare-richmond'].includes(id),
+);
 
 function PageFrame({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return <PublicLayout><main className={dark ? 'bg-[#34322d] text-[#f3efe7]' : ''}>{children}</main></PublicLayout>;
@@ -68,10 +72,14 @@ export function HomePage() {
         {requests.isLoading ? <LoadingRows /> : requests.isError ? <ErrorState onRetry={() => requests.refetch()} /> : list.length ? list.map(r => <RequestCard key={r.id} request={r} />) : <EmptyState title="No public criteria at the moment" body="New mandates appear here when buyers choose to publish them. You can still learn how the private network works." action={<ButtonLink href="/how-it-works" secondary>How it works</ButtonLink>} />}
       </div>
     </section>
+    <section className="mx-auto max-w-[1280px] px-5 py-8 md:px-10 md:py-14">
+      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><SectionTitle eyebrow="DEMO OPPORTUNITIES" title="Confidential deal profiles" description="Fictional broker-style profiles for demonstration only—not verified, represented, or currently for sale." /><Link href="/opportunities" className="inline-flex items-center gap-2 pb-2 text-xs uppercase tracking-[.12em] text-[#655d4c] hover:text-[#9a8352]">Browse all opportunities <ArrowRight size={15} /></Link></div>
+      <div className="mt-7">{homepageFeaturedOpportunities.map(opportunity => <DemoOpportunityCard key={opportunity.id} opportunity={opportunity} />)}</div>
+    </section>
     <div className="lg:hidden"><HeroVisual /></div>
     <section className="border-y border-[#d8d1c5] bg-[#ebe7dd]">
       <div className="mx-auto grid max-w-[1280px] gap-9 px-5 py-10 md:grid-cols-[.85fr_2fr] md:items-center md:px-10 md:py-12">
-        <Eyebrow>One clear starting point</Eyebrow><p className="font-editorial max-w-3xl text-[25px] leading-[1.25] md:text-[32px]">BuySide is organized around acquisition criteria—not inventory. Share only what is needed to assess fit, then decide together what comes next.</p>
+        <Eyebrow>One clear starting point</Eyebrow><p className="font-editorial max-w-3xl text-[25px] leading-[1.25] md:text-[32px]">BuySide pairs clear acquisition criteria with confidential opportunity profiles. Share only what is needed to assess fit, then decide together what comes next.</p>
       </div>
     </section>
     <section className="bg-[#34322d] text-[#f3efe7]">
@@ -117,6 +125,17 @@ export function RequestMarketplace() {
     <div className="mb-3 mt-8 flex items-center justify-between"><Eyebrow>{query.isLoading ? 'Retrieving buyer requests' : `${requests.length} buyer ${requests.length === 1 ? 'request' : 'requests'}`}</Eyebrow><Link href="/confidentiality" className="inline-flex items-center gap-1 text-[11px] text-[#786b52]"><LockKeyhole size={13} /> Privacy principles</Link></div>
     {query.isLoading ? <LoadingRows count={4} /> : query.isError ? <ErrorState onRetry={() => query.refetch()} /> : requests.length ? requests.map(r => <RequestCard request={r} key={r.id} />) : <EmptyState title="No criteria match these filters" body="Try a broader location or budget, or clear a search term to see more buyer demand." action={<button onClick={() => setFilters({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '', verifiedOnly: false, sort: 'newest' })} className="border border-[#cfc8bc] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-clear-filters">Clear filters</button>} />}
   </div></PageFrame>;
+}
+
+export function OpportunitiesPage() {
+  return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
+    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
+      <div><Eyebrow>Demo acquisition opportunities</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Confidential listings</h1><p className="mt-5 max-w-2xl text-sm leading-7 text-[#6b665d]">These {demoOpportunities.length} fictional broker-style profiles are for demonstration only. They are not verified businesses, broker mandates, or current offerings. Asking enterprise value and financials are illustrative. Multiples use adjusted EBITDA or SDE, except the SaaS profile, which uses TTM revenue.</p></div>
+      <Link href="/requests" className="inline-flex h-12 items-center justify-center gap-2 border border-[#bdb5a6] px-5 text-xs uppercase tracking-wider text-[#38352f]">Browse Buyer Requests <ArrowRight size={15} /></Link>
+    </div>
+    <div className="mb-3 mt-10 flex items-center justify-between border-y border-[#d4cdc1] py-4"><Eyebrow>{demoOpportunities.length} fictional opportunities</Eyebrow><span className="font-mono-label text-[9px] uppercase tracking-[.12em] text-[#827968]">Asking EV / earnings or revenue</span></div>
+    <div>{demoOpportunities.map(opportunity => <DemoOpportunityCard key={opportunity.id} opportunity={opportunity} />)}</div>
+  </div><Compliance /></PageFrame>;
 }
 
 export function RequestDetail() {

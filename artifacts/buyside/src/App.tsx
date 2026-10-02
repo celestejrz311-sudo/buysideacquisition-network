@@ -12,7 +12,7 @@ import { PricingPage } from '@/pages/PricingPage';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
-  HowItWorksPage, HomePage, PostRequestPage, PrivacyPolicyPage, PrivateNetworkPage,
+  HowItWorksPage, HomePage, OpportunitiesPage, PostRequestPage, PrivacyPolicyPage, PrivateNetworkPage,
   RequestDetail, RequestMarketplace, SubmitMatchPage,
   TermsOfUsePage,
 } from '@/pages/pages';
@@ -158,6 +158,7 @@ function RoutedPages() {
     <ClerkQueryClientCacheInvalidator />
     <RoutedErrorBoundary><Switch>
       <Route path="/" component={HomeRedirect} />
+      <Route path="/opportunities" component={OpportunitiesPage} />
       <Route path="/requests" component={RequestMarketplace} />
       <Route path="/requests/:requestId" component={RequestDetail} />
       <Route path="/for-buyers" component={ForBuyersPage} />

@@ -3,6 +3,7 @@ import { ArrowRight, ArrowUpRight, LockKeyhole, Menu, Search, ShieldCheck, X } f
 import { useState, type ReactNode } from 'react';
 import { Show, useClerk } from '@clerk/react';
 import type { BuyerRequest } from '@workspace/api-client-react';
+import type { DemoOpportunity } from '@/data/demo-opportunities';
 
 export function Brand({ inverse = false }: { inverse?: boolean }) {
   return <Link href="/" className={`inline-flex items-center gap-3 ${inverse ? 'text-[#eee9de]' : 'text-[#332f29]'}`} data-testid="link-brand">
@@ -14,6 +15,7 @@ export function Brand({ inverse = false }: { inverse?: boolean }) {
 }
 
 const navLinks = [
+  ['/opportunities', 'Opportunities'],
   ['/requests', 'Buyer Requests'],
   ['/for-buyers', 'For Buyers'],
   ['/for-finders', 'For Finders'],
@@ -52,7 +54,7 @@ export function Footer() {
   return <footer className="bg-[#302e29] text-[#d5d0c6]">
     <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-12 md:grid-cols-2 md:px-10 md:py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
       <div><Brand inverse /><p className="mt-6 max-w-sm text-sm leading-6 text-[#aaa59a]">A quieter way to bring qualified acquisition intent and private opportunities together.</p></div>
-      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/requests">Buyer Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Pricing</Link></div></div>
+      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">Acquisition Opportunities</Link><Link href="/requests">Buyer Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Pricing</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Principles</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/confidentiality">Confidentiality</Link><Link href="/for-buyers">For Buyers</Link><Link href="/for-finders">For Finders</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Legal & contact</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/terms-of-use">Terms of Use</Link><Link href="/privacy-policy">Privacy Policy</Link><Link href="/finder-terms">Finder Terms</Link><Link href="/buyer-terms">Buyer Terms</Link><Link href="/disclaimer">Disclaimer</Link><Link href="/contact">Contact</Link></div></div>
     </div>
@@ -110,6 +112,58 @@ export function RequestCard({ request, compact = false }: { request: BuyerReques
         <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>VIEW FULL BUYER MANDATE <ArrowUpRight size={14} /></Link>
         <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`SUBMIT A MATCHING BUSINESS for ${request.title}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
       </div>
+    </div>
+  </article>;
+}
+
+const exactCurrency = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
+export function DemoOpportunityCard({ opportunity }: { opportunity: DemoOpportunity }) {
+  const margin = (opportunity.normalizedEarnings / opportunity.ttmRevenue) * 100;
+  const multipleDenominator = opportunity.valuationBasis === 'TTM revenue'
+    ? opportunity.ttmRevenue
+    : opportunity.normalizedEarnings;
+  const multipleBasisLabel = opportunity.valuationBasis === 'TTM revenue'
+    ? 'TTM Revenue'
+    : opportunity.earningsLabel;
+  const multiple = opportunity.askingPrice / multipleDenominator;
+  const metrics = [
+    ['TTM Revenue', exactCurrency.format(opportunity.ttmRevenue)],
+    [opportunity.earningsLabel, exactCurrency.format(opportunity.normalizedEarnings)],
+    [opportunity.earningsLabel === 'SDE' ? 'SDE Margin' : 'EBITDA Margin', `${margin.toFixed(1)}%`],
+    ['Asking Price', exactCurrency.format(opportunity.askingPrice)],
+    ['Valuation Multiple', `${multiple.toFixed(1)}× ${multipleBasisLabel}`],
+    ['Employees', String(opportunity.employees)],
+    ['Year Established', String(opportunity.yearEstablished)],
+    ['Recurring Revenue', `${opportunity.recurringRevenuePercent}%`],
+    ['Customer Concentration', `Top customer ${opportunity.largestCustomerPercent}%`],
+  ];
+
+  return <article className="group border-t border-[#cfc8bc] py-6 transition-colors hover:border-[#a58f5c]" data-testid={`card-demo-opportunity-${opportunity.id}`}>
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">Demo Opportunity</span>
+      <span className="font-mono-label ml-auto text-[10px] uppercase tracking-[.12em] text-[#938c7e]">{opportunity.industry}</span>
+    </div>
+    <h2 className="font-editorial mt-4 max-w-3xl text-[26px] leading-tight text-[#38352f] md:text-[30px]">{opportunity.title}</h2>
+    <p className="mt-3 text-[12px] text-[#706b61]">{opportunity.city}, {opportunity.state}</p>
+    <div className="mt-4 grid gap-x-6 gap-y-3 border-y border-[#e0d9ce] py-4 text-[12px] sm:grid-cols-2 lg:grid-cols-3">
+      {metrics.map(([label, value]) => <div key={label}>
+        <div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">{label}</div>
+        <div className="mt-1 text-[#39362f]">{value}</div>
+      </div>)}
+    </div>
+    <div className="mt-4 grid gap-4 text-[13px] leading-6 text-[#6b665d] sm:grid-cols-2">
+      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Seller Financing</span>{opportunity.sellerFinancing}</p>
+      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Reason for Sale</span>{opportunity.reasonForSale}</p>
+      <p className="sm:col-span-2"><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Deal Structure</span>{opportunity.dealStructure}</p>
+    </div>
+    <div className="mt-4 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-4 text-[13px] leading-6 text-[#625d53]">
+      <div className="font-mono-label text-[9px] uppercase tracking-[.14em] text-[#8c794d]">Confidential Business Summary</div>
+      <p className="mt-2">{opportunity.confidentialSummary}</p>
     </div>
   </article>;
 }
