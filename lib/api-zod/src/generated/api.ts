@@ -397,7 +397,7 @@ export const ListMySavedRequestsResponse = zod.array(ListMySavedRequestsResponse
 export const GetMyProfileResponse = zod.object({
   "role": zod.enum(['unset', 'buyer', 'broker', 'business_owner', 'advisor', 'deal_finder']).describe('Self-selected primary account role.'),
   "plan": zod.enum(['free', 'pro', 'partner']),
-  "interests": zod.string().optional().describe('Comma-separated list of member interests (buy, sell, service, products, broker, investor).')
+  "interests": zod.string().nullish().describe('Comma-separated list of member interests (buy, sell, service, products, broker, investor).')
 })
 
 
@@ -406,13 +406,13 @@ export const GetMyProfileResponse = zod.object({
  */
 export const UpdateMyProfileBody = zod.object({
   "role": zod.enum(['buyer', 'broker', 'business_owner', 'advisor', 'deal_finder']).describe('The member\'s self-selected primary role.'),
-  "interests": zod.string().optional().describe('Comma-separated list of member interests (buy, sell, service, products, broker, investor).')
+  "interests": zod.string().nullish().describe('Comma-separated list of member interests (buy, sell, service, products, broker, investor).')
 })
 
 export const UpdateMyProfileResponse = zod.object({
   "role": zod.enum(['unset', 'buyer', 'broker', 'business_owner', 'advisor', 'deal_finder']).describe('Self-selected primary account role.'),
   "plan": zod.enum(['free', 'pro', 'partner']),
-  "interests": zod.string().optional().describe('Comma-separated list of member interests (buy, sell, service, products, broker, investor).')
+  "interests": zod.string().nullish().describe('Comma-separated list of member interests (buy, sell, service, products, broker, investor).')
 })
 
 

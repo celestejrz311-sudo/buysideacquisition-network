@@ -309,8 +309,11 @@ export interface MemberProfile {
   /** Self-selected primary account role. */
   role: MemberProfileRole;
   plan: MemberProfilePlan;
-  /** Comma-separated list of member interests (buy, sell, service, products, broker, investor). */
-  interests?: string;
+  /**
+     * Comma-separated list of member interests (buy, sell, service, products, broker, investor).
+     * @nullable
+     */
+  interests?: string | null;
 }
 
 /**
@@ -330,8 +333,11 @@ export const MemberProfileInputRole = {
 export interface MemberProfileInput {
   /** The member's self-selected primary role. */
   role: MemberProfileInputRole;
-  /** Comma-separated list of member interests (buy, sell, service, products, broker, investor). */
-  interests?: string;
+  /**
+     * Comma-separated list of member interests (buy, sell, service, products, broker, investor).
+     * @nullable
+     */
+  interests?: string | null;
 }
 
 export type ListBuyerRequestsParams = {
