@@ -72,6 +72,16 @@ export default defineConfig({
     fs: {
       strict: true,
     },
+    // Base44 dev: proxy API calls to the Express API server container.
+    // Only active when API_PROXY_TARGET is set (does not affect Replit).
+    ...(process.env.API_PROXY_TARGET && {
+      proxy: {
+        '/api': {
+          target: process.env.API_PROXY_TARGET,
+          changeOrigin: true,
+        },
+      },
+    }),
   },
   preview: {
     port,
