@@ -16,7 +16,7 @@ export function Brand({ inverse = false }: { inverse?: boolean }) {
 
 const navLinks = [
   ['/opportunities', 'Opportunities'],
-  ['/requests', 'Buyer Requests'],
+  ['/requests', 'Requests'],
   ['/for-buyers', 'For Buyers'],
   ['/for-finders', 'For Finders'],
   ['/pricing', 'Membership'],
@@ -54,7 +54,7 @@ export function Footer() {
   return <footer className="bg-[#302e29] text-[#d5d0c6]">
     <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-12 md:grid-cols-2 md:px-10 md:py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
       <div><Brand inverse /><p className="mt-6 max-w-sm text-sm leading-6 text-[#aaa59a]">A quieter way to bring qualified acquisition intent and private opportunities together.</p></div>
-      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">Acquisition Opportunities</Link><Link href="/requests">Buyer Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Membership</Link></div></div>
+      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">Acquisition Opportunities</Link><Link href="/requests">Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Membership</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Principles</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/confidentiality">Confidentiality</Link><Link href="/for-buyers">For Buyers</Link><Link href="/for-finders">For Finders</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Legal & contact</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/terms-of-use">Terms of Use</Link><Link href="/privacy-policy">Privacy Policy</Link><Link href="/finder-terms">Finder Terms</Link><Link href="/buyer-terms">Buyer Terms</Link><Link href="/disclaimer">Disclaimer</Link><Link href="/contact">Contact</Link></div></div>
     </div>
@@ -81,7 +81,7 @@ export function SectionTitle({ eyebrow, title, description }: { eyebrow: string;
 export function RequestStatusBadges({ request }: { request: BuyerRequest }) {
   const isVerifiedBuyer = request.isVerified && !request.isExample;
   return <>
-    {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">Sample Buyer Request</span>}
+    {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">Sample Request</span>}
     {isVerifiedBuyer && <>
       <span className="inline-flex items-center gap-1.5 border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#78643a]"><ShieldCheck size={12} /> Active Buyer Mandate</span>
       <span className="inline-flex items-center gap-1.5 border border-[#b8c5b8] bg-[#eef2ec] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#557165]"><span className="size-1.5 rounded-full bg-[#557165]" />Actively Searching</span>
@@ -129,8 +129,8 @@ export function RequestCard({ request, compact = false }: { request: BuyerReques
     </div>}
     <div className="mt-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
       <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>VIEW FULL BUYER MANDATE <ArrowUpRight size={14} /></Link>
-        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`SUBMIT A MATCHING BUSINESS for ${request.title}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
+        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>VIEW FULL REQUEST <ArrowUpRight size={14} /></Link>
+        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`SUBMIT A MATCHING BUSINESS for ${request.title}`}>SUBMIT A MATCH <ArrowRight size={14} /></Link>
       </div>
     </div>
   </article>;
