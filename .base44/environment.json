@@ -7,19 +7,19 @@
       "name": "CLERK_PUBLISHABLE_KEY",
       "description": "Clerk publishable key (pk_test_ or pk_live_) from the Clerk dashboard → API Keys. Used by the Express API server.",
       "requiredAtBoot": true,
-      "generatedForDevelopment": true
+      "generatedForDevelopment": false
     },
     {
       "name": "CLERK_SECRET_KEY",
       "description": "Clerk secret key (sk_test_ or sk_live_) from the Clerk dashboard → API Keys. Used by the Express API server to verify auth tokens.",
       "requiredAtBoot": true,
-      "generatedForDevelopment": true
+      "generatedForDevelopment": false
     },
     {
       "name": "VITE_CLERK_PUBLISHABLE_KEY",
       "description": "Same Clerk publishable key as CLERK_PUBLISHABLE_KEY, prefixed with VITE_ so Vite exposes it to the frontend. Required — the React app throws at startup without it.",
       "requiredAtBoot": true,
-      "generatedForDevelopment": true
+      "generatedForDevelopment": false
     }
   ]
 }
