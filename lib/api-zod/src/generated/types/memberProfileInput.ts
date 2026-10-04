@@ -10,4 +10,6 @@ import type { MemberProfileInputRole } from './memberProfileInputRole';
 export interface MemberProfileInput {
   /** The member's self-selected primary role. */
   role: MemberProfileInputRole;
+  /** Comma-separated list of member interests (buy, sell, service, products, broker, investor). */
+  interests?: string;
 }
