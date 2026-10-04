@@ -19,7 +19,7 @@ const navLinks = [
   ['/requests', 'Buyer Requests'],
   ['/for-buyers', 'For Buyers'],
   ['/for-finders', 'For Finders'],
-  ['/pricing', 'Pricing'],
+  ['/pricing', 'Membership'],
   ['/how-it-works', 'How It Works'],
   ['/private-network', 'Private Network'],
 ] as const;
@@ -54,7 +54,7 @@ export function Footer() {
   return <footer className="bg-[#302e29] text-[#d5d0c6]">
     <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-12 md:grid-cols-2 md:px-10 md:py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
       <div><Brand inverse /><p className="mt-6 max-w-sm text-sm leading-6 text-[#aaa59a]">A quieter way to bring qualified acquisition intent and private opportunities together.</p></div>
-      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">Acquisition Opportunities</Link><Link href="/requests">Buyer Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Pricing</Link></div></div>
+      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">Acquisition Opportunities</Link><Link href="/requests">Buyer Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Membership</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Principles</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/confidentiality">Confidentiality</Link><Link href="/for-buyers">For Buyers</Link><Link href="/for-finders">For Finders</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Legal & contact</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/terms-of-use">Terms of Use</Link><Link href="/privacy-policy">Privacy Policy</Link><Link href="/finder-terms">Finder Terms</Link><Link href="/buyer-terms">Buyer Terms</Link><Link href="/disclaimer">Disclaimer</Link><Link href="/contact">Contact</Link></div></div>
     </div>

@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { Link } from 'wouter';
 import { PublicLayout, Eyebrow } from '@/components/site';
 
+type BillingPeriod = 'monthly' | 'annual';
+
 const plans = [
   {
-    name: 'BuySide Free',
-    price: '$0',
+    id: 'explorer',
+    name: 'Explorer',
+    price: { monthly: 0, annual: 0 },
     cadence: '/month',
     description: 'A clear first step into the network.',
     benefits: [
@@ -18,8 +22,9 @@ const plans = [
     free: true,
   },
   {
-    name: 'BuySide Pro',
-    price: '$79',
+    id: 'buyer-pro',
+    name: 'Buyer Pro',
+    price: { monthly: 79, annual: 63 },
     cadence: '/month',
     description: 'For active buyers and deal finders.',
     benefits: [
@@ -30,16 +35,18 @@ const plans = [
       'Notifications for new matching buyer requests',
       'Professional profile',
     ],
-    action: 'Start with Pro',
+    action: 'Start with Buyer Pro',
     free: false,
+    popular: true,
   },
   {
-    name: 'BuySide Partner',
-    price: '$199',
+    id: 'professional',
+    name: 'Professional',
+    price: { monthly: 149, annual: 119 },
     cadence: '/month',
     description: 'For intermediaries building a consistent pipeline.',
     benefits: [
-      'Everything in Pro',
+      'Everything in Buyer Pro',
       'Verified Partner badge',
       'Priority placement',
       'Featured profile',
@@ -47,13 +54,35 @@ const plans = [
       'Advanced analytics',
       'Priority support',
     ],
-    action: 'Choose Partner',
+    action: 'Choose Professional',
     free: false,
-    featured: true,
+  },
+  {
+    id: 'private-network',
+    name: 'Private Network',
+    price: { monthly: 299, annual: 239 },
+    cadence: '/month',
+    description: 'For principals seeking private, off-market deal flow.',
+    benefits: [
+      'Everything in Professional',
+      'Private Network membership',
+      'Exclusive off-market opportunities',
+      'Private deal rooms',
+      'Dedicated relationship manager',
+      'Invitation-only introductions',
+    ],
+    action: 'Apply for Private Network',
+    free: false,
   },
 ];
 
+function formatPrice(value: number) {
+  return value === 0 ? '$0' : `$${value}`;
+}
+
 export function PricingPage() {
+  const [billing, setBilling] = useState<BillingPeriod>('monthly');
+
   return (
     <PublicLayout>
       <main className="page-enter">
@@ -62,7 +91,7 @@ export function PricingPage() {
           <div className="pointer-events-none absolute -right-8 top-26 hidden h-[310px] w-[310px] rounded-full border border-[#34352f] md:block" />
           <div className="mx-auto max-w-[1280px] px-5 pb-14 pt-16 md:px-10 md:pb-20 md:pt-24">
             <div className="max-w-3xl">
-              <Eyebrow>Plans &amp; pricing</Eyebrow>
+              <Eyebrow>Membership</Eyebrow>
               <h1 className="font-editorial mt-5 max-w-[760px] text-[44px] leading-[1.02] tracking-[-.035em] text-[#eee9de] md:text-[68px]">
                 Clear terms for a more direct way to connect.
               </h1>
@@ -94,26 +123,46 @@ export function PricingPage() {
               <Eyebrow>Membership</Eyebrow>
               <h2 className="font-editorial mt-3 text-3xl tracking-[-.025em] text-[#eee9de] md:text-[40px]">Find your level of access.</h2>
             </div>
-            <p className="max-w-md text-[13px] leading-6 text-[#a39e91]">
-              Plans are billed monthly. The accepted-introduction fee is only
-              charged when a buyer chooses to proceed.
-            </p>
+            <div className="flex flex-col gap-4 md:items-end">
+              <p className="max-w-md text-[13px] leading-6 text-[#a39e91]">
+                Plans are billed monthly. The accepted-introduction fee is only
+                charged when a buyer chooses to proceed.
+              </p>
+              <div className="inline-flex items-center gap-1 border border-[#41423b] bg-[#232420] p-1" data-testid="toggle-billing-period">
+                <button
+                  type="button"
+                  onClick={() => setBilling('monthly')}
+                  className={`px-4 py-2 font-mono-label text-[10px] uppercase tracking-[.12em] transition-colors ${billing === 'monthly' ? 'bg-[#b9a16d] text-[#25241f]' : 'text-[#a39e91] hover:text-[#eee9de]'}`}
+                  data-testid="button-billing-monthly"
+                >
+                  Monthly
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBilling('annual')}
+                  className={`px-4 py-2 font-mono-label text-[10px] uppercase tracking-[.12em] transition-colors ${billing === 'annual' ? 'bg-[#b9a16d] text-[#25241f]' : 'text-[#a39e91] hover:text-[#eee9de]'}`}
+                  data-testid="button-billing-annual"
+                >
+                  Annual <span className={billing === 'annual' ? 'text-[#6b5e40]' : 'text-[#b9a16d]'}>Save 20%</span>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div className="grid items-stretch gap-4 lg:grid-cols-3">
+          <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {plans.map((plan, index) => (
               <article
-                key={plan.name}
+                key={plan.id}
                 className={`relative flex flex-col border p-6 md:p-7 ${
-                  plan.featured
+                  plan.popular
                     ? 'border-[#85734c] bg-[#292a25] lg:-translate-y-2 lg:pb-9'
                     : 'border-[#41423b] bg-[#232420]'
                 }`}
                 data-testid={`card-plan-${index}`}
               >
-                {plan.featured && (
-                  <div className="absolute right-0 top-0 bg-[#b9a16d] px-3 py-2 font-mono-label text-[9px] uppercase tracking-[.14em] text-[#25241f]">
-                    Fullest access
+                {plan.popular && (
+                  <div className="absolute right-0 top-0 bg-[#b9a16d] px-3 py-2 font-mono-label text-[9px] uppercase tracking-[.14em] text-[#25241f]" data-testid={`badge-popular-${index}`}>
+                    Most Popular
                   </div>
                 )}
                 <div className="min-h-[110px]">
@@ -121,8 +170,11 @@ export function PricingPage() {
                   <p className="mt-3 text-[13px] leading-5 text-[#a39e91]">{plan.description}</p>
                 </div>
                 <div className="flex items-baseline gap-2 border-b border-[#41423b] pb-6">
-                  <span className="font-editorial text-[52px] leading-none tracking-[-.045em] text-[#eee9de]" data-testid={`text-price-${index}`}>{plan.price}</span>
+                  <span className="font-editorial text-[52px] leading-none tracking-[-.045em] text-[#eee9de]" data-testid={`text-price-${index}`}>{formatPrice(plan.price[billing])}</span>
                   <span className="font-mono-label text-[10px] uppercase tracking-[.08em] text-[#a39e91]">{plan.cadence}</span>
+                  {billing === 'annual' && plan.price.annual > 0 && (
+                    <span className="ml-auto font-mono-label text-[9px] uppercase tracking-[.1em] text-[#b9a16d]" data-testid={`text-annual-savings-${index}`}>20% off</span>
+                  )}
                 </div>
                 <ul className="mt-6 flex-1 space-y-4">
                   {plan.benefits.map((benefit) => (
@@ -146,9 +198,11 @@ export function PricingPage() {
                       type="button"
                       disabled
                       aria-describedby={`stripe-note-${index}`}
+                      data-plan-id={plan.id}
+                      data-billing={billing}
+                      data-status="unavailable"
                       className="inline-flex min-h-12 w-full cursor-not-allowed items-center justify-center border border-[#55564e] bg-[#30312c] px-4 text-[11px] uppercase tracking-[.1em] text-[#979387]"
                       data-testid={`button-unavailable-${index}`}
-                      data-status="unavailable"
                     >
                       {plan.action} · Unavailable
                     </button>
@@ -197,7 +251,7 @@ export function PricingPage() {
             </div>
             <div className="md:border-l md:border-[#41423b] md:pl-10">
               <p className="font-editorial text-xl leading-8 text-[#d6d1c5] md:text-2xl">
-                “BuySide provides technology and introductions. BuySide does not provide legal, financial, investment, or brokerage advice.”
+                "BuySide provides technology and introductions. BuySide does not provide legal, financial, investment, or brokerage advice."
               </p>
               <p className="mt-5 font-mono-label text-[9px] uppercase tracking-[.14em] text-[#a39e91]" data-testid="text-platform-disclosure">Platform disclosure</p>
             </div>
