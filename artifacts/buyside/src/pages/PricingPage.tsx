@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { Link } from 'wouter';
 import { PublicLayout, Eyebrow } from '@/components/site';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import type { Lang } from '@/i18n/translations';
 
 type BillingPeriod = 'monthly' | 'annual';
-type Lang = 'en' | 'es';
 
 const plans = [
   {
@@ -186,7 +187,7 @@ function formatPrice(value: number) {
 
 export function PricingPage() {
   const [billing, setBilling] = useState<BillingPeriod>('monthly');
-  const [lang, setLang] = useState<Lang>('en');
+  const { lang, setLang } = useLanguage();
 
   return (
     <PublicLayout>

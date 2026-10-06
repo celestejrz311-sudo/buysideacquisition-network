@@ -7,6 +7,7 @@ import { Route, Switch, Redirect, Link, useLocation, Router as WouterRouter } fr
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { LanguageProvider } from '@/i18n/LanguageProvider';
 import NotFound from '@/pages/not-found';
 import { PricingPage } from '@/pages/PricingPage';
 import {
@@ -186,7 +187,9 @@ function RoutedPages() {
 
 function App() {
   return <QueryClientProvider client={queryClient}>
-    <TooltipProvider><WouterRouter base={basePath}><RoutedPages /></WouterRouter><Toaster /></TooltipProvider>
+    <LanguageProvider>
+      <TooltipProvider><WouterRouter base={basePath}><RoutedPages /></WouterRouter><Toaster /></TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>;
 }
 

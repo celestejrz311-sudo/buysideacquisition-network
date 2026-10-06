@@ -4,6 +4,9 @@ import { useState, type ReactNode } from 'react';
 import { Show, useClerk } from '@clerk/react';
 import type { BuyerRequest } from '@workspace/api-client-react';
 import type { DemoOpportunity } from '@/data/demo-opportunities';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import { LanguageSelector } from '@/components/LanguageSelector';
+import type { TranslationKey } from '@/i18n/translations';
 
 export function Brand({ inverse = false }: { inverse?: boolean }) {
   return <Link href="/" className={`inline-flex items-center gap-3 ${inverse ? 'text-[#eee9de]' : 'text-[#332f29]'}`} data-testid="link-brand">
@@ -14,51 +17,54 @@ export function Brand({ inverse = false }: { inverse?: boolean }) {
   </Link>;
 }
 
-const navLinks = [
-  ['/opportunities', 'Opportunities'],
-  ['/requests', 'Requests'],
-  ['/for-buyers', 'For Buyers'],
-  ['/for-finders', 'For Finders'],
-  ['/pricing', 'Membership'],
-  ['/how-it-works', 'How It Works'],
-  ['/private-network', 'Private Network'],
-] as const;
+const navLinks: [string, TranslationKey][] = [
+  ['/opportunities', 'nav.opportunities'],
+  ['/requests', 'nav.requests'],
+  ['/for-buyers', 'nav.forBuyers'],
+  ['/for-finders', 'nav.forFinders'],
+  ['/pricing', 'nav.membership'],
+  ['/how-it-works', 'nav.howItWorks'],
+  ['/private-network', 'nav.privateNetwork'],
+];
 
 export function Header() {
   const [open, setOpen] = useState(false);
   const [path] = useLocation();
   const { signOut } = useClerk();
+  const { t } = useLanguage();
   const homePath = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
   return <header className="relative z-20 border-b border-[#d8d1c5] bg-[#f5f2eb]">
     <div className="mx-auto flex h-[76px] max-w-[1280px] items-center justify-between px-5 md:px-10">
       <Brand />
       <nav className="hidden items-center gap-8 lg:flex">
-        {navLinks.map(([href, label]) => <Link key={href} href={href} className={`text-[13px] transition-colors hover:text-[#877446] ${path === href ? 'text-[#877446]' : 'text-[#625d54]'}`}>{label}</Link>)}
+        {navLinks.map(([href, key]) => <Link key={href} href={href} className={`text-[13px] transition-colors hover:text-[#877446] ${path === href ? 'text-[#877446]' : 'text-[#625d54]'}`}>{t(key)}</Link>)}
       </nav>
       <div className="hidden items-center gap-5 lg:flex">
-        <Show when="signed-out"><Link href="/sign-in" className="text-[13px] text-[#625d54] hover:text-[#332f29]">Sign In</Link></Show>
-        <Show when="signed-in"><Link href="/dashboard" className="text-[13px] text-[#625d54] hover:text-[#332f29]">Workspace</Link><button type="button" onClick={() => signOut({ redirectUrl: homePath })} className="text-[13px] text-[#625d54] hover:text-[#332f29]">Sign out</button></Show>
-        <Link href="/post-request" className="inline-flex items-center gap-2 bg-[#38352f] px-5 py-3 text-[12px] uppercase tracking-[.1em] text-[#f5f2eb] transition hover:bg-[#504b40]">POST A REQUEST <ArrowRight size={14} /></Link>
+        <LanguageSelector />
+        <Show when="signed-out"><Link href="/sign-in" className="text-[13px] text-[#625d54] hover:text-[#332f29]">{t('nav.signIn')}</Link></Show>
+        <Show when="signed-in"><Link href="/dashboard" className="text-[13px] text-[#625d54] hover:text-[#332f29]">{t('nav.workspace')}</Link><button type="button" onClick={() => signOut({ redirectUrl: homePath })} className="text-[13px] text-[#625d54] hover:text-[#332f29]">{t('nav.signOut')}</button></Show>
+        <Link href="/post-request" className="inline-flex items-center gap-2 bg-[#38352f] px-5 py-3 text-[12px] uppercase tracking-[.1em] text-[#f5f2eb] transition hover:bg-[#504b40]">{t('nav.postRequest')} <ArrowRight size={14} /></Link>
       </div>
       <button type="button" onClick={() => setOpen(!open)} className="grid size-10 place-items-center border border-[#d8d1c5] lg:hidden" aria-label="Toggle navigation" data-testid="button-menu">{open ? <X size={18} /> : <Menu size={18} />}</button>
     </div>
     {open && <nav className="absolute left-0 right-0 top-full border-b border-[#d8d1c5] bg-[#f5f2eb] px-5 pb-6 shadow-lg lg:hidden">
-      <div className="mx-auto grid max-w-[1280px] gap-1">{navLinks.map(([href, label]) => <Link key={href} onClick={() => setOpen(false)} href={href} className="border-b border-[#e2ddd3] py-4 text-sm">{label}</Link>)}
-        <div className="flex flex-wrap gap-x-5 gap-y-2 pt-5"><Show when="signed-out"><Link href="/sign-in" className="py-3 text-sm">Sign In</Link></Show><Show when="signed-in"><Link href="/dashboard" className="py-3 text-sm">Workspace</Link><button type="button" onClick={() => signOut({ redirectUrl: homePath })} className="py-3 text-sm">Sign out</button></Show><Link href="/post-request" className="bg-[#38352f] px-4 py-3 text-sm text-[#f5f2eb]">POST A REQUEST</Link></div>
+      <div className="mx-auto grid max-w-[1280px] gap-1">{navLinks.map(([href, key]) => <Link key={href} onClick={() => setOpen(false)} href={href} className="border-b border-[#e2ddd3] py-4 text-sm">{t(key)}</Link>)}
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-5"><LanguageSelector /><Show when="signed-out"><Link href="/sign-in" className="py-3 text-sm">{t('nav.signIn')}</Link></Show><Show when="signed-in"><Link href="/dashboard" className="py-3 text-sm">{t('nav.workspace')}</Link><button type="button" onClick={() => signOut({ redirectUrl: homePath })} className="py-3 text-sm">{t('nav.signOut')}</button></Show><Link href="/post-request" className="bg-[#38352f] px-4 py-3 text-sm text-[#f5f2eb]">{t('nav.postRequest')}</Link></div>
       </div>
     </nav>}
   </header>;
 }
 
 export function Footer() {
+  const { t } = useLanguage();
   return <footer className="bg-[#302e29] text-[#d5d0c6]">
     <div className="mx-auto grid max-w-[1280px] gap-12 px-5 py-12 md:grid-cols-2 md:px-10 md:py-16 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
-      <div><Brand inverse /><p className="mt-6 max-w-sm text-sm leading-6 text-[#aaa59a]">A quieter way to bring qualified acquisition intent and private opportunities together.</p></div>
-      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Explore</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">Acquisition Opportunities</Link><Link href="/requests">Requests</Link><Link href="/private-network">Private Network</Link><Link href="/how-it-works">How It Works</Link><Link href="/pricing">Membership</Link></div></div>
-      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Principles</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/confidentiality">Confidentiality</Link><Link href="/for-buyers">For Buyers</Link><Link href="/for-finders">For Finders</Link></div></div>
-      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">Legal & contact</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/terms-of-use">Terms of Use</Link><Link href="/privacy-policy">Privacy Policy</Link><Link href="/finder-terms">Finder Terms</Link><Link href="/buyer-terms">Buyer Terms</Link><Link href="/disclaimer">Disclaimer</Link><Link href="/contact">Contact</Link></div></div>
+      <div><Brand inverse /><p className="mt-6 max-w-sm text-sm leading-6 text-[#aaa59a]">{t('footer.tagline')}</p></div>
+      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">{t('footer.explore')}</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/opportunities">{t('footer.acquisitionOpportunities')}</Link><Link href="/requests">{t('nav.requests')}</Link><Link href="/private-network">{t('nav.privateNetwork')}</Link><Link href="/how-it-works">{t('nav.howItWorks')}</Link><Link href="/pricing">{t('nav.membership')}</Link></div></div>
+      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">{t('footer.principles')}</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/confidentiality">{t('footer.confidentiality')}</Link><Link href="/for-buyers">{t('nav.forBuyers')}</Link><Link href="/for-finders">{t('nav.forFinders')}</Link></div></div>
+      <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">{t('footer.legalContact')}</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/terms-of-use">{t('footer.termsOfUse')}</Link><Link href="/privacy-policy">{t('footer.privacyPolicy')}</Link><Link href="/finder-terms">{t('footer.finderTerms')}</Link><Link href="/buyer-terms">{t('footer.buyerTerms')}</Link><Link href="/disclaimer">{t('footer.disclaimer')}</Link><Link href="/contact">{t('footer.contact')}</Link></div></div>
     </div>
-    <div className="border-t border-[#504d45] px-5 py-5 md:px-10"><div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-3 text-[11px] leading-5 text-[#aaa59a] md:flex-row"><span>BuySide is a technology and introduction platform.</span><span>© {new Date().getFullYear()} BuySide</span></div></div>
+    <div className="border-t border-[#504d45] px-5 py-5 md:px-10"><div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-3 text-[11px] leading-5 text-[#aaa59a] md:flex-row"><span>{t('footer.platformDisclaimer')}</span><span>© {new Date().getFullYear()} BuySide</span></div></div>
   </footer>;
 }
 
@@ -197,11 +203,13 @@ export function EmptyState({ title, body, action }: { title: string; body: React
 }
 
 export function ErrorState({ onRetry }: { onRetry: () => void }) {
-  return <div className="border border-[#d7c3b8] bg-[#f8f2ed] p-7"><p className="font-mono-label text-[10px] uppercase tracking-[.15em] text-[#956452]">Unable to load this information</p><p className="mt-3 text-sm text-[#5c514a]">Please try again in a moment.</p><button onClick={onRetry} className="mt-5 border border-[#bfa99b] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-retry">Retry</button></div>;
+  const { t } = useLanguage();
+  return <div className="border border-[#d7c3b8] bg-[#f8f2ed] p-7"><p className="font-mono-label text-[10px] uppercase tracking-[.15em] text-[#956452]">{t('error.unableToLoad')}</p><p className="mt-3 text-sm text-[#5c514a]">{t('error.tryAgain')}</p><button onClick={onRetry} className="mt-5 border border-[#bfa99b] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-retry">{t('error.retry')}</button></div>;
 }
 
 export function PrivacyNote({ children }: { children?: ReactNode }) {
-  return <div className="flex gap-3 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-4 text-[12px] leading-5 text-[#625d53]"><LockKeyhole className="mt-0.5 shrink-0 text-[#8c794d]" size={15} /><p>{children || 'Information is shared only with the buyer in connection with this opportunity, subject to the stated privacy terms.'}</p></div>;
+  const { t } = useLanguage();
+  return <div className="flex gap-3 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-4 text-[12px] leading-5 text-[#625d53]"><LockKeyhole className="mt-0.5 shrink-0 text-[#8c794d]" size={15} /><p>{children || t('privacy.note')}</p></div>;
 }
 
 export function money(value: number | null | undefined) {
