@@ -216,6 +216,7 @@ export const translations = {
   'postRequest.privacyPrivate': { en: 'Private — not listed publicly', es: 'Privado — no listado públicamente' },
   'postRequest.publish': { en: 'Publish Request', es: 'Publicar Solicitud' },
   'postRequest.publishing': { en: 'Publishing…', es: 'Publicando…' },
+  'postRequest.submitPrivate': { en: 'Submit Private Request', es: 'Enviar Solicitud Privada' },
   'postRequest.error': { en: 'Your request could not be published. Please review the fields and try again.', es: 'Tu solicitud no pudo ser publicada. Revisa los campos e inténtalo de nuevo.' },
   'postRequest.tips': { en: 'Tips', es: 'Consejos' },
   'postRequest.tip1': { en: 'Choose a visibility level that fits your needs.', es: 'Elige un nivel de visibilidad que se ajuste a tus necesidades.' },

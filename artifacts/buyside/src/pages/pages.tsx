@@ -518,7 +518,7 @@ export function PostRequestPage() {
           {error && <p role="alert" className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm text-[#815d4f]">{error}</p>}
           <div className="flex gap-3">
             <button type="button" onClick={() => setStep(2)} className="inline-flex h-12 items-center gap-2 border border-[#cfc8bc] px-6 text-xs uppercase tracking-wider text-[#38352f] transition hover:border-[#9a8352]" data-testid="button-step-back-2">{t('postRequest.back')}</button>
-            <button disabled={create.isPending} type="submit" className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50" data-testid="button-publish-request">{create.isPending ? t('postRequest.publishing') : t('postRequest.publish')} <ArrowRight size={14} /></button>
+            <button disabled={create.isPending} type="submit" className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50" data-testid="button-publish-request">{create.isPending ? t('postRequest.publishing') : form.watch('privacy') === 'private' ? t('postRequest.submitPrivate') : t('postRequest.publish')} <ArrowRight size={14} /></button>
           </div>
         </div>}
       </form></Form>

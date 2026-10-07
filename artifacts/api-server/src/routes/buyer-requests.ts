@@ -95,12 +95,7 @@ router.get("/buyer-requests", async (req, res): Promise<void> => {
   }
 
   const filters = parsed.data;
-  const conditions = [
-    or(
-      eq(buyerRequestsTable.privacy, "public"),
-      eq(buyerRequestsTable.privacy, "nda_required"),
-    )!,
-  ];
+  const conditions = [eq(buyerRequestsTable.privacy, "public")];
 
   if (filters.industry) {
     conditions.push(ilike(buyerRequestsTable.industry, `%${filters.industry}%`));
