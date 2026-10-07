@@ -36,7 +36,7 @@ export function DemoShowcase() {
               >
                 <div className="flex items-center justify-between">
                   <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">
-                    {t('dash.demoLabel')}
+                    {t('home.sampleLabel')}
                   </span>
                 </div>
                 <p className="mt-4 font-mono-label text-[10px] uppercase tracking-[.14em] text-[#897649]">

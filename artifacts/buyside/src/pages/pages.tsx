@@ -19,7 +19,13 @@ import {
   PrivacyNote, PublicLayout, RequestCard, RequestStatusBadges, SectionTitle, money,
 } from '@/components/site';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { useSeo } from '@/hooks/useSeo';
 import { DemoShowcase } from '@/components/DemoShowcase';
+import { FeaturedOpportunities } from '@/components/FeaturedOpportunities';
+import { TrustSection } from '@/components/TrustSection';
+import { SocialProof } from '@/components/SocialProof';
+import { FinalCta } from '@/components/FinalCta';
+import { MembershipPreview } from '@/components/MembershipPreview';
 
 const field = 'h-12 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
 const area = 'min-h-28 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 py-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
@@ -47,37 +53,44 @@ function HeroVisual() {
 }
 
 export function HomePage() {
+  const { t } = useLanguage();
+  useSeo('home');
   return <PageFrame>
     {/* Hero */}
     <section className="mx-auto grid max-w-[1280px] lg:min-h-[560px] lg:grid-cols-[1.08fr_.92fr]">
       <div className="flex flex-col justify-center px-5 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14 lg:py-16">
-        <Eyebrow>THE BUY SIDE NETWORK</Eyebrow>
-        <h1 className="font-editorial mt-5 max-w-[680px] text-[clamp(2.25rem,7.2vw,4.25rem)] leading-[1.02] tracking-[-.035em]">Find What You're Looking For.</h1>
-        <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#6e685e]">Businesses, services, products, and opportunities — tell BuySide what you need and connect with people who can provide it.</p>
+        <Eyebrow>{t('home.eyebrow')}</Eyebrow>
+        <h1 className="font-editorial mt-5 max-w-[680px] text-[clamp(2.25rem,7.2vw,4.25rem)] leading-[1.02] tracking-[-.035em]">{t('home.heroTitleNew')}</h1>
+        <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#6e685e]">{t('home.heroSub')}</p>
         <div className="mt-6 grid w-full max-w-[620px] grid-cols-1 gap-3 sm:grid-cols-2">
-          <ButtonLink href="/post-request" className="w-full" testId="button-start-search">Start Your Search</ButtonLink>
-          <ButtonLink href="/requests" secondary className="w-full" testId="button-list-what-you-offer">List What You Offer</ButtonLink>
+          <ButtonLink href="/opportunities" className="w-full" testId="button-explore-opportunities">{t('home.ctaExplore')}</ButtonLink>
+          <ButtonLink href="/post-request" secondary className="w-full" testId="button-post-what-you-need">{t('home.ctaPostNeed')}</ButtonLink>
         </div>
-        <p className="mt-5 max-w-[560px] font-mono-label text-[10px] uppercase leading-5 tracking-[.15em] text-[#918a7c]">Find what you need. Connect with the right people. Get introduced.</p>
+        <p className="mt-5 max-w-[560px] font-mono-label text-[10px] uppercase leading-5 tracking-[.15em] text-[#918a7c]">{t('home.heroFootnote')}</p>
       </div>
       <div className="hidden lg:block"><HeroVisual /></div>
     </section>
 
-    {/* What are you looking for? */}
+    <div className="lg:hidden"><HeroVisual /></div>
+
+    {/* Featured Opportunities */}
+    <FeaturedOpportunities />
+
+    {/* Marketplace Categories — What are you looking for? */}
     <section className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
-      <SectionTitle eyebrow="WHAT ARE YOU LOOKING FOR?" title="Tell us what you need." description="Pick a category below and create a request. The BuySide network will help you find it." />
+      <SectionTitle eyebrow={t('home.whatEyebrow')} title={t('home.whatTitle')} description={t('home.whatDesc')} />
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         {[
-          { num: '01', title: 'Find a Business', desc: 'Looking to acquire or invest in a business.', examples: ['HVAC company in Florida', 'Restaurant in Miami', 'E-commerce brand', 'Manufacturing company', 'Cash-flowing business'], cta: 'Find a Business', href: '/post-request?category=business', testId: 'card-find-business' },
-          { num: '02', title: 'Find a Service', desc: 'Looking for professional or business services.', examples: ['Business broker', 'Attorney', 'Accountant', 'Financing', 'Due diligence', 'Marketing', 'Cleaning company', 'Contractors', 'Consultants'], cta: 'Find a Service', href: '/post-request?category=service', testId: 'card-find-service' },
-          { num: '03', title: 'Find a Product', desc: 'Looking for products, suppliers, or sourcing opportunities.', examples: ['Wholesale inventory', 'Electronics', 'Equipment', 'Commercial supplies', 'Bulk products', 'Manufacturers and suppliers'], cta: 'Find a Product', href: '/post-request?category=product', testId: 'card-find-product' },
+          { num: '01', title: t('home.findBusiness'), desc: t('home.findBusinessDesc'), examples: ['HVAC company in Florida', 'Restaurant in Miami', 'E-commerce brand', 'Manufacturing company', 'Cash-flowing business'], cta: t('home.findBusiness'), href: '/post-request?category=business', testId: 'card-find-business' },
+          { num: '02', title: t('home.findService'), desc: t('home.findServiceDesc'), examples: ['Business broker', 'Attorney', 'Accountant', 'Financing', 'Due diligence', 'Marketing', 'Cleaning company', 'Contractors', 'Consultants'], cta: t('home.findService'), href: '/post-request?category=service', testId: 'card-find-service' },
+          { num: '03', title: t('home.findProduct'), desc: t('home.findProductDesc'), examples: ['Wholesale inventory', 'Electronics', 'Equipment', 'Commercial supplies', 'Bulk products', 'Manufacturers and suppliers'], cta: t('home.findProduct'), href: '/post-request?category=product', testId: 'card-find-product' },
         ].map(card => (
           <article key={card.num} className="flex flex-col border border-[#cfc8bc] bg-[#f8f6f0] p-7" data-testid={card.testId}>
             <div className="font-mono-label text-[10px] uppercase tracking-[.14em] text-[#897649]">{card.num}</div>
             <h3 className="font-editorial mt-4 text-2xl">{card.title}</h3>
             <p className="mt-3 text-[13px] leading-6 text-[#6b665d]">{card.desc}</p>
             <div className="mt-5 flex-1 border-t border-[#e0d9ce] pt-4">
-              <p className="font-mono-label text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Examples</p>
+              <p className="font-mono-label text-[9px] uppercase tracking-[.12em] text-[#948c7b]">{t('home.examples')}</p>
               <ul className="mt-2 space-y-1 text-[12px] leading-5 text-[#8a8478]">
                 {card.examples.map(ex => <li key={ex}>{ex}</li>)}
               </ul>
@@ -91,50 +104,62 @@ export function HomePage() {
     {/* Have Something People Are Looking For? */}
     <section className="bg-[#34322d] text-[#f3efe7]">
       <div className="mx-auto max-w-[1280px] px-5 py-16 md:px-10 md:py-24">
-        <Eyebrow light>OFFER WHAT YOU HAVE</Eyebrow>
-        <h2 className="font-editorial mt-5 max-w-2xl text-4xl leading-tight md:text-5xl">Have Something People Are Looking For?</h2>
-        <p className="mt-5 max-w-xl text-sm leading-7 text-[#c1bcb2]">List what you can offer and connect with people who are actively looking for it.</p>
+        <Eyebrow light>{t('home.offerEyebrow')}</Eyebrow>
+        <h2 className="font-editorial mt-5 max-w-2xl text-4xl leading-tight md:text-5xl">{t('home.offerTitle')}</h2>
+        <p className="mt-5 max-w-xl text-sm leading-7 text-[#c1bcb2]">{t('home.offerBody')}</p>
         <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          {["A Business", "A Service", "A Product"].map(item => (
-            <div key={item} className="border border-[#5a574e] p-5"><h3 className="font-editorial text-xl">{item}</h3><p className="mt-2 text-[12px] leading-5 text-[#c1bcb2]">{item === "A Business" ? "List a business for sale or investment." : item === "A Service" ? "Offer professional or business services." : "List products, supplies, or sourcing opportunities."}</p></div>
+          {[
+            { title: t('home.aBusiness'), desc: t('home.aBusinessDesc') },
+            { title: t('home.aService'), desc: t('home.aServiceDesc') },
+            { title: t('home.aProduct'), desc: t('home.aProductDesc') },
+          ].map(item => (
+            <div key={item.title} className="border border-[#5a574e] p-5"><h3 className="font-editorial text-xl">{item.title}</h3><p className="mt-2 text-[12px] leading-5 text-[#c1bcb2]">{item.desc}</p></div>
           ))}
         </div>
-        <div className="mt-8"><ButtonLink href="/requests" testId="button-list-what-you-offer-dark">List What You Offer</ButtonLink></div>
+        <div className="mt-8"><ButtonLink href="/requests" testId="button-list-what-you-offer-dark">{t('home.ctaList')}</ButtonLink></div>
       </div>
     </section>
-
-    <div className="lg:hidden"><HeroVisual /></div>
 
     {/* How it works */}
     <section className="border-y border-[#d8d1c5] bg-[#ebe7dd]">
       <div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-16">
-        <SectionTitle eyebrow="HOW IT WORKS" title="Simple steps to find what you need." />
+        <SectionTitle eyebrow={t('home.howEyebrow')} title={t('home.howTitle')} />
         <div className="mt-10 grid gap-0 border-y border-[#d4cdc1]">
           {[
-            ['01', 'Tell us what you need', 'Create a request describing what you need — a business, a service, or a product.'],
-            ['02', 'Get matched', 'BuySide shows your request to people who can help — sellers, providers, brokers, and suppliers.'],
-            ['03', 'Review responses', 'People who have what you need can submit a match. You review each one and decide.'],
-            ['04', 'Connect', 'When you find the right match, BuySide facilitates the introduction.'],
-          ].map(([n, t, d]) => (
+            ['01', t('home.step1TitleNew'), t('home.step1DescNew')],
+            ['02', t('home.step2TitleNew'), t('home.step2DescNew')],
+            ['03', t('home.step3TitleNew'), t('home.step3DescNew')],
+            ['04', t('home.step4TitleNew'), t('home.step4DescNew')],
+          ].map(([n, title, desc]) => (
             <div key={n} className="grid grid-cols-[50px_1fr] gap-4 border-b border-[#d4cdc1] py-6 last:border-0">
               <span className="font-mono-label text-xs text-[#b9a16d]">{n}</span>
-              <div><h3 className="font-editorial text-2xl">{t}</h3><p className="mt-2 text-sm leading-6 text-[#6b665d]">{d}</p></div>
+              <div><h3 className="font-editorial text-2xl">{title}</h3><p className="mt-2 text-sm leading-6 text-[#6b665d]">{desc}</p></div>
             </div>
           ))}
         </div>
+        <div className="mt-6 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-4 text-[13px] leading-6 text-[#625d53]">{t('home.introFeeNote')}</div>
       </div>
     </section>
 
-    {/* For both sides */}
-    <section className="mx-auto grid max-w-[1280px] gap-10 px-5 py-20 md:grid-cols-[.75fr_1.25fr] md:px-10 md:py-28">
-      <div><Eyebrow>For everyone</Eyebrow><h2 className="font-editorial mt-5 text-4xl leading-tight md:text-5xl">Built for both sides of a connection.</h2></div>
-      <div className="grid gap-10 sm:grid-cols-2"><div className="border-t border-[#cfc8bc] pt-5"><h3 className="font-editorial text-2xl">Looking for something</h3><p className="mt-3 text-sm leading-6 text-[#6b665d]">Post a request and let the network find it. Receive relevant matches without broadcasting your needs across the market.</p><Link className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-wider" href="/for-buyers">How it works <ArrowUpRight size={14} /></Link></div><div className="border-t border-[#cfc8bc] pt-5"><h3 className="font-editorial text-2xl">Have something to offer</h3><p className="mt-3 text-sm leading-6 text-[#6b665d]">Browse requests and submit a match when you have what someone is looking for. Brokers, owners, advisors, and suppliers welcome.</p><Link className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-wider" href="/for-finders">How to respond <ArrowUpRight size={14} /></Link></div></div>
-    </section>
+    {/* Trust & Confidentiality */}
+    <TrustSection />
+
+    {/* Membership preview */}
+    <MembershipPreview />
+
+    {/* Social proof (hidden until real data) */}
+    <SocialProof />
+
+    {/* Final CTA */}
+    <FinalCta />
+
     <Compliance />
   </PageFrame>;
 }
 
 export function RequestMarketplace() {
+  const { t } = useLanguage();
+  useSeo('requests');
   const [filters, setFilters] = useState({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '' as '' | BuyerRequest['buyerType'], verifiedOnly: false, sort: 'newest' as 'newest' | 'highest_budget' | 'highest_reward' | 'closing_soon' });
   const params = useMemo(() => ({
     ...(filters.search ? { search: filters.search } : {}), ...(filters.industry ? { industry: filters.industry } : {}),
@@ -146,36 +171,38 @@ export function RequestMarketplace() {
   const query = useListBuyerRequests(params);
   const requests = (query.data || []).filter(request => !filters.buyerType || request.buyerType === filters.buyerType);
   return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
-    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end"><div><Eyebrow>Request marketplace</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Requests</h1><p className="mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">Browse public requests from people looking for businesses, services, and products. Submit a match if you have what they need.</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">Post a Request <ArrowRight size={15} /></Link></div>
+    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end"><div><Eyebrow>{t('requests.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">{t('requests.title')}</h1><p className="mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">{t('requests.intro')}</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">{t('requests.postRequest')} <ArrowRight size={15} /></Link></div>
     <div className="mt-10 border-y border-[#d4cdc1] py-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="sm:col-span-2"><span className={label}>Search criteria</span><span className="relative block"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#918a7c]" /><input className={`${field} pl-10`} placeholder="Industry, title or profile" value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} data-testid="input-search-requests" /></span></label>
-        <label><span className={label}>Industry</span><input className={field} placeholder="Any industry" value={filters.industry} onChange={e => setFilters({ ...filters, industry: e.target.value })} data-testid="input-filter-industry" /></label>
-        <div className="sm:col-span-2"><span className={label}>Location</span><div className="grid grid-cols-3 gap-2">
+        <label className="sm:col-span-2"><span className={label}>{t('requests.searchLabel')}</span><span className="relative block"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#918a7c]" /><input className={`${field} pl-10`} placeholder={t('requests.searchPlaceholder')} value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} data-testid="input-search-requests" /></span></label>
+        <label><span className={label}>{t('requests.industry')}</span><input className={field} placeholder={t('requests.industryPlaceholder')} value={filters.industry} onChange={e => setFilters({ ...filters, industry: e.target.value })} data-testid="input-filter-industry" /></label>
+        <div className="sm:col-span-2"><span className={label}>{t('requests.location')}</span><div className="grid grid-cols-3 gap-2">
           {(['country', 'region', 'city'] as const).map(key => <label key={key}><span className="sr-only">{key}</span><input className={field} placeholder={`Any ${key}`} value={filters[key]} onChange={e => setFilters({ ...filters, [key]: e.target.value })} data-testid={`input-filter-${key}`} /></label>)}
         </div></div>
-        <fieldset className="sm:col-span-2"><legend className={label}>Purchase price (USD)</legend><div className="grid grid-cols-2 gap-2">
+        <fieldset className="sm:col-span-2"><legend className={label}>{t('requests.purchasePrice')}</legend><div className="grid grid-cols-2 gap-2">
           <label><span className="sr-only">Minimum purchase price</span><input className={field} type="number" min="0" placeholder="Minimum" value={filters.minBudget} onChange={e => setFilters({ ...filters, minBudget: e.target.value })} data-testid="input-min-budget" /></label>
           <label><span className="sr-only">Maximum purchase price</span><input className={field} type="number" min="0" placeholder="Maximum" value={filters.maxBudget} onChange={e => setFilters({ ...filters, maxBudget: e.target.value })} data-testid="input-max-budget" /></label>
         </div></fieldset>
-        <label><span className={label}>Buyer type</span><select className={field} value={filters.buyerType} onChange={e => setFilters({ ...filters, buyerType: e.target.value as typeof filters.buyerType })} data-testid="select-filter-buyer-type"><option value="">Any buyer type</option><option value="individual">Individual</option><option value="strategic">Strategic buyer</option><option value="search_fund">Search fund</option><option value="private_equity">Private equity</option><option value="other">Other</option></select></label>
-        <label><span className={label}>Sort by</span><select className={field} value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value as typeof filters.sort })} data-testid="select-sort"><option value="newest">Recently published</option><option value="highest_budget">Highest budget</option><option value="highest_reward">Highest finder fee</option><option value="closing_soon">Closing soon</option></select></label>
+        <label><span className={label}>{t('requests.buyerType')}</span><select className={field} value={filters.buyerType} onChange={e => setFilters({ ...filters, buyerType: e.target.value as typeof filters.buyerType })} data-testid="select-filter-buyer-type"><option value="">{t('requests.anyBuyerType')}</option><option value="individual">Individual</option><option value="strategic">Strategic buyer</option><option value="search_fund">Search fund</option><option value="private_equity">Private equity</option><option value="other">Other</option></select></label>
+        <label><span className={label}>{t('requests.sortBy')}</span><select className={field} value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value as typeof filters.sort })} data-testid="select-sort"><option value="newest">{t('requests.sortNewest')}</option><option value="highest_budget">{t('requests.sortHighestBudget')}</option><option value="highest_reward">{t('requests.sortHighestReward')}</option><option value="closing_soon">{t('requests.sortClosingSoon')}</option></select></label>
       </div>
-      <label className="mt-4 flex cursor-pointer items-center gap-2 text-xs text-[#5f5a51]"><input type="checkbox" checked={filters.verifiedOnly} onChange={e => setFilters({ ...filters, verifiedOnly: e.target.checked })} data-testid="checkbox-verified" /> Verified buyers only</label>
+      <label className="mt-4 flex cursor-pointer items-center gap-2 text-xs text-[#5f5a51]"><input type="checkbox" checked={filters.verifiedOnly} onChange={e => setFilters({ ...filters, verifiedOnly: e.target.checked })} data-testid="checkbox-verified" /> {t('requests.verifiedOnly')}</label>
     </div>
-    <div className="mb-3 mt-8 flex items-center justify-between"><Eyebrow>{query.isLoading ? 'Retrieving requests' : `${requests.length} ${requests.length === 1 ? 'request' : 'requests'}`}</Eyebrow><Link href="/confidentiality" className="inline-flex items-center gap-1 text-[11px] text-[#786b52]"><LockKeyhole size={13} /> Privacy principles</Link></div>
-    {query.isLoading ? <LoadingRows count={4} /> : query.isError ? <ErrorState onRetry={() => query.refetch()} /> : requests.length ? requests.map(r => <RequestCard request={r} key={r.id} />) : <EmptyState title="No criteria match these filters" body="Try a broader location or budget, or clear a search term to see more requests." action={<button onClick={() => setFilters({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '', verifiedOnly: false, sort: 'newest' })} className="border border-[#cfc8bc] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-clear-filters">Clear filters</button>} />}
+    <div className="mb-3 mt-8 flex items-center justify-between"><Eyebrow>{query.isLoading ? t('requests.retrieving') : `${requests.length} ${requests.length === 1 ? 'request' : 'requests'}`}</Eyebrow><Link href="/confidentiality" className="inline-flex items-center gap-1 text-[11px] text-[#786b52]"><LockKeyhole size={13} /> {t('requests.privacyPrinciples')}</Link></div>
+    {query.isLoading ? <LoadingRows count={4} /> : query.isError ? <ErrorState onRetry={() => query.refetch()} /> : requests.length ? requests.map(r => <RequestCard request={r} key={r.id} />) : <EmptyState title={t('requests.noMatch')} body={t('requests.noMatchBody')} action={<button onClick={() => setFilters({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '', verifiedOnly: false, sort: 'newest' })} className="border border-[#cfc8bc] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-clear-filters">{t('requests.clearFilters')}</button>} />}
   </div></PageFrame>;
 }
 
 export function OpportunitiesPage() {
+  const { t } = useLanguage();
+  useSeo('opportunities');
   return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
     <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
-      <div><Eyebrow>Opportunities</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Browse opportunities</h1><p className="mt-5 max-w-2xl text-sm leading-7 text-[#6b665d]">People are looking for businesses, services, and products. Browse their requests and submit a match if you have what they need.</p></div>
-      <Link href="/requests" className="inline-flex h-12 items-center justify-center gap-2 border border-[#bdb5a6] px-5 text-xs uppercase tracking-wider text-[#38352f]">Browse Requests <ArrowRight size={15} /></Link>
+      <div><Eyebrow>{t('opportunities.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">{t('opportunities.title')}</h1><p className="mt-5 max-w-2xl text-sm leading-7 text-[#6b665d]">{t('opportunities.intro')}</p></div>
+      <Link href="/requests" className="inline-flex h-12 items-center justify-center gap-2 border border-[#bdb5a6] px-5 text-xs uppercase tracking-wider text-[#38352f]">{t('opportunities.browseRequests')} <ArrowRight size={15} /></Link>
     </div>
     <div className="mt-10">
-      <EmptyState title="No opportunities listed yet" body="When people post requests for businesses, services, or products, you'll find them here. Browse current requests to see if you can help." action={<ButtonLink href="/requests" secondary>Browse Requests</ButtonLink>} />
+      <EmptyState title={t('opportunities.noneYet')} body={t('opportunities.noneYetBody')} action={<ButtonLink href="/requests" secondary>{t('opportunities.browseRequests')}</ButtonLink>} />
     </div>
   </div><Compliance /></PageFrame>;
 }
@@ -288,49 +315,60 @@ function EditorialBlock({ n, title, children, dark = false }: { n: string; title
 }
 
 export function ForBuyersPage() {
-  return <EditorialPage eyebrow="For people looking for something" title="Make your request work harder." intro="BuySide gives you a clear, discreet way to describe what you need — a business, a service, or a product — and a place for the right people to find you." cta={{ label: 'Create a Request', href: '/post-request' }}>
-    <EditorialBlock n="01" title="Be specific, not exposed">Set the sectors, business profile, geography, financial parameters and timing you are genuinely prepared to consider. Publish only at the privacy level that fits.</EditorialBlock>
-    <EditorialBlock n="02" title="Receive context with the introduction">Submissions can include the business profile, fit rationale and the submitter's relationship to the opportunity. Review what is shared before deciding whether to engage.</EditorialBlock>
-    <EditorialBlock n="03" title="Stay in control">Your request is not a public listing of your identity. You decide whether a potential match should move forward, and what information to share next.</EditorialBlock>
-    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-xs leading-6 text-[#625d53]">BuySide does not represent buyers, negotiate transactions, or provide investment, legal, tax or accounting advice. All acquisition decisions remain yours.</div>
+  const { t } = useLanguage();
+  useSeo('forBuyers');
+  return <EditorialPage eyebrow={t('forBuyers.eyebrow')} title={t('forBuyers.title')} intro={t('forBuyers.intro')} cta={{ label: t('forBuyers.cta'), href: '/post-request' }}>
+    <EditorialBlock n="01" title={t('forBuyers.b1Title')}>{t('forBuyers.b1Body')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('forBuyers.b2Title')}>{t('forBuyers.b2Body')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('forBuyers.b3Title')}>{t('forBuyers.b3Body')}</EditorialBlock>
+    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-xs leading-6 text-[#625d53]">{t('forBuyers.disclaimer')}</div>
   </EditorialPage>;
 }
 
 export function ForFindersPage() {
-  return <EditorialPage eyebrow="For people who have something to offer" title="A well-placed match can matter." intro="Bring forward what you have when it matches someone's request. BuySide is designed for informed, relationship-aware introductions—not anonymous lead generation." cta={{ label: 'Browse Requests', href: '/requests' }}>
-    <EditorialBlock n="01" title="Who may submit">Business owners, brokers, M&A advisors, accountants, attorneys and other deal finders may submit a potential match when they are authorized to share the information and can explain their connection.</EditorialBlock>
-    <EditorialBlock n="02" title="Confidentiality comes first">Start with non-identifying business context unless the owner has authorized disclosure. Avoid sharing personal information, client materials or confidential documents without permission.</EditorialBlock>
-    <EditorialBlock n="03" title="A potential success-based reward">Qualified introductions that result in completed transactions may earn a success-based reward of up to 8% of the final transaction value, subject to applicable terms, transaction structure, licensing requirements, and jurisdiction.</EditorialBlock>
-    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm font-semibold leading-6 text-[#625d53]">No closing. No finder reward.</div>
-    <p className="text-xs leading-6 text-[#6b665d]">Reward eligibility, amount, payment timing, and legal requirements vary by transaction, structure, jurisdiction, and participant status. Terms must be confirmed before an introduction or submission.</p>
-    <p className="text-xs leading-6 text-[#6b665d]">No reward is promised or guaranteed. Any compensation depends on applicable terms, transaction structure, licensing requirements, jurisdiction and a separate agreement.</p>
+  const { t } = useLanguage();
+  useSeo('forFinders');
+  return <EditorialPage eyebrow={t('forFinders.eyebrow')} title={t('forFinders.title')} intro={t('forFinders.intro')} cta={{ label: t('forFinders.cta'), href: '/requests' }}>
+    <EditorialBlock n="01" title={t('forFinders.b1Title')}>{t('forFinders.b1Body')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('forFinders.b2Title')}>{t('forFinders.b2Body')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('forFinders.b3Title')}>{t('forFinders.b3Body')}</EditorialBlock>
+    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm font-semibold leading-6 text-[#625d53]">{t('forFinders.noClosing')}</div>
+    <p className="text-xs leading-6 text-[#6b665d]">{t('forFinders.caution1')}</p>
+    <p className="text-xs leading-6 text-[#6b665d]">{t('forFinders.caution2')}</p>
   </EditorialPage>;
 }
 
 export function HowItWorksPage() {
-  return <EditorialPage eyebrow="How it works" title="A simple path from request to connection." intro="The process begins with what you need. Each party can assess relevance before deciding whether to share more." cta={{ label: 'Browse Requests', href: '/requests' }}>
-    <EditorialBlock n="01" title="Someone posts a request">A person defines what they need — a business, service, or product — with location, budget, and timeline. Privacy settings determine how the request is presented.</EditorialBlock>
-    <EditorialBlock n="02" title="Someone submits a match">A person who has what's needed provides context, explains why it fits and states their relationship to it. Initial identity details can be kept confidential.</EditorialBlock>
-    <EditorialBlock n="03" title="The requester reviews the match">The requester reviews potential matches against what they asked for. Submissions are not endorsements, verified details, or a promise of follow-up.</EditorialBlock>
-    <EditorialBlock n="04" title="Participants decide what comes next">If there is mutual interest, the parties can establish appropriate confidentiality, confirm representation and agree directly on next steps. BuySide does not negotiate the transaction.</EditorialBlock>
+  const { t } = useLanguage();
+  useSeo('howItWorks');
+  return <EditorialPage eyebrow={t('howItWorks.eyebrow')} title={t('howItWorks.title')} intro={t('howItWorks.intro')} cta={{ label: t('howItWorks.cta'), href: '/requests' }}>
+    <EditorialBlock n="01" title={t('home.step1TitleNew')}>{t('home.step1DescNew')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('home.step2TitleNew')}>{t('home.step2DescNew')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('home.step3TitleNew')}>{t('home.step3DescNew')}</EditorialBlock>
+    <EditorialBlock n="04" title={t('home.step4TitleNew')}>{t('home.step4DescNew')}</EditorialBlock>
+    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-[13px] leading-6 text-[#625d53]">{t('home.introFeeNote')}</div>
   </EditorialPage>;
 }
 
 export function PrivateNetworkPage() {
-  return <EditorialPage eyebrow="A private network" title="A better setting for serious intent." intro="BuySide connects stated acquisition demand with people who may know a relevant business. It is not an open directory of businesses, buyers or intermediaries." cta={{ label: 'Review published criteria', href: '/requests' }} tone="dark">
-    <EditorialBlock dark n="01" title="Acquisition buyers">Strategic acquirers, individual buyers, private equity firms, search funds and other qualified buyers may describe their criteria, subject to platform access and request settings.</EditorialBlock>
-    <EditorialBlock dark n="02" title="Owners and operators">Owners can learn whether a buyer's stated criteria align before choosing to share information or enter a conversation.</EditorialBlock>
-    <EditorialBlock dark n="03" title="Brokers and advisors">Intermediaries can surface a relevant mandate to a client opportunity when authorized, while keeping roles and relationships clear.</EditorialBlock>
-    <EditorialBlock dark n="04" title="Connected deal finders">People with a legitimate connection to a business may submit a potential match when they have permission to share appropriate information.</EditorialBlock>
+  const { t } = useLanguage();
+  useSeo('privateNetwork');
+  return <EditorialPage eyebrow={t('privateNetwork.eyebrow')} title={t('privateNetwork.title')} intro={t('privateNetwork.intro')} cta={{ label: t('privateNetwork.cta'), href: '/requests' }} tone="dark">
+    <EditorialBlock dark n="01" title={t('privateNetwork.b1Title')}>{t('privateNetwork.b1Body')}</EditorialBlock>
+    <EditorialBlock dark n="02" title={t('privateNetwork.b2Title')}>{t('privateNetwork.b2Body')}</EditorialBlock>
+    <EditorialBlock dark n="03" title={t('privateNetwork.b3Title')}>{t('privateNetwork.b3Body')}</EditorialBlock>
+    <EditorialBlock dark n="04" title={t('privateNetwork.b4Title')}>{t('privateNetwork.b4Body')}</EditorialBlock>
   </EditorialPage>;
 }
 
 export function ConfidentialityPage() {
-  return <EditorialPage eyebrow="Confidentiality" title="Share deliberately. Keep control of identity." intro="Private introductions only work when information is handled with care. BuySide is designed to support selective disclosure—not to replace consent, legal agreements or professional judgment." cta={{ label: 'Browse Requests', href: '/requests' }}>
-    <EditorialBlock n="01" title="Start with non-identifying context">A first submission can describe the sector, location, business scale and fit without naming a company or owner. Only include information you are authorized to share.</EditorialBlock>
-    <EditorialBlock n="02" title="Consent before sensitive disclosure">Do not upload or transmit trade secrets, personal data, financial records or confidential client materials without the necessary permission and safeguards. Use an NDA when appropriate.</EditorialBlock>
-    <EditorialBlock n="03" title="Privacy settings have limits">Public, members-only, NDA-required and private request settings affect visibility. They do not guarantee anonymity or replace a signed confidentiality agreement.</EditorialBlock>
-    <EditorialBlock n="04" title="Make introductions with care">Participants are responsible for confirming authority, representation, permissions and applicable disclosure obligations before sharing information or proceeding.</EditorialBlock>
+  const { t } = useLanguage();
+  useSeo('confidentiality');
+  return <EditorialPage eyebrow={t('confidentiality.eyebrow')} title={t('confidentiality.title')} intro={t('confidentiality.intro')} cta={{ label: t('confidentiality.cta'), href: '/requests' }}>
+    <EditorialBlock n="01" title={t('confidentiality.b1Title')}>{t('confidentiality.b1Body')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('confidentiality.b2Title')}>{t('confidentiality.b2Body')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('confidentiality.b3Title')}>{t('confidentiality.b3Body')}</EditorialBlock>
+    <EditorialBlock n="04" title={t('confidentiality.b4Title')}>{t('confidentiality.b4Body')}</EditorialBlock>
     <Compliance />
   </EditorialPage>;
 }
@@ -399,7 +437,10 @@ export function ContactPage() {
 }
 
 export function PostRequestPage() {
+  const { t } = useLanguage();
+  useSeo('requests');
   const [error, setError] = useState('');
+  const [step, setStep] = useState(1);
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const create = useCreateBuyerRequest();
@@ -425,22 +466,63 @@ export function PostRequestPage() {
       queryClient.invalidateQueries({ queryKey: getListBuyerRequestsQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetMySummaryQueryKey() });
       setLocation(`/requests/${created.id}`);
-    }, onError: () => setError('Your request could not be published. Please review the fields and try again.') });
+    }, onError: () => setError(t('postRequest.error')) });
   });
-  return <PageFrame><div className="mx-auto max-w-[960px] px-5 py-10 md:px-10 md:py-16"><Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> Back to home</Link>
-    <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_275px]"><div><Eyebrow>Create a Request</Eyebrow><h1 className="font-editorial mt-3 text-5xl tracking-[-.03em] md:text-6xl">What are you looking for?</h1><p className="mt-4 max-w-xl text-sm leading-7 text-[#6b665d]">Tell us what you need. The BuySide network will help you find it.</p>
-      <Form {...form}><form onSubmit={send} className="mt-8 space-y-7">
-        <label className="block"><span className={label}>What are you looking for?</span><input className={field} required {...r('title', { required: 'Add a short title', minLength: 3, maxLength: 120 })} placeholder="For example: HVAC company in Florida" data-testid="input-request-title" /></label>
-        <label className="block"><span className={label}>Category</span><select className={field} {...r('industry')} data-testid="input-category"><option value="">Select a category</option><option value="Business">Business</option><option value="Service">Service</option><option value="Product">Product</option><option value="Other">Other</option></select></label>
-        <fieldset className="grid gap-5 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Location</legend><label><span className={label}>Country</span><input className={field} {...r('country')} data-testid="input-country" /></label><label><span className={label}>Region or state</span><input className={field} {...r('region')} data-testid="input-region" /></label><label><span className={label}>City</span><input className={field} {...r('city')} data-testid="input-city" /></label><label className="flex items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" {...r('remoteAccepted')} data-testid="checkbox-remote" /> Open to remote or location-flexible options</label></fieldset>
-        <fieldset className="grid gap-5 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Budget or price range</legend><label><span className={label}>Minimum (USD)</span><input className={field} type="number" min="0" {...r('minimumPurchasePrice', { valueAsNumber: true })} data-testid="input-min-price" /></label><label><span className={label}>Maximum (USD)</span><input className={field} type="number" min="0" {...r('maximumPurchasePrice', { valueAsNumber: true })} data-testid="input-max-price" /></label></fieldset>
-        <label className="block"><span className={label}>Description</span><textarea className={area} required minLength={10} maxLength={1600} {...r('preferredProfile', { required: true, minLength: 10, maxLength: 1600 })} placeholder="Describe what you're looking for in detail." data-testid="input-description" /></label>
-        <label className="block"><span className={label}>Timeline</span><input className={field} {...r('timeline')} placeholder="For example: Actively looking" data-testid="input-timeline" /></label>
-        <label className="block"><span className={label}>Contact preferences</span><select className={field} {...r('privacy')} data-testid="select-privacy"><option value="public">Public — appears in marketplace</option><option value="members_only">Members only</option><option value="nda_required">NDA required</option><option value="private">Private — not listed publicly</option></select></label>
-        {error && <p role="alert" className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm text-[#815d4f]">{error}</p>}
-        <button disabled={create.isPending} type="submit" className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50" data-testid="button-publish-request">{create.isPending ? 'Publishing…' : 'Publish Request'} <ArrowRight size={14} /></button>
+
+  const stepLabels = [t('postRequest.step1'), t('postRequest.step2'), t('postRequest.step3')];
+  const canProceed = () => {
+    if (step === 1) return form.getValues('title')?.trim()?.length >= 3;
+    return true;
+  };
+
+  return <PageFrame><div className="mx-auto max-w-[960px] px-5 py-10 md:px-10 md:py-16"><Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('postRequest.backHome')}</Link>
+    <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_275px]"><div><Eyebrow>{t('postRequest.eyebrow')}</Eyebrow><h1 className="font-editorial mt-3 text-5xl tracking-[-.03em] md:text-6xl">{t('postRequest.title')}</h1><p className="mt-4 max-w-xl text-sm leading-7 text-[#6b665d]">{t('postRequest.intro')}</p>
+
+      {/* Step indicator */}
+      <div className="mt-8 flex items-center gap-3">
+        {stepLabels.map((label, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className={`flex size-8 items-center justify-center border font-mono-label text-[11px] ${step > i + 1 ? 'border-[#b9a16d] bg-[#b9a16d] text-[#25241f]' : step === i + 1 ? 'border-[#b9a16d] text-[#b9a16d]' : 'border-[#cfc8bc] text-[#918a7c]'}`} data-testid={`step-indicator-${i + 1}`}>
+              {step > i + 1 ? <Check size={14} /> : i + 1}
+            </div>
+            <span className={`text-[12px] ${step === i + 1 ? 'text-[#38352f]' : 'text-[#918a7c]'}`}>{label}</span>
+            {i < stepLabels.length - 1 && <div className={`h-px w-8 ${step > i + 1 ? 'bg-[#b9a16d]' : 'bg-[#d4cdc1]'}`} />}
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 font-mono-label text-[10px] uppercase tracking-[.12em] text-[#918a7c]">{t('postRequest.stepLabel')} {step} {t('postRequest.of')} 3 — {stepLabels[step - 1]}</p>
+
+      <Form {...form}><form onSubmit={send} className="mt-6 space-y-7">
+        {/* Step 1: What do you need? */}
+        {step === 1 && <div className="space-y-5">
+          <label className="block"><span className={label}>{t('postRequest.titleLabel')}</span><input className={field} required {...r('title', { required: 'Add a short title', minLength: 3, maxLength: 120 })} placeholder={t('postRequest.titlePlaceholder')} data-testid="input-request-title" /></label>
+          <label className="block"><span className={label}>{t('postRequest.category')}</span><select className={field} {...r('industry')} data-testid="input-category"><option value="">{t('postRequest.selectCategory')}</option><option value="Business">Business</option><option value="Service">Service</option><option value="Product">Product</option><option value="Other">Other</option></select></label>
+          <button type="button" onClick={() => { if (canProceed()) setStep(2); }} className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] transition hover:bg-[#504b40]" data-testid="button-step-next">{t('postRequest.next')} <ArrowRight size={14} /></button>
+        </div>}
+
+        {/* Step 2: Details */}
+        {step === 2 && <div className="space-y-7">
+          <fieldset className="grid gap-5 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('postRequest.location')}</legend><label><span className={label}>{t('postRequest.country')}</span><input className={field} {...r('country')} data-testid="input-country" /></label><label><span className={label}>{t('postRequest.region')}</span><input className={field} {...r('region')} data-testid="input-region" /></label><label><span className={label}>{t('postRequest.city')}</span><input className={field} {...r('city')} data-testid="input-city" /></label><label className="flex items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" {...r('remoteAccepted')} data-testid="checkbox-remote" /> {t('postRequest.remote')}</label></fieldset>
+          <fieldset className="grid gap-5 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('postRequest.budget')}</legend><label><span className={label}>{t('postRequest.minimum')}</span><input className={field} type="number" min="0" {...r('minimumPurchasePrice', { valueAsNumber: true })} data-testid="input-min-price" /></label><label><span className={label}>{t('postRequest.maximum')}</span><input className={field} type="number" min="0" {...r('maximumPurchasePrice', { valueAsNumber: true })} data-testid="input-max-price" /></label></fieldset>
+          <label className="block"><span className={label}>{t('postRequest.description')}</span><textarea className={area} required minLength={10} maxLength={1600} {...r('preferredProfile', { required: true, minLength: 10, maxLength: 1600 })} placeholder={t('postRequest.descriptionPlaceholder')} data-testid="input-description" /></label>
+          <label className="block"><span className={label}>{t('postRequest.timeline')}</span><input className={field} {...r('timeline')} placeholder={t('postRequest.timelinePlaceholder')} data-testid="input-timeline" /></label>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setStep(1)} className="inline-flex h-12 items-center gap-2 border border-[#cfc8bc] px-6 text-xs uppercase tracking-wider text-[#38352f] transition hover:border-[#9a8352]" data-testid="button-step-back">{t('postRequest.back')}</button>
+            <button type="button" onClick={() => setStep(3)} className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] transition hover:bg-[#504b40]" data-testid="button-step-next-2">{t('postRequest.next')} <ArrowRight size={14} /></button>
+          </div>
+        </div>}
+
+        {/* Step 3: Contact */}
+        {step === 3 && <div className="space-y-7">
+          <label className="block"><span className={label}>{t('postRequest.contactPrefs')}</span><select className={field} {...r('privacy')} data-testid="select-privacy"><option value="public">{t('postRequest.privacyPublic')}</option><option value="members_only">{t('postRequest.privacyMembers')}</option><option value="nda_required">{t('postRequest.privacyNda')}</option><option value="private">{t('postRequest.privacyPrivate')}</option></select></label>
+          {error && <p role="alert" className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm text-[#815d4f]">{error}</p>}
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setStep(2)} className="inline-flex h-12 items-center gap-2 border border-[#cfc8bc] px-6 text-xs uppercase tracking-wider text-[#38352f] transition hover:border-[#9a8352]" data-testid="button-step-back-2">{t('postRequest.back')}</button>
+            <button disabled={create.isPending} type="submit" className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50" data-testid="button-publish-request">{create.isPending ? t('postRequest.publishing') : t('postRequest.publish')} <ArrowRight size={14} /></button>
+          </div>
+        </div>}
       </form></Form>
-    </div><aside className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 lg:mt-12"><Eyebrow>Tips</Eyebrow><ul className="mt-4 space-y-4 text-xs leading-5 text-[#6b665d]"><li className="flex gap-2"><ShieldCheck size={15} className="shrink-0 text-[#887649]" />Choose a visibility level that fits your needs.</li><li className="flex gap-2"><CircleHelp size={15} className="shrink-0 text-[#887649]" />You can leave budget fields blank if flexible.</li><li className="flex gap-2"><LockKeyhole size={15} className="shrink-0 text-[#887649]" />Avoid including personal or confidential information.</li></ul></aside></div></div></PageFrame>;
+    </div><aside className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 lg:mt-12"><Eyebrow>{t('postRequest.tips')}</Eyebrow><ul className="mt-4 space-y-4 text-xs leading-5 text-[#6b665d]"><li className="flex gap-2"><ShieldCheck size={15} className="shrink-0 text-[#887649]" />{t('postRequest.tip1')}</li><li className="flex gap-2"><CircleHelp size={15} className="shrink-0 text-[#887649]" />{t('postRequest.tip2')}</li><li className="flex gap-2"><LockKeyhole size={15} className="shrink-0 text-[#887649]" />{t('postRequest.tip3')}</li></ul></aside></div></div></PageFrame>;
 }
 
 function Metric({ title, value, note }: { title: string; value?: number | string; note: string }) {

@@ -677,6 +677,74 @@ export const translations = {
     en: 'Do not send confidential business, personal, financial or transaction information to an unverified address or channel.',
     es: 'No envíes información confidencial empresarial, personal, financiera o de transacciones a una dirección o canal no verificado.',
   },
+
+  // Hero (updated)
+  'home.heroTitleNew': { en: 'Buy and sell Florida businesses without expensive middlemen.', es: 'Compra y vende negocios en Florida sin intermediarios caros.' },
+  'home.heroSub': { en: 'Discreet, qualified introductions — connect directly with buyers, sellers, and deal finders.', es: 'Presentaciones discretas y calificadas — conéctate directamente con compradores, vendedores y buscadores de oportunidades.' },
+  'home.ctaExplore': { en: 'Explore Opportunities', es: 'Explorar Oportunidades' },
+  'home.ctaPostNeed': { en: 'Post What You Need', es: 'Publicar lo que Necesitas' },
+
+  // Featured opportunities
+  'home.featuredEyebrow': { en: 'Featured Opportunities', es: 'Oportunidades Destacadas' },
+  'home.featuredTitle': { en: "A look at what's on the market.", es: 'Un vistazo a lo que hay en el mercado.' },
+  'home.featuredSub': { en: 'Sample opportunities shown for illustration. Join to access live listings.', es: 'Oportunidades de ejemplo mostradas para ilustración. Únete para acceder a listados en vivo.' },
+  'home.sampleLabel': { en: 'Sample Opportunity', es: 'Oportunidad de Ejemplo' },
+  'home.sampleRequest': { en: 'Sample Request', es: 'Solicitud de Ejemplo' },
+  'home.viewAllOpportunities': { en: 'View All Opportunities', es: 'Ver Todas las Oportunidades' },
+
+  // How it works (new 4 steps)
+  'home.step1TitleNew': { en: 'Discover', es: 'Descubre' },
+  'home.step1DescNew': { en: 'Browse opportunities and requests that match your acquisition goals.', es: 'Explora oportunidades y solicitudes que coincidan con tus objetivos de adquisición.' },
+  'home.step2TitleNew': { en: 'Request Introduction', es: 'Solicitar Presentación' },
+  'home.step2DescNew': { en: 'Found a match? Request an introduction to the other party.', es: '¿Encontraste una coincidencia? Solicita una presentación a la otra parte.' },
+  'home.step3TitleNew': { en: 'Accept Match', es: 'Aceptar Coincidencia' },
+  'home.step3DescNew': { en: 'Review the qualified match and accept to proceed.', es: 'Revisa la coincidencia calificada y acepta para continuar.' },
+  'home.step4TitleNew': { en: 'Connect Privately', es: 'Conectar Privadamente' },
+  'home.step4DescNew': { en: 'Connect directly and move the conversation forward on your terms.', es: 'Conéctate directamente y avanza la conversación a tu manera.' },
+  'home.introFeeNote': { en: 'The $99 introduction fee is charged only when a buyer accepts a qualified match.', es: 'La tarifa de presentación de $99 se cobra solo cuando un comprador acepta una coincidencia calificada.' },
+
+  // Trust
+  'home.trustEyebrow': { en: 'Trust & Confidentiality', es: 'Confianza y Confidencialidad' },
+  'home.trustTitle': { en: 'Verified members. Controlled disclosure. Private by design.', es: 'Miembros verificados. Divulgación controlada. Privado por diseño.' },
+  'home.trustVerified': { en: 'Verified Member', es: 'Miembro Verificado' },
+  'home.trustVerifiedDesc': { en: 'Badges distinguish members whose identity and credentials have been confirmed.', es: 'Las insignias distinguen a los miembros cuya identidad y credenciales han sido confirmadas.' },
+  'home.trustPrivateInfo': { en: 'Private Information', es: 'Información Privada' },
+  'home.trustPrivateDesc': { en: 'Business details stay confidential until both parties agree to share more.', es: 'Los detalles del negocio permanecen confidenciales hasta que ambas partes acuerden compartir más.' },
+  'home.trustQualified': { en: 'Qualified Introductions', es: 'Presentaciones Calificadas' },
+  'home.trustQualifiedDesc': { en: 'Every introduction is reviewed before it reaches you. No spam, no noise.', es: 'Cada presentación es revisada antes de llegar a ti. Sin spam, sin ruido.' },
+  'home.trustControlled': { en: 'Controlled Disclosure', es: 'Divulgación Controlada' },
+  'home.trustControlledDesc': { en: 'You decide what to share, when, and with whom — at every step.', es: 'Tú decides qué compartir, cuándo y con quién — en cada paso.' },
+
+  // Membership preview
+  'home.membershipEyebrow': { en: 'Membership', es: 'Membresía' },
+  'home.membershipTitle': { en: 'Choose your level of access.', es: 'Elige tu nivel de acceso.' },
+  'home.membershipBody': { en: 'Transparent monthly pricing. No transaction percentages. The $99 introduction fee applies only when you accept a qualified match.', es: 'Precios mensuales transparentes. Sin porcentajes de transacción. La tarifa de presentación de $99 aplica solo cuando aceptas una coincidencia calificada.' },
+  'home.membershipCta': { en: 'View Plans', es: 'Ver Planes' },
+  'home.planFree': { en: 'Free', es: 'Gratis' },
+  'home.planBuyerPro': { en: 'Buyer Pro', es: 'Buyer Pro' },
+  'home.planProfessional': { en: 'Professional', es: 'Professional' },
+  'home.planPrivateNetwork': { en: 'Private Network', es: 'Private Network' },
+
+  // Social proof (hidden until data available)
+  'home.socialEyebrow': { en: 'By the Numbers', es: 'En Cifras' },
+  'home.socialTitle': { en: 'A growing network of serious participants.', es: 'Una red creciente de participantes serios.' },
+  'home.socialBusinesses': { en: 'Businesses Listed', es: 'Negocios Listados' },
+  'home.socialIntroductions': { en: 'Introductions Made', es: 'Presentaciones Realizadas' },
+  'home.socialVerified': { en: 'Verified Members', es: 'Miembros Verificados' },
+  'home.socialTestimonials': { en: 'Member Testimonials', es: 'Testimonios de Miembros' },
+
+  // Final CTA
+  'home.finalCtaTitle': { en: 'Ready to find your next opportunity?', es: '¿Listo para encontrar tu próxima oportunidad?' },
+  'home.finalCtaBody': { en: 'Join BuySide to browse opportunities, post requests, and connect privately.', es: 'Únete a BuySide para explorar oportunidades, publicar solicitudes y conectar de forma privada.' },
+
+  // Request form steps
+  'postRequest.step1': { en: 'What do you need?', es: '¿Qué necesitas?' },
+  'postRequest.step2': { en: 'Details', es: 'Detalles' },
+  'postRequest.step3': { en: 'Contact', es: 'Contacto' },
+  'postRequest.stepLabel': { en: 'Step', es: 'Paso' },
+  'postRequest.of': { en: 'of', es: 'de' },
+  'postRequest.next': { en: 'Continue', es: 'Continuar' },
+  'postRequest.back': { en: 'Back', es: 'Atrás' },
 } as const;
 
 export type TranslationKey = keyof typeof translations;

@@ -3,6 +3,7 @@ import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react';
 import { Link } from 'wouter';
 import { PublicLayout, Eyebrow } from '@/components/site';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { useSeo } from '@/hooks/useSeo';
 import type { Lang } from '@/i18n/translations';
 
 type BillingPeriod = 'monthly' | 'annual';
@@ -188,6 +189,7 @@ function formatPrice(value: number) {
 export function PricingPage() {
   const [billing, setBilling] = useState<BillingPeriod>('monthly');
   const { lang, setLang } = useLanguage();
+  useSeo('membership');
 
   return (
     <PublicLayout>
