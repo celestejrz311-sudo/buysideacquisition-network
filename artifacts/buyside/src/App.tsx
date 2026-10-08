@@ -10,6 +10,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { LanguageProvider } from '@/i18n/LanguageProvider';
 import NotFound from '@/pages/not-found';
 import { PricingPage } from '@/pages/PricingPage';
+import { AdminPage } from '@/pages/AdminPage';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
@@ -91,6 +92,10 @@ function MemberOnly({ children, signOutTo = '/sign-in' }: { children: ReactNode;
 
 function PostRequestRoute() {
   return <MemberOnly signOutTo="/sign-up"><PostRequestPage /></MemberOnly>;
+}
+
+function AdminRoute() {
+  return <MemberOnly><AdminPage /></MemberOnly>;
 }
 
 function SubmitMatchRoute() {
@@ -177,6 +182,7 @@ function RoutedPages() {
       <Route path="/post-request" component={PostRequestRoute} />
       <Route path="/submit/:requestId" component={SubmitMatchRoute} />
       <Route path="/dashboard" component={DashboardRoute} />
+      <Route path="/admin" component={AdminRoute} />
       {/* This optional wildcard is required for Clerk OAuth callback paths. */}
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />

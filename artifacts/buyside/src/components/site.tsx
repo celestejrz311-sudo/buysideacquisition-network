@@ -85,33 +85,35 @@ export function SectionTitle({ eyebrow, title, description }: { eyebrow: string;
 }
 
 export function RequestStatusBadges({ request }: { request: BuyerRequest }) {
+  const { t } = useLanguage();
   const isVerifiedBuyer = request.isVerified && !request.isExample;
   return <>
-    {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">Sample Request</span>}
+    {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">{t('card.sampleRequest')}</span>}
     {isVerifiedBuyer && <>
-      <span className="inline-flex items-center gap-1.5 border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#78643a]"><ShieldCheck size={12} /> Active Buyer Mandate</span>
-      <span className="inline-flex items-center gap-1.5 border border-[#b8c5b8] bg-[#eef2ec] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#557165]"><span className="size-1.5 rounded-full bg-[#557165]" />Actively Searching</span>
+      <span className="inline-flex items-center gap-1.5 border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#78643a]"><ShieldCheck size={12} /> {t('card.activeBuyer')}</span>
+      <span className="inline-flex items-center gap-1.5 border border-[#b8c5b8] bg-[#eef2ec] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#557165]"><span className="size-1.5 rounded-full bg-[#557165]" />{t('card.activelySearching')}</span>
     </>}
   </>;
 }
 
 export function FinderFeeField({ request, detail = false }: { request: BuyerRequest; detail?: boolean }) {
-  const disclosure = request.rewardDisclosure?.trim()
-    || 'Not specified. Confirm the fee and terms with the buyer before making an introduction.';
+  const { t } = useLanguage();
+  const disclosure = request.rewardDisclosure?.trim() || t('finderFee.default');
   return <div className={`border-l-2 border-[#b9a16d] bg-[#eeebe3] ${detail ? 'mt-8 p-5' : 'mt-4 px-4 py-3'}`} data-testid={`field-finder-fee-${request.id}`}>
-    <div className="font-mono-label text-[10px] uppercase tracking-[.14em] text-[#8c794d]">Finder Fee</div>
+    <div className="font-mono-label text-[10px] uppercase tracking-[.14em] text-[#8c794d]">{t('finderFee.label')}</div>
     <p className={`mt-1 font-semibold text-[#39362f] ${detail ? 'text-sm leading-6' : 'text-[12px] leading-5'}`}>{disclosure}</p>
   </div>;
 }
 
 export function RequestCard({ request, compact = false }: { request: BuyerRequest; compact?: boolean }) {
+  const { t } = useLanguage();
   const budget = request.minimumPurchasePrice != null && request.maximumPurchasePrice != null
     ? `${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`
     : request.maximumPurchasePrice != null
-      ? `Up to ${money(request.maximumPurchasePrice)}`
+      ? `${t('card.upTo')} ${money(request.maximumPurchasePrice)}`
       : request.minimumPurchasePrice != null
-        ? `From ${money(request.minimumPurchasePrice)}`
-        : 'Flexible acquisition range';
+        ? `${t('card.from')} ${money(request.minimumPurchasePrice)}`
+        : t('card.flexibleRange');
   const location = [request.city, request.region, request.country].filter(Boolean).join(', ');
   return <article className="group border-t border-[#cfc8bc] py-6 transition-colors hover:border-[#a58f5c]" data-testid={`card-request-${request.id}`}>
     <div className="flex flex-wrap items-center gap-2">
@@ -121,22 +123,22 @@ export function RequestCard({ request, compact = false }: { request: BuyerReques
     <Link href={`/requests/${request.id}`} className="mt-4 block">
       <h3 className="font-editorial max-w-2xl text-[26px] leading-tight transition-colors group-hover:text-[#806c42] md:text-[30px]">{request.title}</h3>
     </Link>
-    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-[#706b61]"><span>{request.industry} · {request.businessCategory}</span><span>{location || 'Location flexible'}{request.remoteAccepted ? ' · Remote considered' : ''}</span></div>
+    <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-[12px] text-[#706b61]"><span>{request.industry} · {request.businessCategory}</span><span>{location || t('card.locationFlexible')}{request.remoteAccepted ? ` · ${t('card.remoteConsidered')}` : ''}</span></div>
     <FinderFeeField request={request} />
     {!compact && <div className="mt-4 grid gap-x-6 gap-y-3 border-y border-[#e0d9ce] py-4 text-[12px] sm:grid-cols-2 lg:grid-cols-4">
-      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Purchase price</div><div className="mt-1 text-[#39362f]">{budget}</div></div>
-      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Target revenue</div><div className="mt-1 text-[#39362f]">{request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : 'Flexible'}</div></div>
-      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">EBITDA / SDE requirement</div><div className="mt-1 text-[#39362f]">{request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : 'Not specified'}</div></div>
-      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">Acquisition timeline</div><div className="mt-1 text-[#39362f]">{request.timeline}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">{t('card.purchasePrice')}</div><div className="mt-1 text-[#39362f]">{budget}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">{t('card.targetRevenue')}</div><div className="mt-1 text-[#39362f]">{request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : t('requestDetail.flexible')}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">{t('card.ebitdaSde')}</div><div className="mt-1 text-[#39362f]">{request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : t('card.notSpecified')}</div></div>
+      <div><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#948c7b]">{t('card.timeline')}</div><div className="mt-1 text-[#39362f]">{request.timeline}</div></div>
     </div>}
     {!compact && <div className="mt-4 grid gap-4 text-[13px] leading-6 text-[#6b665d] sm:grid-cols-2">
-      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Key acquisition criteria</span>{request.preferredProfile}</p>
-      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">Exclusions</span>{request.dealExclusions || 'None specified.'}</p>
+      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">{t('card.keyCriteria')}</span>{request.preferredProfile}</p>
+      <p><span className="font-mono-label mr-2 text-[9px] uppercase tracking-[.12em] text-[#948c7b]">{t('card.exclusions')}</span>{request.dealExclusions || t('card.noneSpecified')}</p>
     </div>}
     <div className="mt-5 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
       <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>VIEW FULL REQUEST <ArrowUpRight size={14} /></Link>
-        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`SUBMIT A MATCHING BUSINESS for ${request.title}`}>SUBMIT A MATCH <ArrowRight size={14} /></Link>
+        <Link href={`/requests/${request.id}`} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[.12em] text-[#645b48] hover:text-[#917a49]" data-testid={`link-review-criteria-${request.id}`}>{t('card.viewFullRequest')} <ArrowUpRight size={14} /></Link>
+        <Link href={`/submit/${request.id}`} className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[10px] uppercase leading-4 tracking-[.08em] text-[#f5f2eb] transition hover:bg-[#504b40] sm:w-auto sm:whitespace-nowrap" data-testid={`link-submit-match-${request.id}`} aria-label={`${t('card.submitMatch')} for ${request.title}`}>{t('card.submitMatch')} <ArrowRight size={14} /></Link>
       </div>
     </div>
   </article>;
@@ -149,6 +151,7 @@ const exactCurrency = new Intl.NumberFormat('en-US', {
 });
 
 export function DemoOpportunityCard({ opportunity }: { opportunity: DemoOpportunity }) {
+  const { t } = useLanguage();
   const margin = (opportunity.normalizedEarnings / opportunity.ttmRevenue) * 100;
   const multipleDenominator = opportunity.valuationBasis === 'TTM revenue'
     ? opportunity.ttmRevenue
@@ -171,7 +174,7 @@ export function DemoOpportunityCard({ opportunity }: { opportunity: DemoOpportun
 
   return <article className="group border-t border-[#cfc8bc] py-6 transition-colors hover:border-[#a58f5c]" data-testid={`card-demo-opportunity-${opportunity.id}`}>
     <div className="flex flex-wrap items-center gap-2">
-      <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">Demo Opportunity</span>
+      <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">{t('dash.demoLabel')}</span>
       <span className="font-mono-label ml-auto text-[10px] uppercase tracking-[.12em] text-[#938c7e]">{opportunity.industry}</span>
     </div>
     <h2 className="font-editorial mt-4 max-w-3xl text-[26px] leading-tight text-[#38352f] md:text-[30px]">{opportunity.title}</h2>

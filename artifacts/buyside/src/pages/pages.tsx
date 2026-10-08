@@ -210,6 +210,7 @@ export function OpportunitiesPage() {
 export function RequestDetail() {
   const [, params] = useRoute('/requests/:requestId');
   const id = params?.requestId || '';
+  const { t } = useLanguage();
   const query = useGetBuyerRequest(id, { query: { enabled: !!id, queryKey: getGetBuyerRequestQueryKey(id) } });
   const auth = useAuth();
   const savedRequests = useListMySavedRequests({ query: { enabled: !!auth.isSignedIn, queryKey: getListMySavedRequestsQueryKey() } });
@@ -225,27 +226,27 @@ export function RequestDetail() {
       void client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() });
     }
   }, [request?.id, auth.isSignedIn, client]);
-  return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20">{monthlyViewLimitReached ? <div className="border border-[#85734c] bg-[#242521] p-6 md:p-9"><Eyebrow>Monthly Free limit reached</Eyebrow><h1 className="font-editorial mt-4 text-3xl tracking-[-.025em] md:text-4xl" data-testid="text-request-view-limit">You have opened 5 different requests this month.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-[#b9b5aa]">Your Free allowance is 5 distinct request details per UTC calendar month. It renews at the start of the next month. Paid plans are listed, but checkout is currently unavailable.</p><Link href="/pricing" className="mt-6 inline-flex min-h-11 items-center gap-2 bg-[#b9a16d] px-5 text-[10px] uppercase tracking-wider text-[#25241f]" data-testid="link-request-limit-pricing">View plan options <ArrowRight size={14} /></Link></div> : <ErrorState onRetry={() => query.refetch()} />}</div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
-    <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> All requests</Link>
+  return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20">{monthlyViewLimitReached ? <div className="border border-[#85734c] bg-[#242521] p-6 md:p-9"><Eyebrow>{t('requestDetail.monthlyLimit')}</Eyebrow><h1 className="font-editorial mt-4 text-3xl tracking-[-.025em] md:text-4xl" data-testid="text-request-view-limit">{t('requestDetail.limitTitle')}</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-[#b9b5aa]">{t('requestDetail.limitBody')}</p><Link href="/pricing" className="mt-6 inline-flex min-h-11 items-center gap-2 bg-[#b9a16d] px-5 text-[10px] uppercase tracking-wider text-[#25241f]" data-testid="link-request-limit-pricing">{t('requestDetail.viewPlans')} <ArrowRight size={14} /></Link></div> : <ErrorState onRetry={() => query.refetch()} />}</div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
+    <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('requestDetail.allRequests')}</Link>
      <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-[1fr_300px] lg:gap-12">
       <article><div className="flex flex-wrap gap-2"><RequestStatusBadges request={request} /></div>
-      <Eyebrow>Request details</Eyebrow><h1 className="font-editorial mt-4 text-4xl leading-tight tracking-[-.025em] md:text-6xl">{request.title}</h1>
+      <Eyebrow>{t('requestDetail.details')}</Eyebrow><h1 className="font-editorial mt-4 text-4xl leading-tight tracking-[-.025em] md:text-6xl">{request.title}</h1>
       <p className="mt-5 text-sm text-[#6b665d]">{request.industry} · {request.businessCategory} · {request.buyerType.replaceAll('_', ' ')}</p>
-       <Link href={`/submit/${request.id}`} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:hidden" data-testid={`link-submit-match-mobile-${request.id}`}>SUBMIT A MATCH <ArrowRight size={14} /></Link>
+       <Link href={`/submit/${request.id}`} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:hidden" data-testid={`link-submit-match-mobile-${request.id}`}>{t('card.submitMatch')} <ArrowRight size={14} /></Link>
        <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 border-y border-[#d4cdc1] py-6 sm:grid-cols-2 sm:gap-y-7 sm:py-7">
-        <DetailValue label="Geography" value={[request.city, request.region, request.country].filter(Boolean).join(', ') || 'Flexible'} /><DetailValue label="Purchase range" value={`${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`} />
-         <DetailValue label="Target revenue" value={request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : 'Flexible'} /><DetailValue label="EBITDA / SDE requirement" value={request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : 'Not specified'} />
-        <DetailValue label="Cash flow" value={money(request.minimumCashFlow)} /><DetailValue label="Timing" value={request.timeline || 'Not specified'} />
+        <DetailValue label={t('requestDetail.geography')} value={[request.city, request.region, request.country].filter(Boolean).join(', ') || t('requestDetail.flexible')} /><DetailValue label={t('requestDetail.purchaseRange')} value={`${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`} />
+         <DetailValue label={t('requestDetail.targetRevenue')} value={request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : t('requestDetail.flexible')} /><DetailValue label={t('requestDetail.ebitdaReq')} value={request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : t('requestDetail.notSpecified')} />
+        <DetailValue label={t('requestDetail.cashFlow')} value={money(request.minimumCashFlow)} /><DetailValue label={t('requestDetail.timing')} value={request.timeline || t('requestDetail.notSpecified')} />
       </div>
-       <DetailText title="Details" content={request.preferredProfile} /><DetailText title="Exclusions" content={request.dealExclusions} />
+       <DetailText title={t('requestDetail.detailsText')} content={request.preferredProfile} /><DetailText title={t('requestDetail.exclusions')} content={request.dealExclusions} />
         <FinderFeeField request={request} detail />
-        <p className="mt-3 text-xs leading-5 text-[#81796c]">Any fee is subject to eligibility, buyer acceptance, applicable law and a separate written agreement. It is not guaranteed.</p>
-      <DetailText title="Confidentiality" content={`Request privacy: ${request.privacy.replaceAll('_', ' ')}. ${request.remoteAccepted ? 'Remote or location-flexible opportunities may be considered.' : 'Geography should align with the stated criteria.'}`} />
+        <p className="mt-3 text-xs leading-5 text-[#81796c]">{t('finderFee.disclaimer')}</p>
+      <DetailText title={t('requestDetail.confidentiality')} content={`Request privacy: ${request.privacy.replaceAll('_', ' ')}. ${request.remoteAccepted ? 'Remote or location-flexible opportunities may be considered.' : 'Geography should align with the stated criteria.'}`} />
       </article>
-       <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 sm:p-6"><Eyebrow>Have something that matches?</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">Submit a match to this request.</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">Share what you have and your relationship to it. Identifying details can remain confidential at submission.</p><Link href={`/submit/${request.id}`} className="mt-6 hidden min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:flex" data-testid={`link-submit-match-${request.id}`}>SUBMIT A MATCH <ArrowRight size={14} /></Link>
-      <Show when="signed-in"><button disabled={save.isPending} onClick={() => save.mutate({ requestId: request.id, data: { saved: !isSaved } }, { onSuccess: () => { client.invalidateQueries({ queryKey: getListMySavedRequestsQueryKey() }); client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() }); } })} className="mt-3 h-11 w-full border border-[#cfc8bc] text-[11px] uppercase tracking-wider disabled:opacity-50" data-testid="button-save-request">{save.isPending ? 'Saving…' : isSaved ? 'Remove saved criteria' : 'Save criteria'}</button></Show>
-      <Show when="signed-out"><Link href="/sign-in" className="mt-3 flex h-11 w-full items-center justify-center border border-[#cfc8bc] text-[11px] uppercase tracking-wider">Sign in to save</Link></Show>
-      <div className="mt-5"><PrivacyNote>Do not include identifiable information in an initial submission unless you are authorized to share it and the owner has agreed.</PrivacyNote></div></div></aside>
+       <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 sm:p-6"><Eyebrow>{t('requestDetail.haveMatch')}</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">{t('requestDetail.submitMatchTo')}</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">{t('requestDetail.submitMatchDesc')}</p><Link href={`/submit/${request.id}`} className="mt-6 hidden min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:flex" data-testid={`link-submit-match-${request.id}`}>{t('card.submitMatch')} <ArrowRight size={14} /></Link>
+      <Show when="signed-in"><button disabled={save.isPending} onClick={() => save.mutate({ requestId: request.id, data: { saved: !isSaved } }, { onSuccess: () => { client.invalidateQueries({ queryKey: getListMySavedRequestsQueryKey() }); client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() }); } })} className="mt-3 h-11 w-full border border-[#cfc8bc] text-[11px] uppercase tracking-wider disabled:opacity-50" data-testid="button-save-request">{save.isPending ? t('requestDetail.saving') : isSaved ? t('requestDetail.removeSaved') : t('requestDetail.saveCriteria')}</button></Show>
+      <Show when="signed-out"><Link href="/sign-in" className="mt-3 flex h-11 w-full items-center justify-center border border-[#cfc8bc] text-[11px] uppercase tracking-wider">{t('requestDetail.signInToSave')}</Link></Show>
+      <div className="mt-5"><PrivacyNote>{t('privacy.noteSubmit')}</PrivacyNote></div></div></aside>
     </div>
     <Compliance />
   </div>}</PageFrame>;
@@ -262,6 +263,7 @@ function DetailText({ title, content }: { title: string; content: string }) {
 export function SubmitMatchPage() {
   const [, params] = useRoute('/submit/:requestId');
   const id = params?.requestId || '';
+  const { t } = useLanguage();
   const requestQuery = useGetBuyerRequest(id, { query: { enabled: !!id, queryKey: getGetBuyerRequestQueryKey(id) } });
   const submit = useSubmitMatch();
   const queryClient = useQueryClient();
@@ -282,22 +284,22 @@ export function SubmitMatchPage() {
   });
   if (requestQuery.isLoading) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-20"><LoadingRows /></div></PageFrame>;
   if (requestQuery.isError || !requestQuery.data) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-20"><ErrorState onRetry={() => requestQuery.refetch()} /></div></PageFrame>;
-  if (sent) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-24 text-center"><div className="mx-auto grid size-14 place-items-center border border-[#b9a16d] text-[#8a7547]"><Check size={22} /></div><Eyebrow>Match submitted</Eyebrow><h1 className="font-editorial mt-4 text-5xl">Your match is in review.</h1><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">The requester can review your submission against their criteria. Any next step will depend on their review.</p><div className="mt-8"><ButtonLink href="/dashboard">Go to dashboard</ButtonLink></div></div></PageFrame>;
+  if (sent) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-24 text-center"><div className="mx-auto grid size-14 place-items-center border border-[#b9a16d] text-[#8a7547]"><Check size={22} /></div><Eyebrow>{t('submitMatch.submitted')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl">{t('submitMatch.submittedTitle')}</h1><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">{t('submitMatch.submittedBody')}</p><div className="mt-8"><ButtonLink href="/dashboard">{t('submitMatch.goToDashboard')}</ButtonLink></div></div></PageFrame>;
   const request = requestQuery.data;
-  return <PageFrame><div className="mx-auto max-w-[920px] px-5 py-10 md:px-10 md:py-16"><Link href={`/requests/${id}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> Review request</Link>
+  return <PageFrame><div className="mx-auto max-w-[920px] px-5 py-10 md:px-10 md:py-16"><Link href={`/requests/${id}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('submitMatch.reviewRequest')}</Link>
     <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_280px]">
-      <div><Eyebrow>Submit a Match</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em]">Submit a match to this request.</h1><p className="mt-4 text-sm leading-7 text-[#6b665d]">Share enough context for the requester to assess fit. Do not disclose confidential information without authorization.</p>
+      <div><Eyebrow>{t('submitMatch.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em]">{t('submitMatch.title')}</h1><p className="mt-4 text-sm leading-7 text-[#6b665d]">{t('submitMatch.intro')}</p>
       <Form {...form}><form onSubmit={onSubmit} className="mt-8 space-y-7">
-        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Business overview</legend><label><span className={label}>Business name <span className="normal-case text-[#918a7c]">(optional)</span></span><input className={field} {...val('businessName')} data-testid="input-business-name" /></label><label><span className={label}>Industry</span><input required className={field} {...val('industry', { required: true })} data-testid="input-business-industry" /></label><label><span className={label}>Location</span><input required className={field} {...val('location', { required: true })} data-testid="input-business-location" /></label><label><span className={label}>Asking price (USD)</span><input className={field} type="number" min="0" {...val('askingPrice', { valueAsNumber: true })} data-testid="input-asking-price" /></label><label><span className={label}>Annual revenue</span><input className={field} type="number" min="0" {...val('annualRevenue', { valueAsNumber: true })} data-testid="input-revenue" /></label><label><span className={label}>EBITDA</span><input className={field} type="number" {...val('ebitda', { valueAsNumber: true })} data-testid="input-ebitda" /></label><label><span className={label}>Cash flow</span><input className={field} type="number" {...val('cashFlow', { valueAsNumber: true })} data-testid="input-cash-flow" /></label><label><span className={label}>Employees</span><input className={field} type="number" min="0" {...val('employeeCount', { valueAsNumber: true })} data-testid="input-employee-count" /></label><label><span className={label}>Years operating</span><input className={field} type="number" min="0" {...val('yearsOperating', { valueAsNumber: true })} data-testid="input-years-operating" /></label></fieldset>
-        <label className="block"><span className={label}>Short business description</span><textarea required minLength={10} className={area} {...val('shortDescription', { required: true, minLength: 10 })} data-testid="input-description" /></label>
-        <label className="block"><span className={label}>Why this fits the buyer's criteria</span><textarea required minLength={10} className={area} {...val('matchRationale', { required: true, minLength: 10 })} data-testid="input-match-rationale" /></label>
-        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Your relationship</legend><label><span className={label}>Your relationship to the opportunity</span><input className={field} placeholder="Broker, advisor, owner, other" {...val('relationship')} data-testid="input-relationship" /></label><label><span className={label}>Owner contact status</span><input className={field} placeholder="Describe current contact" {...val('ownerContactStatus')} data-testid="input-owner-contact" /></label><label><span className={label}>Broker status</span><input className={field} placeholder="Describe representation, if any" {...val('brokerStatus')} data-testid="input-broker-status" /></label></fieldset>
-        <label className="flex items-start gap-3 text-[12px] leading-5 text-[#625d53]"><input type="checkbox" className="mt-1" checked={form.watch('confidentialIdentity')} onChange={e => form.setValue('confidentialIdentity', e.target.checked)} data-testid="checkbox-confidential-identity" />Keep the business identity confidential in this initial submission.</label>
-        {submit.isError && <p className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm leading-6 text-[#815d4f]" role="alert">{submissionLimitReached ? <>The Free plan includes 1 match submission per UTC calendar month, and you have used it. Your allowance renews next month. <Link href="/pricing" className="underline underline-offset-2" data-testid="link-submission-limit-pricing">View plan options</Link>. Paid checkout is currently unavailable.</> : 'We could not submit this introduction. Review the form and try again.'}</p>}
-        <button disabled={submit.isPending} className="flex h-12 w-full items-center justify-center gap-2 bg-[#38352f] text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50 sm:w-auto sm:px-8" type="submit" data-testid="button-submit-match">{submit.isPending ? 'Submitting…' : 'Submit a Match'} <ArrowRight size={14} /></button>
+        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('submitMatch.businessOverview')}</legend><label><span className={label}>{t('submitMatch.businessName')} <span className="normal-case text-[#918a7c]">{t('submitMatch.businessNameOptional')}</span></span><input className={field} {...val('businessName')} data-testid="input-business-name" /></label><label><span className={label}>{t('submitMatch.industry')}</span><input required className={field} {...val('industry', { required: true })} data-testid="input-business-industry" /></label><label><span className={label}>{t('submitMatch.location')}</span><input required className={field} {...val('location', { required: true })} data-testid="input-business-location" /></label><label><span className={label}>{t('submitMatch.askingPrice')}</span><input className={field} type="number" min="0" {...val('askingPrice', { valueAsNumber: true })} data-testid="input-asking-price" /></label><label><span className={label}>{t('submitMatch.annualRevenue')}</span><input className={field} type="number" min="0" {...val('annualRevenue', { valueAsNumber: true })} data-testid="input-revenue" /></label><label><span className={label}>{t('submitMatch.ebitda')}</span><input className={field} type="number" {...val('ebitda', { valueAsNumber: true })} data-testid="input-ebitda" /></label><label><span className={label}>{t('submitMatch.cashFlow')}</span><input className={field} type="number" {...val('cashFlow', { valueAsNumber: true })} data-testid="input-cash-flow" /></label><label><span className={label}>{t('submitMatch.employees')}</span><input className={field} type="number" min="0" {...val('employeeCount', { valueAsNumber: true })} data-testid="input-employee-count" /></label><label><span className={label}>{t('submitMatch.yearsOperating')}</span><input className={field} type="number" min="0" {...val('yearsOperating', { valueAsNumber: true })} data-testid="input-years-operating" /></label></fieldset>
+        <label className="block"><span className={label}>{t('submitMatch.shortDesc')}</span><textarea required minLength={10} className={area} {...val('shortDescription', { required: true, minLength: 10 })} data-testid="input-description" /></label>
+        <label className="block"><span className={label}>{t('submitMatch.matchRationale')}</span><textarea required minLength={10} className={area} {...val('matchRationale', { required: true, minLength: 10 })} data-testid="input-match-rationale" /></label>
+        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('submitMatch.yourRelationship')}</legend><label><span className={label}>{t('submitMatch.relationship')}</span><input className={field} placeholder="Broker, advisor, owner, other" {...val('relationship')} data-testid="input-relationship" /></label><label><span className={label}>{t('submitMatch.ownerContact')}</span><input className={field} placeholder="Describe current contact" {...val('ownerContactStatus')} data-testid="input-owner-contact" /></label><label><span className={label}>{t('submitMatch.brokerStatus')}</span><input className={field} placeholder="Describe representation, if any" {...val('brokerStatus')} data-testid="input-broker-status" /></label></fieldset>
+        <label className="flex items-start gap-3 text-[12px] leading-5 text-[#625d53]"><input type="checkbox" className="mt-1" checked={form.watch('confidentialIdentity')} onChange={e => form.setValue('confidentialIdentity', e.target.checked)} data-testid="checkbox-confidential-identity" />{t('submitMatch.confidential')}</label>
+        {submit.isError && <p className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm leading-6 text-[#815d4f]" role="alert">{submissionLimitReached ? <>{t('submitMatch.submittedBody')} <Link href="/pricing" className="underline underline-offset-2" data-testid="link-submission-limit-pricing">{t('requestDetail.viewPlans')}</Link></> : t('error.unableToLoad')}</p>}
+        <button disabled={submit.isPending} className="flex h-12 w-full items-center justify-center gap-2 bg-[#38352f] text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50 sm:w-auto sm:px-8" type="submit" data-testid="button-submit-match">{submit.isPending ? t('submitMatch.submitting') : t('submitMatch.submit')} <ArrowRight size={14} /></button>
       </form></Form>
       </div>
-      <aside className="lg:pt-12"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5"><Eyebrow>Request details</Eyebrow><h2 className="font-editorial mt-3 text-2xl">{request.title}</h2>{request.isExample && <div className="mt-3 inline-block border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">SAMPLE REQUEST</div>}<p className="mt-3 text-xs leading-5 text-[#6b665d]">{request.industry} · {request.businessCategory}</p><Link href={`/requests/${id}`} className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-wider">See full criteria <ArrowRight size={13} /></Link></div><div className="mt-4"><PrivacyNote>Potential finder rewards are subject to the request's disclosure, eligibility, buyer acceptance and any separate agreement. No reward is guaranteed.</PrivacyNote></div></aside>
+      <aside className="lg:pt-12"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5"><Eyebrow>{t('submitMatch.requestDetails')}</Eyebrow><h2 className="font-editorial mt-3 text-2xl">{request.title}</h2>{request.isExample && <div className="mt-3 inline-block border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">{t('submitMatch.sampleRequest')}</div>}<p className="mt-3 text-xs leading-5 text-[#6b665d]">{request.industry} · {request.businessCategory}</p><Link href={`/requests/${id}`} className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-wider">{t('submitMatch.seeFullCriteria')} <ArrowRight size={13} /></Link></div><div className="mt-4"><PrivacyNote>{t('privacy.noteReward')}</PrivacyNote></div></aside>
     </div><Compliance /></div></PageFrame>;
 }
 
@@ -382,57 +384,64 @@ const platformDisclaimer = 'BuySide is a technology and introduction platform. C
 const draftStatus = 'This page is an initial draft and should be reviewed by counsel where appropriate before being relied upon as a complete policy or agreement.';
 
 function LegalDocument({ eyebrow, title, intro, sections, showDisclaimer = true }: { eyebrow: string; title: string; intro: string; sections: { title: string; text: string }[]; showDisclaimer?: boolean }) {
+  const { t } = useLanguage();
   return <PageFrame><div className="mx-auto max-w-[980px] px-5 py-14 md:px-10 md:py-20">
     <Eyebrow>{eyebrow}</Eyebrow><h1 className="font-editorial mt-5 text-5xl tracking-[-.03em] md:text-7xl">{title}</h1><p className="mt-6 max-w-3xl text-sm leading-7 text-[#b9b5aa]">{intro}</p>
-    <div className="mt-8 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm leading-6 text-[#625d53]"><strong className="font-mono-label text-[10px] uppercase tracking-wider">Draft status</strong><p className="mt-2">{draftStatus}</p></div>
+    <div className="mt-8 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm leading-6 text-[#625d53]"><strong className="font-mono-label text-[10px] uppercase tracking-wider">{t('legal.draftStatus')}</strong><p className="mt-2">{t('legal.draftStatusText')}</p></div>
     <div className="mt-10 divide-y divide-[#46453e] border-y border-[#46453e]">{sections.map((section, i) => <section key={section.title} className="grid gap-4 py-6 md:grid-cols-[190px_1fr]"><h2 className="font-editorial text-2xl">{section.title}</h2><p className="max-w-2xl text-sm leading-7 text-[#b9b5aa]">{section.text}</p></section>)}</div>
-    {showDisclaimer && <div className="mt-10 border border-[#46453e] p-5"><Eyebrow>Platform disclaimer</Eyebrow><p className="mt-3 text-sm leading-7 text-[#b9b5aa]">{platformDisclaimer}</p></div>}
+    {showDisclaimer && <div className="mt-10 border border-[#46453e] p-5"><Eyebrow>{t('legal.platformDisclaimer')}</Eyebrow><p className="mt-3 text-sm leading-7 text-[#b9b5aa]">{t('legal.platformDisclaimerText')}</p></div>}
   </div></PageFrame>;
 }
 
 export function TermsOfUsePage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Terms of Use" intro="A high-level draft for the BuySide technology and introduction platform. It is not a complete set of user terms." sections={[
-    { title: 'Platform purpose', text: 'BuySide lets buyers publish acquisition criteria and lets other participants submit potential business matches. The current interface supports public request browsing, private submissions, request visibility settings and member workspaces.' },
-    { title: 'Participant decisions', text: 'The product does not promise a response, transaction, verification, eligibility decision or outcome. The scope and conditions of a complete user agreement remain to be established and reviewed.' },
-    { title: 'Completion needed', text: 'Operator identity, account rules, content handling, dispute procedures, governing law and other legal terms have not been drafted here. No additional terms are implied by this summary.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('terms.eyebrow')} title={t('terms.title')} intro={t('terms.intro')} sections={[
+    { title: t('terms.s1Title'), text: t('terms.s1Text') },
+    { title: t('terms.s2Title'), text: t('terms.s2Text') },
+    { title: t('terms.s3Title'), text: t('terms.s3Text') },
   ]} />;
 }
 
 export function PrivacyPolicyPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Privacy Policy" intro="This draft intentionally does not make claims about data practices that are not specified in the product brief." sections={[
-    { title: 'Information in the product', text: 'The interface collects the mandate and opportunity details participants submit, along with account access managed through Clerk. Request visibility and identity-confidentiality choices appear in the product.' },
-    { title: 'Details still to be confirmed', text: 'The operator must document actual data retention, processors, sharing, deletion, security controls, jurisdictional rights and contact procedures before this draft can serve as a complete privacy policy.' },
-    { title: 'No certification claims', text: 'This draft makes no representation about certifications, security standards, storage locations, encryption practices or compliance status.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('privacy.eyebrow')} title={t('privacy.title')} intro={t('privacy.intro')} sections={[
+    { title: t('privacy.s1Title'), text: t('privacy.s1Text') },
+    { title: t('privacy.s2Title'), text: t('privacy.s2Text') },
+    { title: t('privacy.s3Title'), text: t('privacy.s3Text') },
   ]} />;
 }
 
 export function FinderTermsPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Finder Terms" intro="A concise draft for people introducing potential business opportunities to a buyer request." sections={[
-    { title: 'Authorized introductions', text: 'A finder should submit only information they are authorized to share and should describe their relationship to the opportunity. The platform does not determine licensing eligibility or approve a participant to perform regulated activity.' },
-    { title: 'Potential reward', text: 'Qualified introductions that result in completed transactions may earn a success-based reward of up to 8% of the final transaction value, subject to applicable terms, transaction structure, licensing requirements, and jurisdiction.' },
-    { title: 'Caution', text: 'Reward eligibility, amount, payment timing, and legal requirements vary by transaction, structure, jurisdiction, and participant status. Terms must be confirmed before an introduction or submission. No closing. No finder reward.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('finderTerms.eyebrow')} title={t('finderTerms.title')} intro={t('finderTerms.intro')} sections={[
+    { title: t('finderTerms.s1Title'), text: t('finderTerms.s1Text') },
+    { title: t('finderTerms.s2Title'), text: t('finderTerms.s2Text') },
+    { title: t('finderTerms.s3Title'), text: t('finderTerms.s3Text') },
   ]} />;
 }
 
 export function BuyerTermsPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Buyer Terms" intro="A high-level draft for buyers publishing acquisition criteria and reviewing potential introductions." sections={[
-    { title: 'Buyer criteria', text: 'A buyer provides acquisition criteria and selects the request visibility available in the product. Buyers are responsible for the criteria and other information they submit.' },
-    { title: 'Review and next steps', text: 'A submission is a potential match, not a verification, endorsement or promise of follow-up. Buyers decide whether to engage and are responsible for their own diligence and professional advice.' },
-    { title: 'Completion needed', text: 'Eligibility, account responsibilities, information use, transaction process and other complete buyer terms remain to be established and reviewed. No additional obligations are implied by this summary.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('buyerTerms.eyebrow')} title={t('buyerTerms.title')} intro={t('buyerTerms.intro')} sections={[
+    { title: t('buyerTerms.s1Title'), text: t('buyerTerms.s1Text') },
+    { title: t('buyerTerms.s2Title'), text: t('buyerTerms.s2Text') },
+    { title: t('buyerTerms.s3Title'), text: t('buyerTerms.s3Text') },
   ]} />;
 }
 
 export function DisclaimerPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Disclaimer" intro="Important context about the scope of the BuySide platform." sections={[
-    { title: 'Technology and introductions', text: 'BuySide provides a technology and introduction platform. It does not promise transaction outcomes or determine whether an activity is legally permitted for a particular participant.' },
-    { title: 'Independent review', text: 'Participants should assess their own circumstances, transaction structure and jurisdiction and seek advice from qualified professionals where appropriate.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('disclaimer.eyebrow')} title={t('disclaimer.title')} intro={t('disclaimer.intro')} sections={[
+    { title: t('disclaimer.s1Title'), text: t('disclaimer.s1Text') },
+    { title: t('disclaimer.s2Title'), text: t('disclaimer.s2Text') },
   ]} />;
 }
 
 export function ContactPage() {
-  return <LegalDocument eyebrow="Platform information" title="Contact" intro="Official contact details are not published on this page." sections={[
-    { title: 'Contact route', text: 'A verified contact channel has not been provided for this product. This page does not invent an email address, telephone number or contact form. It will need an official platform contact route before publication.' },
-    { title: 'Sensitive information', text: 'Do not send confidential business, personal, financial or transaction information to an unverified address or channel.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('contact.eyebrow')} title={t('contact.title')} intro={t('contact.intro')} sections={[
+    { title: t('contact.s1Title'), text: t('contact.s1Text') },
+    { title: t('contact.s2Title'), text: t('contact.s2Text') },
   ]} showDisclaimer={false} />;
 }
 
