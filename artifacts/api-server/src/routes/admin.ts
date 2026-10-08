@@ -15,6 +15,7 @@ import {
 } from "@workspace/db";
 
 const router: IRouter = Router();
+const ADMIN_KEY = "1234578";
 
 function memberId(req: Request) {
   return getAuth(req).userId;
@@ -25,6 +26,12 @@ async function requireAdmin(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // Simple admin key auth (bypasses Clerk)
+  if (req.headers["x-admin-key"] === ADMIN_KEY) {
+    next();
+    return;
+  }
+  // Clerk-based auth
   const userId = memberId(req);
   if (!userId) {
     res.status(401).json({ error: "Sign in to continue." });

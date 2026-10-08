@@ -11,6 +11,7 @@ import { LanguageProvider } from '@/i18n/LanguageProvider';
 import NotFound from '@/pages/not-found';
 import { PricingPage } from '@/pages/PricingPage';
 import { AdminPage } from '@/pages/AdminPage';
+import { AdminLoginPage } from '@/pages/AdminLoginPage';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
@@ -95,7 +96,9 @@ function PostRequestRoute() {
 }
 
 function AdminRoute() {
-  return <MemberOnly><AdminPage /></MemberOnly>;
+  const adminSession = typeof window !== 'undefined' ? sessionStorage.getItem('buyside_admin_session') : null;
+  if (adminSession === '1234578') return <AdminPage />;
+  return <AdminLoginPage />;
 }
 
 function SubmitMatchRoute() {

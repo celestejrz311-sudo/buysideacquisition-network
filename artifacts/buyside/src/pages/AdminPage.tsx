@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
-import { useAuth } from '@clerk/react';
 import { ArrowLeft, Check, Search, X } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { PublicLayout, Eyebrow } from '@/components/site';
+
+const ADMIN_SESSION_KEY = 'buyside_admin_session';
+const ADMIN_PASSWORD = '1234578';
+const hasAdminSession = () => sessionStorage.getItem(ADMIN_SESSION_KEY) === ADMIN_PASSWORD;
 
 type AdminUser = {
   userId: string;
@@ -53,9 +56,11 @@ const btnPrimary = `${btn} bg-[#38352f] text-[#f5f2eb] hover:bg-[#504b40]`;
 const btnOutline = `${btn} border border-[#cfc8bc] text-[#38352f] hover:border-[#9a8352]`;
 
 async function adminFetch<T>(path: string, options?: RequestInit): Promise<T> {
+  const headers: Record<string, string> = { 'content-type': 'application/json', ...options?.headers as Record<string, string> };
+  if (hasAdminSession()) headers['x-admin-key'] = ADMIN_PASSWORD;
   const res = await fetch(`/api${path}`, {
     ...options,
-    headers: { 'content-type': 'application/json', ...options?.headers },
+    headers,
   });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
@@ -65,7 +70,6 @@ async function adminFetch<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export function AdminPage() {
-  const { isSignedIn, userId } = useAuth();
   const { t } = useLanguage();
   const [tab, setTab] = useState<'users' | 'requests' | 'matches' | 'analytics'>('analytics');
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -79,11 +83,9 @@ export function AdminPage() {
   const [saving, setSaving] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isSignedIn || !userId) { setIsAdmin(false); return; }
-    fetch('/api/me/profile').then(r => r.json()).then(p => {
-      setIsAdmin(p.role === 'admin');
-    }).catch(() => setIsAdmin(false));
-  }, [isSignedIn, userId]);
+    if (hasAdminSession()) { setIsAdmin(true); return; }
+    setIsAdmin(false);
+  }, []);
 
   const loadUsers = useCallback(async () => {
     setLoading(true); setError('');
