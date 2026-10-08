@@ -10,6 +10,8 @@ export const memberProfilesTable = pgTable("member_profiles", {
   suspended: boolean("suspended").notNull().default(false),
   verified: boolean("verified").notNull().default(false),
   stripeSubscriptionStatus: text("stripe_subscription_status"),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
   privateNetworkApproved: boolean("private_network_approved").notNull().default(false),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()

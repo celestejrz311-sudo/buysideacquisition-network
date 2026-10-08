@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ArrowRight, Check, LockKeyhole, ShieldCheck } from 'lucide-react';
+import { ArrowRight, Check, LockKeyhole, ShieldCheck, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
+import { useAuth } from '@clerk/react';
 import { PublicLayout, Eyebrow } from '@/components/site';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useSeo } from '@/hooks/useSeo';
@@ -189,7 +190,34 @@ function formatPrice(value: number) {
 export function PricingPage() {
   const [billing, setBilling] = useState<BillingPeriod>('monthly');
   const { lang, setLang } = useLanguage();
+  const { isSignedIn, signIn } = useAuth();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   useSeo('membership');
+
+  async function handleCheckout(planId: string) {
+    if (!isSignedIn) {
+      signIn({ redirectUrl: window.location.href });
+      return;
+    }
+    setLoadingPlan(planId);
+    try {
+      const resp = await fetch('/api/stripe/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: planId, billing }),
+      });
+      const data = await resp.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error || 'Unable to start checkout. Please try again.');
+      }
+    } catch {
+      alert('Unable to start checkout. Please try again.');
+    } finally {
+      setLoadingPlan(null);
+    }
+  }
 
   return (
     <PublicLayout>
@@ -322,19 +350,19 @@ export function PricingPage() {
                   <div className="mt-8">
                     <button
                       type="button"
-                      disabled
-                      aria-describedby={`stripe-note-${index}`}
+                      disabled={loadingPlan !== null}
+                      onClick={() => handleCheckout(plan.id)}
                       data-plan-id={plan.id}
                       data-billing={billing}
-                      data-status="unavailable"
-                      className="inline-flex min-h-12 w-full cursor-not-allowed items-center justify-center border border-[#55564e] bg-[#30312c] px-4 text-[11px] uppercase tracking-[.1em] text-[#979387]"
-                      data-testid={`button-unavailable-${index}`}
+                      data-status="available"
+                      className="inline-flex min-h-12 w-full items-center justify-center gap-2 bg-[#b9a16d] px-4 text-[11px] uppercase tracking-[.1em] text-[#25241f] transition-colors hover:bg-[#c6b17b] disabled:opacity-60"
+                      data-testid={`button-checkout-${index}`}
                     >
-                      {plan.action[lang]} · {ui.unavailable[lang]}
+                      {loadingPlan === plan.id && <Loader2 size={14} className="animate-spin" />}
+                      {loadingPlan === plan.id
+                        ? (lang === 'es' ? 'Procesando...' : 'Processing...')
+                        : plan.action[lang]}
                     </button>
-                    <p id={`stripe-note-${index}`} className="mt-3 text-center text-[11px] leading-5 text-[#a39e91]" data-testid={`status-stripe-${index}`}>
-                      {ui.stripeNote[lang]}
-                    </p>
                   </div>
                 )}
               </article>
