@@ -20,6 +20,7 @@ services:
     volumes:
       - .:/app
     environment:
+      CI: "true"
       DATABASE_URL: postgresql://buyside:buyside_dev@db:5432/buyside
     command:
       - sh
@@ -39,6 +40,7 @@ services:
     volumes:
       - .:/app
     environment:
+      CI: "true"
       NODE_ENV: development
       PORT: "5000"
       DATABASE_URL: postgresql://buyside:buyside_dev@db:5432/buyside
@@ -71,6 +73,7 @@ services:
     volumes:
       - .:/app
     environment:
+      CI: "true"
       PORT: "5173"
       BASE_PATH: "/"
       API_PROXY_TARGET: http://api:5000

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowRight, Check, LockKeyhole, ShieldCheck, Loader2 } from 'lucide-react';
 import { Link } from 'wouter';
-import { useAuth } from '@clerk/react';
+import { useAuth, useClerk } from '@clerk/react';
 import { PublicLayout, Eyebrow } from '@/components/site';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useSeo } from '@/hooks/useSeo';
@@ -34,6 +34,7 @@ const plans = [
     },
     action: { en: 'Create a free account', es: 'Crear una cuenta gratuita' },
     free: true,
+    popular: false,
   },
   {
     id: 'buyer-pro',
@@ -95,6 +96,7 @@ const plans = [
     },
     action: { en: 'Choose Professional', es: 'Elegir Professional' },
     free: false,
+    popular: false,
   },
   {
     id: 'private-network',
@@ -124,6 +126,7 @@ const plans = [
     },
     action: { en: 'Apply for Private Network', es: 'Solicitar Private Network' },
     free: false,
+    popular: false,
   },
 ] as const;
 
@@ -190,13 +193,14 @@ function formatPrice(value: number) {
 export function PricingPage() {
   const [billing, setBilling] = useState<BillingPeriod>('monthly');
   const { lang, setLang } = useLanguage();
-  const { isSignedIn, signIn } = useAuth();
+  const { isSignedIn } = useAuth();
+  const { redirectToSignIn } = useClerk();
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   useSeo('membership');
 
   async function handleCheckout(planId: string) {
     if (!isSignedIn) {
-      signIn({ redirectUrl: window.location.href });
+      redirectToSignIn({ redirectUrl: window.location.href });
       return;
     }
     setLoadingPlan(planId);

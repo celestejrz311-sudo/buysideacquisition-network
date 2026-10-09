@@ -11,6 +11,12 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "sequential"
+[[workflows.workflow.steps]]
+shell = "pnpm --filter @workspace/api-server run dev"
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
