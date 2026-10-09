@@ -9,14 +9,14 @@ import {
 } from "@workspace/api-client-react";
 import { ArrowRight, CheckCircle2, CircleAlert } from "lucide-react";
 
-const roles: Array<{ value: MemberProfileInput["role"]; label: string }> = [
-  { value: "buyer", label: "Buyer" },
-  { value: "broker", label: "Broker" },
-  { value: "business_owner", label: "Business Owner" },
-  { value: "advisor", label: "Advisor" },
-  { value: "deal_finder", label: "Deal Finder" },
+const interestOptions: Array<{ value: string; label: string }> = [
+  { value: "buy", label: "I'm looking to buy" },
+  { value: "sell", label: "I'm looking to sell" },
+  { value: "service", label: "I offer a service" },
+  { value: "products", label: "I sell products" },
+  { value: "broker", label: "I'm a broker / finder" },
+  { value: "investor", label: "I'm an investor" },
 ];
-type AccountRole = MemberProfileInput["role"] | "unset";
 
 const planNames = {
   free: "BuySide Free",
@@ -34,11 +34,13 @@ export function AccountPlanPanel({
   const profile = useGetMyProfile();
   const updateProfile = useUpdateMyProfile();
   const queryClient = useQueryClient();
-  const [role, setRole] = useState<AccountRole>("unset");
+  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
 
   useEffect(() => {
-    if (profile.data?.role) setRole(profile.data.role);
-  }, [profile.data?.role]);
+    if (profile.data?.interests) {
+      setSelectedInterests(profile.data.interests.split(",").filter(Boolean));
+    }
+  }, [profile.data?.interests]);
 
   const planName = profile.isLoading
     ? "Loading plan"
@@ -48,10 +50,26 @@ export function AccountPlanPanel({
         ? planNames[profile.data.plan]
         : "BuySide Free";
 
-  function saveRole() {
-    if (role === "unset") return;
+  function toggleInterest(value: string) {
+    setSelectedInterests((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value],
+    );
+  }
+
+  function saveInterests() {
+    const role = selectedInterests.includes("buy")
+      ? "buyer"
+      : selectedInterests.includes("broker")
+        ? "broker"
+        : selectedInterests.includes("sell")
+          ? "business_owner"
+          : selectedInterests.includes("service")
+            ? "advisor"
+            : selectedInterests.includes("investor")
+              ? "buyer"
+              : "deal_finder";
     updateProfile.mutate(
-      { data: { role } },
+      { data: { role, interests: selectedInterests.join(",") } },
       {
         onSuccess: () => {
           void queryClient.invalidateQueries({
@@ -69,7 +87,7 @@ export function AccountPlanPanel({
     >
       <div>
         <p className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#8c8475]">
-          Primary role
+          How do you use BuySide?
         </p>
         {profile.isError ? (
           <div className="mt-3 text-xs text-[#d4a08c]">
@@ -85,53 +103,55 @@ export function AccountPlanPanel({
           </div>
         ) : (
           <>
-            <label className="sr-only" htmlFor="member-primary-role">
-              Select your primary BuySide role
-            </label>
-            <select
-              id="member-primary-role"
-              value={role}
-              disabled={profile.isLoading || updateProfile.isPending}
-              onChange={(event) =>
-                setRole(event.target.value as AccountRole)
-              }
-              className="mt-3 h-11 w-full border border-[#cfc8bc] bg-[#242521] px-3 text-sm text-[#eee9de] outline-none focus:border-[#b9a16d] disabled:opacity-60"
-              data-testid="select-primary-role"
+            <fieldset
+              className="mt-3 space-y-2"
+              data-testid="fieldset-interests"
             >
-              <option value="unset">Select a primary role</option>
-              {roles.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
+              <legend className="sr-only">Select how you use BuySide</legend>
+              {interestOptions.map((option) => {
+                const checked = selectedInterests.includes(option.value);
+                return (
+                  <label
+                    key={option.value}
+                    className="flex cursor-pointer items-center gap-2 text-sm text-[#eee9de]"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      disabled={profile.isLoading || updateProfile.isPending}
+                      onChange={() => toggleInterest(option.value)}
+                      className="size-4 accent-[#b9a16d]"
+                      data-testid={`checkbox-interest-${option.value}`}
+                    />
+                    {option.label}
+                  </label>
+                );
+              })}
+            </fieldset>
             <button
               type="button"
-              onClick={saveRole}
-              disabled={
-                profile.isLoading || updateProfile.isPending || role === "unset"
-              }
+              onClick={saveInterests}
+              disabled={profile.isLoading || updateProfile.isPending}
               className="mt-3 inline-flex items-center gap-2 border border-[#85734c] px-3 py-2 text-[10px] uppercase tracking-[.1em] text-[#c6b17b] transition-colors hover:bg-[#302f29] disabled:cursor-wait disabled:opacity-50"
-              data-testid="button-save-role"
+              data-testid="button-save-interests"
             >
-              {updateProfile.isPending ? "Saving…" : "Save role"}
+              {updateProfile.isPending ? "Saving…" : "Save interests"}
             </button>
             {updateProfile.isError && (
               <p className="mt-2 text-xs text-[#d4a08c]" role="alert">
-                Your role could not be saved. Please try again.
+                Your interests could not be saved. Please try again.
               </p>
             )}
             {updateProfile.isSuccess && (
               <p
                 className="mt-2 inline-flex items-center gap-1 text-xs text-[#b9a16d]"
-                data-testid="status-role-saved"
+                data-testid="status-interests-saved"
               >
                 <CheckCircle2 size={13} /> Profile updated
               </p>
             )}
             <p className="mt-3 text-[11px] leading-5 text-[#a39e91]">
-              This is your self-selected primary role. It does not verify
-              credentials or grant special access.
+              Select all that apply. This helps personalize your dashboard.
             </p>
           </>
         )}

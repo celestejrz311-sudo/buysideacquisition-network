@@ -486,6 +486,9 @@ components:
         plan:
           type: string
           enum: [free, pro, partner]
+        interests:
+          type: ["string", "null"]
+          description: Comma-separated list of member interests (buy, sell, service, products, broker, investor).
     MemberProfileInput:
       type: object
       required: [role]
@@ -494,4 +497,7 @@ components:
           type: string
           enum: [buyer, broker, business_owner, advisor, deal_finder]
           description: The member's self-selected primary role.
+        interests:
+          type: ["string", "null"]
+          description: Comma-separated list of member interests (buy, sell, service, products, broker, investor).
 

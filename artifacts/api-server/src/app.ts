@@ -4,6 +4,7 @@ import pinoHttp from "pino-http";
 import { clerkMiddleware } from "@clerk/express";
 import { publishableKeyFromHost } from "@clerk/shared/keys";
 import router from "./routes";
+import { handleStripeWebhook } from "./routes/stripe";
 import { logger } from "./lib/logger";
 import {
   CLERK_PROXY_PATH,
@@ -34,6 +35,15 @@ app.use(
 );
 app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 app.use(cors());
+
+// Stripe webhook needs the raw body for signature verification — must be
+// mounted before express.json() consumes the body.
+app.post(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  handleStripeWebhook,
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(

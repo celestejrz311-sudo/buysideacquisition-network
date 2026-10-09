@@ -38,7 +38,12 @@ export const buyerRequestsTable = pgTable(
       ),
     privacy: text("privacy").notNull().default("public"),
     isVerified: boolean("is_verified").notNull().default(false),
+    isApproved: boolean("is_approved").notNull().default(false),
+    isRejected: boolean("is_rejected").notNull().default(false),
     isExample: boolean("is_example").notNull().default(false),
+    featured: boolean("featured").notNull().default(false),
+    finderRewardType: text("finder_reward_type"),
+    finderRewardValue: text("finder_reward_value"),
     createdBy: text("created_by").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -50,6 +55,7 @@ export const buyerRequestsTable = pgTable(
       table.createdAt,
     ),
     index("buyer_requests_creator_idx").on(table.createdBy),
+    index("buyer_requests_featured_idx").on(table.featured),
   ],
 );
 

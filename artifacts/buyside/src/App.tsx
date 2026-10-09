@@ -7,8 +7,13 @@ import { Route, Switch, Redirect, Link, useLocation, Router as WouterRouter } fr
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { LanguageProvider } from '@/i18n/LanguageProvider';
 import NotFound from '@/pages/not-found';
 import { PricingPage } from '@/pages/PricingPage';
+import { AdminPage } from '@/pages/AdminPage';
+import { AdminLoginPage } from '@/pages/AdminLoginPage';
+import { BusinessListingDetail } from '@/pages/BusinessListingDetail';
+import { SmartSearchPage } from '@/pages/SmartSearchPage';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
@@ -92,6 +97,12 @@ function PostRequestRoute() {
   return <MemberOnly signOutTo="/sign-up"><PostRequestPage /></MemberOnly>;
 }
 
+function AdminRoute() {
+  const adminSession = typeof window !== 'undefined' ? sessionStorage.getItem('buyside_admin_session') : null;
+  if (adminSession === '12345678') return <AdminPage />;
+  return <AdminLoginPage />;
+}
+
 function SubmitMatchRoute() {
   return <MemberOnly><SubmitMatchPage /></MemberOnly>;
 }
@@ -158,6 +169,7 @@ function RoutedPages() {
     <ClerkQueryClientCacheInvalidator />
     <RoutedErrorBoundary><Switch>
       <Route path="/" component={HomeRedirect} />
+      <Route path="/search" component={SmartSearchPage} />
       <Route path="/opportunities" component={OpportunitiesPage} />
       <Route path="/requests" component={RequestMarketplace} />
       <Route path="/requests/:requestId" component={RequestDetail} />
@@ -176,6 +188,8 @@ function RoutedPages() {
       <Route path="/post-request" component={PostRequestRoute} />
       <Route path="/submit/:requestId" component={SubmitMatchRoute} />
       <Route path="/dashboard" component={DashboardRoute} />
+      <Route path="/listings/:id" component={BusinessListingDetail} />
+      <Route path="/admin" component={AdminRoute} />
       {/* This optional wildcard is required for Clerk OAuth callback paths. */}
       <Route path="/sign-in/*?" component={SignInPage} />
       <Route path="/sign-up/*?" component={SignUpPage} />
@@ -186,7 +200,9 @@ function RoutedPages() {
 
 function App() {
   return <QueryClientProvider client={queryClient}>
-    <TooltipProvider><WouterRouter base={basePath}><RoutedPages /></WouterRouter><Toaster /></TooltipProvider>
+    <LanguageProvider>
+      <TooltipProvider><WouterRouter base={basePath}><RoutedPages /></WouterRouter><Toaster /></TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>;
 }
 

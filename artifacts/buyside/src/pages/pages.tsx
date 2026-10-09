@@ -15,18 +15,22 @@ import {
 import { Form } from '@/components/ui/form';
 import { AccountPlanPanel } from '@/components/account-plan';
 import {
-  ButtonLink, DemoOpportunityCard, EmptyState, ErrorState, Eyebrow, FinderFeeField, LoadingRows,
+  ButtonLink, EmptyState, ErrorState, Eyebrow, FinderFeeField, LoadingRows,
   PrivacyNote, PublicLayout, RequestCard, RequestStatusBadges, SectionTitle, money,
 } from '@/components/site';
-import { demoOpportunities } from '@/data/demo-opportunities';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import { useSeo } from '@/hooks/useSeo';
+import { DemoShowcase } from '@/components/DemoShowcase';
+import { FeaturedOpportunities } from '@/components/FeaturedOpportunities';
+import { TrustSection } from '@/components/TrustSection';
+import { SocialProof } from '@/components/SocialProof';
+import { FinalCta } from '@/components/FinalCta';
+import { MembershipPreview } from '@/components/MembershipPreview';
+import { BusinessOpportunities } from '@/components/BusinessOpportunities';
 
 const field = 'h-12 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
 const area = 'min-h-28 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 py-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
 const label = 'mb-2 block font-mono-label text-[10px] uppercase tracking-[.12em] text-[#625d53]';
-const homepageFeaturedOpportunities = demoOpportunities.filter(({ id }) =>
-  ['commercial-cleaning-south-florida', 'saas-compliance-denver', 'healthcare-richmond'].includes(id),
-);
-
 function PageFrame({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return <PublicLayout><main className={dark ? 'bg-[#34322d] text-[#f3efe7]' : ''}>{children}</main></PublicLayout>;
 }
@@ -50,50 +54,116 @@ function HeroVisual() {
 }
 
 export function HomePage() {
-  const requests = useListBuyerRequests({ sort: 'newest' });
-  const list = (requests.data || []).filter(request => request.isExample).slice(0, 4);
+  const { t } = useLanguage();
+  useSeo('home');
   return <PageFrame>
+    {/* Hero */}
     <section className="mx-auto grid max-w-[1280px] lg:min-h-[560px] lg:grid-cols-[1.08fr_.92fr]">
       <div className="flex flex-col justify-center px-5 py-10 sm:px-8 sm:py-12 md:px-10 md:py-14 lg:py-16">
-        <Eyebrow>THE GLOBAL BUYER REQUEST NETWORK</Eyebrow>
-        <h1 className="font-editorial mt-5 max-w-[680px] text-[clamp(2.25rem,7.2vw,4.25rem)] leading-[1.02] tracking-[-.035em]">Tell us what you want to buy. Let the network find it.</h1>
-        <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#6e685e]">Buyers post the businesses they want to acquire. Brokers, owners, advisors and deal finders submit matching opportunities. BuySide connects both sides through clear criteria and private introductions.</p>
+        <Eyebrow>{t('home.eyebrow')}</Eyebrow>
+        <h1 className="font-editorial mt-5 max-w-[680px] text-[clamp(2.25rem,7.2vw,4.25rem)] leading-[1.02] tracking-[-.035em]">{t('home.heroTitleNew')}</h1>
+        <p className="mt-5 max-w-[560px] text-[15px] leading-7 text-[#6e685e]">{t('home.heroSub')}</p>
         <div className="mt-6 grid w-full max-w-[620px] grid-cols-1 gap-3 sm:grid-cols-2">
-          <ButtonLink href="/post-request" className="w-full" testId="button-post-buyer-request">Post a Buyer Request</ButtonLink>
-          <ButtonLink href="/requests" secondary className="w-full" testId="button-find-request-to-match">Find a Request to Match</ButtonLink>
+          <ButtonLink href="/opportunities" className="w-full" testId="button-explore-opportunities">{t('home.ctaExplore')}</ButtonLink>
+          <ButtonLink href="/post-request" secondary className="w-full" testId="button-post-what-you-need">{t('home.ctaPostNeed')}</ButtonLink>
         </div>
-        <p className="mt-5 max-w-[560px] font-mono-label text-[10px] uppercase leading-5 tracking-[.15em] text-[#918a7c]">Private opportunities. Qualified introductions. Success-based rewards.</p>
+        <p className="mt-5 max-w-[560px] font-mono-label text-[10px] uppercase leading-5 tracking-[.15em] text-[#918a7c]">{t('home.heroFootnote')}</p>
       </div>
       <div className="hidden lg:block"><HeroVisual /></div>
     </section>
-    <section className="mx-auto max-w-[1280px] px-5 py-8 md:px-10 md:py-14">
-      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><SectionTitle eyebrow="SAMPLE BUYER REQUESTS" title="What buyers are seeking" description="Illustrative acquisition criteria only—not live or verified buyer mandates." /><Link href="/requests" className="inline-flex items-center gap-2 pb-2 text-xs uppercase tracking-[.12em] text-[#655d4c] hover:text-[#9a8352]">Browse all demand <ArrowRight size={15} /></Link></div>
-      <div className="mt-7">
-        {requests.isLoading ? <LoadingRows /> : requests.isError ? <ErrorState onRetry={() => requests.refetch()} /> : list.length ? list.map(r => <RequestCard key={r.id} request={r} />) : <EmptyState title="No public criteria at the moment" body="New mandates appear here when buyers choose to publish them. You can still learn how the private network works." action={<ButtonLink href="/how-it-works" secondary>How it works</ButtonLink>} />}
-      </div>
-    </section>
-    <section className="mx-auto max-w-[1280px] px-5 py-8 md:px-10 md:py-14">
-      <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end"><SectionTitle eyebrow="DEMO OPPORTUNITIES" title="Confidential deal profiles" description="Fictional broker-style profiles for demonstration only—not verified, represented, or currently for sale." /><Link href="/opportunities" className="inline-flex items-center gap-2 pb-2 text-xs uppercase tracking-[.12em] text-[#655d4c] hover:text-[#9a8352]">Browse all opportunities <ArrowRight size={15} /></Link></div>
-      <div className="mt-7">{homepageFeaturedOpportunities.map(opportunity => <DemoOpportunityCard key={opportunity.id} opportunity={opportunity} />)}</div>
-    </section>
+
     <div className="lg:hidden"><HeroVisual /></div>
-    <section className="border-y border-[#d8d1c5] bg-[#ebe7dd]">
-      <div className="mx-auto grid max-w-[1280px] gap-9 px-5 py-10 md:grid-cols-[.85fr_2fr] md:items-center md:px-10 md:py-12">
-        <Eyebrow>One clear starting point</Eyebrow><p className="font-editorial max-w-3xl text-[25px] leading-[1.25] md:text-[32px]">BuySide pairs clear acquisition criteria with confidential opportunity profiles. Share only what is needed to assess fit, then decide together what comes next.</p>
+
+    {/* Business Opportunities (for-sale listings) */}
+    <BusinessOpportunities />
+
+    {/* Featured Opportunities */}
+    <FeaturedOpportunities />
+
+    {/* Marketplace Categories — What are you looking for? */}
+    <section className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
+      <SectionTitle eyebrow={t('home.whatEyebrow')} title={t('home.whatTitle')} description={t('home.whatDesc')} />
+      <div className="mt-10 grid gap-5 md:grid-cols-3">
+        {[
+          { num: '01', title: t('home.findBusiness'), desc: t('home.findBusinessDesc'), examples: ['HVAC company in Florida', 'Restaurant in Miami', 'E-commerce brand', 'Manufacturing company', 'Cash-flowing business'], cta: t('home.findBusiness'), href: '/post-request?category=business', testId: 'card-find-business' },
+          { num: '02', title: t('home.findService'), desc: t('home.findServiceDesc'), examples: ['Business broker', 'Attorney', 'Accountant', 'Financing', 'Due diligence', 'Marketing', 'Cleaning company', 'Contractors', 'Consultants'], cta: t('home.findService'), href: '/post-request?category=service', testId: 'card-find-service' },
+          { num: '03', title: t('home.findProduct'), desc: t('home.findProductDesc'), examples: ['Wholesale inventory', 'Electronics', 'Equipment', 'Commercial supplies', 'Bulk products', 'Manufacturers and suppliers'], cta: t('home.findProduct'), href: '/post-request?category=product', testId: 'card-find-product' },
+        ].map(card => (
+          <article key={card.num} className="flex flex-col border border-[#cfc8bc] bg-[#f8f6f0] p-7" data-testid={card.testId}>
+            <div className="font-mono-label text-[10px] uppercase tracking-[.14em] text-[#897649]">{card.num}</div>
+            <h3 className="font-editorial mt-4 text-2xl">{card.title}</h3>
+            <p className="mt-3 text-[13px] leading-6 text-[#6b665d]">{card.desc}</p>
+            <div className="mt-5 flex-1 border-t border-[#e0d9ce] pt-4">
+              <p className="font-mono-label text-[9px] uppercase tracking-[.12em] text-[#948c7b]">{t('home.examples')}</p>
+              <ul className="mt-2 space-y-1 text-[12px] leading-5 text-[#8a8478]">
+                {card.examples.map(ex => <li key={ex}>{ex}</li>)}
+              </ul>
+            </div>
+            <Link href={card.href} className="mt-6 inline-flex min-h-11 items-center justify-center gap-2 bg-[#38352f] px-4 text-[11px] uppercase tracking-[.1em] text-[#f5f2eb] transition hover:bg-[#504b40]">{card.cta} <ArrowRight size={14} /></Link>
+          </article>
+        ))}
       </div>
     </section>
+
+    {/* Have Something People Are Looking For? */}
     <section className="bg-[#34322d] text-[#f3efe7]">
-      <div className="mx-auto grid max-w-[1280px] gap-14 px-5 py-20 md:grid-cols-2 md:items-center md:px-10 md:py-28">
-        <div><Eyebrow light>Intent before introduction</Eyebrow><h2 className="font-editorial mt-5 max-w-xl text-4xl leading-tight md:text-6xl">The right conversation begins with fit.</h2><p className="mt-6 max-w-lg text-sm leading-7 text-[#c1bcb2]">A buyer mandate gives owners and their advisors a discreet way to understand whether an opportunity is relevant before identity is shared.</p><div className="mt-8"><ButtonLink href="/how-it-works">Understand the process</ButtonLink></div></div>
-        <div className="grid gap-0 border-y border-[#5a574e]">{[['01', 'Set the brief', 'Buyers publish the industries, size, geography and profile that matter.'], ['02', 'Introduce privately', 'Finders can submit a potential match with context and their relationship to it.'], ['03', 'Choose the next step', 'The buyer reviews a submission and decides whether to progress.']].map(([n, t, d]) => <div key={n} className="grid grid-cols-[50px_1fr] gap-4 border-b border-[#5a574e] py-6 last:border-0"><span className="font-mono-label text-xs text-[#b9a16d]">{n}</span><div><h3 className="font-editorial text-2xl">{t}</h3><p className="mt-2 text-sm leading-6 text-[#c1bcb2]">{d}</p></div></div>)}</div>
+      <div className="mx-auto max-w-[1280px] px-5 py-16 md:px-10 md:py-24">
+        <Eyebrow light>{t('home.offerEyebrow')}</Eyebrow>
+        <h2 className="font-editorial mt-5 max-w-2xl text-4xl leading-tight md:text-5xl">{t('home.offerTitle')}</h2>
+        <p className="mt-5 max-w-xl text-sm leading-7 text-[#c1bcb2]">{t('home.offerBody')}</p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {[
+            { title: t('home.aBusiness'), desc: t('home.aBusinessDesc') },
+            { title: t('home.aService'), desc: t('home.aServiceDesc') },
+            { title: t('home.aProduct'), desc: t('home.aProductDesc') },
+          ].map(item => (
+            <div key={item.title} className="border border-[#5a574e] p-5"><h3 className="font-editorial text-xl">{item.title}</h3><p className="mt-2 text-[12px] leading-5 text-[#c1bcb2]">{item.desc}</p></div>
+          ))}
+        </div>
+        <div className="mt-8"><ButtonLink href="/requests" testId="button-list-what-you-offer-dark">{t('home.ctaList')}</ButtonLink></div>
       </div>
     </section>
-    <section className="mx-auto grid max-w-[1280px] gap-10 px-5 py-20 md:grid-cols-[.75fr_1.25fr] md:px-10 md:py-28"><div><Eyebrow>For the people who make a deal</Eyebrow><h2 className="font-editorial mt-5 text-4xl leading-tight md:text-5xl">Built for both sides of a thoughtful introduction.</h2></div><div className="grid gap-10 sm:grid-cols-2"><div className="border-t border-[#cfc8bc] pt-5"><h3 className="font-editorial text-2xl">Buyers</h3><p className="mt-3 text-sm leading-6 text-[#6b665d]">Make your criteria legible and receive relevant opportunities without broadcasting a wish list across the market.</p><Link className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-wider" href="/for-buyers">Buyer approach <ArrowUpRight size={14} /></Link></div><div className="border-t border-[#cfc8bc] pt-5"><h3 className="font-editorial text-2xl">Finders</h3><p className="mt-3 text-sm leading-6 text-[#6b665d]">Bring qualified context to acquisition searches as a broker, advisor, owner or connected deal finder.</p><Link className="mt-5 inline-flex items-center gap-2 text-xs uppercase tracking-wider" href="/for-finders">Finder eligibility <ArrowUpRight size={14} /></Link></div></div></section>
+
+    {/* How it works */}
+    <section className="border-y border-[#d8d1c5] bg-[#ebe7dd]">
+      <div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-16">
+        <SectionTitle eyebrow={t('home.howEyebrow')} title={t('home.howTitle')} />
+        <div className="mt-10 grid gap-0 border-y border-[#d4cdc1]">
+          {[
+            ['01', t('home.step1TitleNew'), t('home.step1DescNew')],
+            ['02', t('home.step2TitleNew'), t('home.step2DescNew')],
+            ['03', t('home.step3TitleNew'), t('home.step3DescNew')],
+            ['04', t('home.step4TitleNew'), t('home.step4DescNew')],
+          ].map(([n, title, desc]) => (
+            <div key={n} className="grid grid-cols-[50px_1fr] gap-4 border-b border-[#d4cdc1] py-6 last:border-0">
+              <span className="font-mono-label text-xs text-[#b9a16d]">{n}</span>
+              <div><h3 className="font-editorial text-2xl">{title}</h3><p className="mt-2 text-sm leading-6 text-[#6b665d]">{desc}</p></div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-6 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-4 text-[13px] leading-6 text-[#625d53]">{t('home.introFeeNote')}</div>
+      </div>
+    </section>
+
+    {/* Trust & Confidentiality */}
+    <TrustSection />
+
+    {/* Membership preview */}
+    <MembershipPreview />
+
+    {/* Social proof (hidden until real data) */}
+    <SocialProof />
+
+    {/* Final CTA */}
+    <FinalCta />
+
     <Compliance />
   </PageFrame>;
 }
 
 export function RequestMarketplace() {
+  const { t } = useLanguage();
+  useSeo('requests');
   const [filters, setFilters] = useState({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '' as '' | BuyerRequest['buyerType'], verifiedOnly: false, sort: 'newest' as 'newest' | 'highest_budget' | 'highest_reward' | 'closing_soon' });
   const params = useMemo(() => ({
     ...(filters.search ? { search: filters.search } : {}), ...(filters.industry ? { industry: filters.industry } : {}),
@@ -105,42 +175,46 @@ export function RequestMarketplace() {
   const query = useListBuyerRequests(params);
   const requests = (query.data || []).filter(request => !filters.buyerType || request.buyerType === filters.buyerType);
   return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
-    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end"><div><Eyebrow>Request marketplace</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Buyer demand</h1><p className="mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">Browse public criteria and clearly labeled sample requests. Samples are illustrative, not live or verified buyers.</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">Post a Buyer Request <ArrowRight size={15} /></Link></div>
+    <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end"><div><Eyebrow>{t('requests.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">{t('requests.title')}</h1><p className="mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">{t('requests.intro')}</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">{t('requests.postRequest')} <ArrowRight size={15} /></Link></div>
     <div className="mt-10 border-y border-[#d4cdc1] py-5">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <label className="sm:col-span-2"><span className={label}>Search criteria</span><span className="relative block"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#918a7c]" /><input className={`${field} pl-10`} placeholder="Industry, title or profile" value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} data-testid="input-search-requests" /></span></label>
-        <label><span className={label}>Industry</span><input className={field} placeholder="Any industry" value={filters.industry} onChange={e => setFilters({ ...filters, industry: e.target.value })} data-testid="input-filter-industry" /></label>
-        <div className="sm:col-span-2"><span className={label}>Location</span><div className="grid grid-cols-3 gap-2">
+        <label className="sm:col-span-2"><span className={label}>{t('requests.searchLabel')}</span><span className="relative block"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#918a7c]" /><input className={`${field} pl-10`} placeholder={t('requests.searchPlaceholder')} value={filters.search} onChange={e => setFilters({ ...filters, search: e.target.value })} data-testid="input-search-requests" /></span></label>
+        <label><span className={label}>{t('requests.industry')}</span><input className={field} placeholder={t('requests.industryPlaceholder')} value={filters.industry} onChange={e => setFilters({ ...filters, industry: e.target.value })} data-testid="input-filter-industry" /></label>
+        <div className="sm:col-span-2"><span className={label}>{t('requests.location')}</span><div className="grid grid-cols-3 gap-2">
           {(['country', 'region', 'city'] as const).map(key => <label key={key}><span className="sr-only">{key}</span><input className={field} placeholder={`Any ${key}`} value={filters[key]} onChange={e => setFilters({ ...filters, [key]: e.target.value })} data-testid={`input-filter-${key}`} /></label>)}
         </div></div>
-        <fieldset className="sm:col-span-2"><legend className={label}>Purchase price (USD)</legend><div className="grid grid-cols-2 gap-2">
+        <fieldset className="sm:col-span-2"><legend className={label}>{t('requests.purchasePrice')}</legend><div className="grid grid-cols-2 gap-2">
           <label><span className="sr-only">Minimum purchase price</span><input className={field} type="number" min="0" placeholder="Minimum" value={filters.minBudget} onChange={e => setFilters({ ...filters, minBudget: e.target.value })} data-testid="input-min-budget" /></label>
           <label><span className="sr-only">Maximum purchase price</span><input className={field} type="number" min="0" placeholder="Maximum" value={filters.maxBudget} onChange={e => setFilters({ ...filters, maxBudget: e.target.value })} data-testid="input-max-budget" /></label>
         </div></fieldset>
-        <label><span className={label}>Buyer type</span><select className={field} value={filters.buyerType} onChange={e => setFilters({ ...filters, buyerType: e.target.value as typeof filters.buyerType })} data-testid="select-filter-buyer-type"><option value="">Any buyer type</option><option value="individual">Individual</option><option value="strategic">Strategic buyer</option><option value="search_fund">Search fund</option><option value="private_equity">Private equity</option><option value="other">Other</option></select></label>
-        <label><span className={label}>Sort by</span><select className={field} value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value as typeof filters.sort })} data-testid="select-sort"><option value="newest">Recently published</option><option value="highest_budget">Highest budget</option><option value="highest_reward">Highest finder fee</option><option value="closing_soon">Closing soon</option></select></label>
+        <label><span className={label}>{t('requests.buyerType')}</span><select className={field} value={filters.buyerType} onChange={e => setFilters({ ...filters, buyerType: e.target.value as typeof filters.buyerType })} data-testid="select-filter-buyer-type"><option value="">{t('requests.anyBuyerType')}</option><option value="individual">Individual</option><option value="strategic">Strategic buyer</option><option value="search_fund">Search fund</option><option value="private_equity">Private equity</option><option value="other">Other</option></select></label>
+        <label><span className={label}>{t('requests.sortBy')}</span><select className={field} value={filters.sort} onChange={e => setFilters({ ...filters, sort: e.target.value as typeof filters.sort })} data-testid="select-sort"><option value="newest">{t('requests.sortNewest')}</option><option value="highest_budget">{t('requests.sortHighestBudget')}</option><option value="highest_reward">{t('requests.sortHighestReward')}</option><option value="closing_soon">{t('requests.sortClosingSoon')}</option></select></label>
       </div>
-      <label className="mt-4 flex cursor-pointer items-center gap-2 text-xs text-[#5f5a51]"><input type="checkbox" checked={filters.verifiedOnly} onChange={e => setFilters({ ...filters, verifiedOnly: e.target.checked })} data-testid="checkbox-verified" /> Verified buyers only</label>
+      <label className="mt-4 flex cursor-pointer items-center gap-2 text-xs text-[#5f5a51]"><input type="checkbox" checked={filters.verifiedOnly} onChange={e => setFilters({ ...filters, verifiedOnly: e.target.checked })} data-testid="checkbox-verified" /> {t('requests.verifiedOnly')}</label>
     </div>
-    <div className="mb-3 mt-8 flex items-center justify-between"><Eyebrow>{query.isLoading ? 'Retrieving buyer requests' : `${requests.length} buyer ${requests.length === 1 ? 'request' : 'requests'}`}</Eyebrow><Link href="/confidentiality" className="inline-flex items-center gap-1 text-[11px] text-[#786b52]"><LockKeyhole size={13} /> Privacy principles</Link></div>
-    {query.isLoading ? <LoadingRows count={4} /> : query.isError ? <ErrorState onRetry={() => query.refetch()} /> : requests.length ? requests.map(r => <RequestCard request={r} key={r.id} />) : <EmptyState title="No criteria match these filters" body="Try a broader location or budget, or clear a search term to see more buyer demand." action={<button onClick={() => setFilters({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '', verifiedOnly: false, sort: 'newest' })} className="border border-[#cfc8bc] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-clear-filters">Clear filters</button>} />}
+    <div className="mb-3 mt-8 flex items-center justify-between"><Eyebrow>{query.isLoading ? t('requests.retrieving') : `${requests.length} ${requests.length === 1 ? 'request' : 'requests'}`}</Eyebrow><Link href="/confidentiality" className="inline-flex items-center gap-1 text-[11px] text-[#786b52]"><LockKeyhole size={13} /> {t('requests.privacyPrinciples')}</Link></div>
+    {query.isLoading ? <LoadingRows count={4} /> : query.isError ? <ErrorState onRetry={() => query.refetch()} /> : requests.length ? requests.map(r => <RequestCard request={r} key={r.id} />) : <EmptyState title={t('requests.noMatch')} body={t('requests.noMatchBody')} action={<button onClick={() => setFilters({ search: '', industry: '', country: '', region: '', city: '', minBudget: '', maxBudget: '', buyerType: '', verifiedOnly: false, sort: 'newest' })} className="border border-[#cfc8bc] px-4 py-2 text-xs uppercase tracking-wider" data-testid="button-clear-filters">{t('requests.clearFilters')}</button>} />}
   </div></PageFrame>;
 }
 
 export function OpportunitiesPage() {
+  const { t } = useLanguage();
+  useSeo('opportunities');
   return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-12 md:px-10 md:py-20">
     <div className="grid gap-8 md:grid-cols-[1fr_auto] md:items-end">
-      <div><Eyebrow>Demo acquisition opportunities</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">Confidential listings</h1><p className="mt-5 max-w-2xl text-sm leading-7 text-[#6b665d]">These {demoOpportunities.length} fictional broker-style profiles are for demonstration only. They are not verified businesses, broker mandates, or current offerings. Asking enterprise value and financials are illustrative. Multiples use adjusted EBITDA or SDE, except the SaaS profile, which uses TTM revenue.</p></div>
-      <Link href="/requests" className="inline-flex h-12 items-center justify-center gap-2 border border-[#bdb5a6] px-5 text-xs uppercase tracking-wider text-[#38352f]">Browse Buyer Requests <ArrowRight size={15} /></Link>
+      <div><Eyebrow>{t('opportunities.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-7xl">{t('opportunities.title')}</h1><p className="mt-5 max-w-2xl text-sm leading-7 text-[#6b665d]">{t('opportunities.intro')}</p></div>
+      <Link href="/requests" className="inline-flex h-12 items-center justify-center gap-2 border border-[#bdb5a6] px-5 text-xs uppercase tracking-wider text-[#38352f]">{t('opportunities.browseRequests')} <ArrowRight size={15} /></Link>
     </div>
-    <div className="mb-3 mt-10 flex items-center justify-between border-y border-[#d4cdc1] py-4"><Eyebrow>{demoOpportunities.length} fictional opportunities</Eyebrow><span className="font-mono-label text-[9px] uppercase tracking-[.12em] text-[#827968]">Asking EV / earnings or revenue</span></div>
-    <div>{demoOpportunities.map(opportunity => <DemoOpportunityCard key={opportunity.id} opportunity={opportunity} />)}</div>
+    <div className="mt-10">
+      <EmptyState title={t('opportunities.noneYet')} body={t('opportunities.noneYetBody')} action={<ButtonLink href="/requests" secondary>{t('opportunities.browseRequests')}</ButtonLink>} />
+    </div>
   </div><Compliance /></PageFrame>;
 }
 
 export function RequestDetail() {
   const [, params] = useRoute('/requests/:requestId');
   const id = params?.requestId || '';
+  const { t } = useLanguage();
   const query = useGetBuyerRequest(id, { query: { enabled: !!id, queryKey: getGetBuyerRequestQueryKey(id) } });
   const auth = useAuth();
   const savedRequests = useListMySavedRequests({ query: { enabled: !!auth.isSignedIn, queryKey: getListMySavedRequestsQueryKey() } });
@@ -156,27 +230,27 @@ export function RequestDetail() {
       void client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() });
     }
   }, [request?.id, auth.isSignedIn, client]);
-  return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20">{monthlyViewLimitReached ? <div className="border border-[#85734c] bg-[#242521] p-6 md:p-9"><Eyebrow>Monthly Free limit reached</Eyebrow><h1 className="font-editorial mt-4 text-3xl tracking-[-.025em] md:text-4xl" data-testid="text-request-view-limit">You have opened 5 different buyer requests this month.</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-[#b9b5aa]">Your Free allowance is 5 distinct buyer request details per UTC calendar month. It renews at the start of the next month. Paid plans are listed, but checkout is currently unavailable.</p><Link href="/pricing" className="mt-6 inline-flex min-h-11 items-center gap-2 bg-[#b9a16d] px-5 text-[10px] uppercase tracking-wider text-[#25241f]" data-testid="link-request-limit-pricing">View plan options <ArrowRight size={14} /></Link></div> : <ErrorState onRetry={() => query.refetch()} />}</div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
-    <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> All buyer demand</Link>
+  return <PageFrame>{query.isLoading ? <div className="mx-auto max-w-4xl px-5 py-20"><LoadingRows /></div> : query.isError || !request ? <div className="mx-auto max-w-4xl px-5 py-20">{monthlyViewLimitReached ? <div className="border border-[#85734c] bg-[#242521] p-6 md:p-9"><Eyebrow>{t('requestDetail.monthlyLimit')}</Eyebrow><h1 className="font-editorial mt-4 text-3xl tracking-[-.025em] md:text-4xl" data-testid="text-request-view-limit">{t('requestDetail.limitTitle')}</h1><p className="mt-4 max-w-2xl text-sm leading-6 text-[#b9b5aa]">{t('requestDetail.limitBody')}</p><Link href="/pricing" className="mt-6 inline-flex min-h-11 items-center gap-2 bg-[#b9a16d] px-5 text-[10px] uppercase tracking-wider text-[#25241f]" data-testid="link-request-limit-pricing">{t('requestDetail.viewPlans')} <ArrowRight size={14} /></Link></div> : <ErrorState onRetry={() => query.refetch()} />}</div> : <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
+    <Link href="/requests" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('requestDetail.allRequests')}</Link>
      <div className="mt-8 grid gap-8 lg:mt-10 lg:grid-cols-[1fr_300px] lg:gap-12">
       <article><div className="flex flex-wrap gap-2"><RequestStatusBadges request={request} /></div>
-      <Eyebrow>Acquisition criteria</Eyebrow><h1 className="font-editorial mt-4 text-4xl leading-tight tracking-[-.025em] md:text-6xl">{request.title}</h1>
+      <Eyebrow>{t('requestDetail.details')}</Eyebrow><h1 className="font-editorial mt-4 text-4xl leading-tight tracking-[-.025em] md:text-6xl">{request.title}</h1>
       <p className="mt-5 text-sm text-[#6b665d]">{request.industry} · {request.businessCategory} · {request.buyerType.replaceAll('_', ' ')}</p>
-       <Link href={`/submit/${request.id}`} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:hidden" data-testid={`link-submit-match-mobile-${request.id}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
+       <Link href={`/submit/${request.id}`} className="mt-6 flex min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:hidden" data-testid={`link-submit-match-mobile-${request.id}`}>{t('card.submitMatch')} <ArrowRight size={14} /></Link>
        <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-6 border-y border-[#d4cdc1] py-6 sm:grid-cols-2 sm:gap-y-7 sm:py-7">
-        <DetailValue label="Geography" value={[request.city, request.region, request.country].filter(Boolean).join(', ') || 'Flexible'} /><DetailValue label="Purchase range" value={`${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`} />
-         <DetailValue label="Target revenue" value={request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : 'Flexible'} /><DetailValue label="EBITDA / SDE requirement" value={request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : 'Not specified'} />
-        <DetailValue label="Cash flow" value={money(request.minimumCashFlow)} /><DetailValue label="Timing" value={request.timeline || 'Not specified'} />
+        <DetailValue label={t('requestDetail.geography')} value={[request.city, request.region, request.country].filter(Boolean).join(', ') || t('requestDetail.flexible')} /><DetailValue label={t('requestDetail.purchaseRange')} value={`${money(request.minimumPurchasePrice)} – ${money(request.maximumPurchasePrice)}`} />
+         <DetailValue label={t('requestDetail.targetRevenue')} value={request.minimumRevenue != null ? `${money(request.minimumRevenue)}+` : t('requestDetail.flexible')} /><DetailValue label={t('requestDetail.ebitdaReq')} value={request.minimumEbitda != null ? `${money(request.minimumEbitda)}+` : t('requestDetail.notSpecified')} />
+        <DetailValue label={t('requestDetail.cashFlow')} value={money(request.minimumCashFlow)} /><DetailValue label={t('requestDetail.timing')} value={request.timeline || t('requestDetail.notSpecified')} />
       </div>
-       <DetailText title="Key acquisition criteria" content={request.preferredProfile} /><DetailText title="Exclusions" content={request.dealExclusions} />
+       <DetailText title={t('requestDetail.detailsText')} content={request.preferredProfile} /><DetailText title={t('requestDetail.exclusions')} content={request.dealExclusions} />
         <FinderFeeField request={request} detail />
-        <p className="mt-3 text-xs leading-5 text-[#81796c]">Any fee is subject to eligibility, buyer acceptance, applicable law and a separate written agreement. It is not guaranteed.</p>
-      <DetailText title="Confidentiality" content={`Request privacy: ${request.privacy.replaceAll('_', ' ')}. ${request.remoteAccepted ? 'Remote or location-flexible opportunities may be considered.' : 'Geography should align with the stated criteria.'}`} />
+        <p className="mt-3 text-xs leading-5 text-[#81796c]">{t('finderFee.disclaimer')}</p>
+      <DetailText title={t('requestDetail.confidentiality')} content={`Request privacy: ${request.privacy.replaceAll('_', ' ')}. ${request.remoteAccepted ? 'Remote or location-flexible opportunities may be considered.' : 'Geography should align with the stated criteria.'}`} />
       </article>
-       <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 sm:p-6"><Eyebrow>Have a relevant opportunity?</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">A private introduction starts here.</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">Share the business profile and your relationship to it. Identifying details can remain confidential at submission.</p><Link href={`/submit/${request.id}`} className="mt-6 hidden min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:flex" data-testid={`link-submit-match-${request.id}`}>SUBMIT A MATCHING BUSINESS <ArrowRight size={14} /></Link>
-      <Show when="signed-in"><button disabled={save.isPending} onClick={() => save.mutate({ requestId: request.id, data: { saved: !isSaved } }, { onSuccess: () => { client.invalidateQueries({ queryKey: getListMySavedRequestsQueryKey() }); client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() }); } })} className="mt-3 h-11 w-full border border-[#cfc8bc] text-[11px] uppercase tracking-wider disabled:opacity-50" data-testid="button-save-request">{save.isPending ? 'Saving…' : isSaved ? 'Remove saved criteria' : 'Save criteria'}</button></Show>
-      <Show when="signed-out"><Link href="/sign-in" className="mt-3 flex h-11 w-full items-center justify-center border border-[#cfc8bc] text-[11px] uppercase tracking-wider">Sign in to save</Link></Show>
-      <div className="mt-5"><PrivacyNote>Do not include identifiable information in an initial submission unless you are authorized to share it and the owner has agreed.</PrivacyNote></div></div></aside>
+       <aside className="lg:pt-14"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 sm:p-6"><Eyebrow>{t('requestDetail.haveMatch')}</Eyebrow><p className="font-editorial mt-3 text-2xl leading-tight">{t('requestDetail.submitMatchTo')}</p><p className="mt-3 text-xs leading-5 text-[#6b665d]">{t('requestDetail.submitMatchDesc')}</p><Link href={`/submit/${request.id}`} className="mt-6 hidden min-h-12 w-full items-center justify-center gap-2 bg-[#38352f] px-4 py-3 text-center text-[11px] uppercase tracking-wider text-[#f5f2eb] lg:flex" data-testid={`link-submit-match-${request.id}`}>{t('card.submitMatch')} <ArrowRight size={14} /></Link>
+      <Show when="signed-in"><button disabled={save.isPending} onClick={() => save.mutate({ requestId: request.id, data: { saved: !isSaved } }, { onSuccess: () => { client.invalidateQueries({ queryKey: getListMySavedRequestsQueryKey() }); client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() }); } })} className="mt-3 h-11 w-full border border-[#cfc8bc] text-[11px] uppercase tracking-wider disabled:opacity-50" data-testid="button-save-request">{save.isPending ? t('requestDetail.saving') : isSaved ? t('requestDetail.removeSaved') : t('requestDetail.saveCriteria')}</button></Show>
+      <Show when="signed-out"><Link href="/sign-in" className="mt-3 flex h-11 w-full items-center justify-center border border-[#cfc8bc] text-[11px] uppercase tracking-wider">{t('requestDetail.signInToSave')}</Link></Show>
+      <div className="mt-5"><PrivacyNote>{t('privacy.noteSubmit')}</PrivacyNote></div></div></aside>
     </div>
     <Compliance />
   </div>}</PageFrame>;
@@ -193,13 +267,14 @@ function DetailText({ title, content }: { title: string; content: string }) {
 export function SubmitMatchPage() {
   const [, params] = useRoute('/submit/:requestId');
   const id = params?.requestId || '';
+  const { t } = useLanguage();
   const requestQuery = useGetBuyerRequest(id, { query: { enabled: !!id, queryKey: getGetBuyerRequestQueryKey(id) } });
   const submit = useSubmitMatch();
   const queryClient = useQueryClient();
   const [sent, setSent] = useState(false);
   const submissionLimitReached =
     submit.isError &&
-    submit.error?.message.includes('Free plan limit of 1 matching business submission');
+    submit.error?.message.includes('Free plan limit of 1 match submission');
   const form = useForm<MatchSubmissionInput>({ defaultValues: { businessName: '', industry: '', location: '', askingPrice: null, annualRevenue: null, ebitda: null, cashFlow: null, employeeCount: null, yearsOperating: null, shortDescription: '', matchRationale: '', relationship: '', ownerContactStatus: '', brokerStatus: '', confidentialIdentity: true } });
   const val = form.register;
   const onSubmit = form.handleSubmit(data => {
@@ -213,22 +288,22 @@ export function SubmitMatchPage() {
   });
   if (requestQuery.isLoading) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-20"><LoadingRows /></div></PageFrame>;
   if (requestQuery.isError || !requestQuery.data) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-20"><ErrorState onRetry={() => requestQuery.refetch()} /></div></PageFrame>;
-  if (sent) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-24 text-center"><div className="mx-auto grid size-14 place-items-center border border-[#b9a16d] text-[#8a7547]"><Check size={22} /></div><Eyebrow>Submission received</Eyebrow><h1 className="font-editorial mt-4 text-5xl">Your introduction is in review.</h1><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">The buyer can review your submission against their criteria. Any next step will depend on their review.</p><div className="mt-8"><ButtonLink href="/dashboard">Go to dashboard</ButtonLink></div></div></PageFrame>;
+  if (sent) return <PageFrame><div className="mx-auto max-w-3xl px-5 py-24 text-center"><div className="mx-auto grid size-14 place-items-center border border-[#b9a16d] text-[#8a7547]"><Check size={22} /></div><Eyebrow>{t('submitMatch.submitted')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl">{t('submitMatch.submittedTitle')}</h1><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-[#6b665d]">{t('submitMatch.submittedBody')}</p><div className="mt-8"><ButtonLink href="/dashboard">{t('submitMatch.goToDashboard')}</ButtonLink></div></div></PageFrame>;
   const request = requestQuery.data;
-  return <PageFrame><div className="mx-auto max-w-[920px] px-5 py-10 md:px-10 md:py-16"><Link href={`/requests/${id}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> Review buyer criteria</Link>
+  return <PageFrame><div className="mx-auto max-w-[920px] px-5 py-10 md:px-10 md:py-16"><Link href={`/requests/${id}`} className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('submitMatch.reviewRequest')}</Link>
     <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_280px]">
-      <div><Eyebrow>Private match submission</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em]">Introduce an opportunity.</h1><p className="mt-4 text-sm leading-7 text-[#6b665d]">Share enough context for the buyer to assess fit. Do not disclose confidential information without authorization.</p>
+      <div><Eyebrow>{t('submitMatch.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em]">{t('submitMatch.title')}</h1><p className="mt-4 text-sm leading-7 text-[#6b665d]">{t('submitMatch.intro')}</p>
       <Form {...form}><form onSubmit={onSubmit} className="mt-8 space-y-7">
-        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Business overview</legend><label><span className={label}>Business name <span className="normal-case text-[#918a7c]">(optional)</span></span><input className={field} {...val('businessName')} data-testid="input-business-name" /></label><label><span className={label}>Industry</span><input required className={field} {...val('industry', { required: true })} data-testid="input-business-industry" /></label><label><span className={label}>Location</span><input required className={field} {...val('location', { required: true })} data-testid="input-business-location" /></label><label><span className={label}>Asking price (USD)</span><input className={field} type="number" min="0" {...val('askingPrice', { valueAsNumber: true })} data-testid="input-asking-price" /></label><label><span className={label}>Annual revenue</span><input className={field} type="number" min="0" {...val('annualRevenue', { valueAsNumber: true })} data-testid="input-revenue" /></label><label><span className={label}>EBITDA</span><input className={field} type="number" {...val('ebitda', { valueAsNumber: true })} data-testid="input-ebitda" /></label><label><span className={label}>Cash flow</span><input className={field} type="number" {...val('cashFlow', { valueAsNumber: true })} data-testid="input-cash-flow" /></label><label><span className={label}>Employees</span><input className={field} type="number" min="0" {...val('employeeCount', { valueAsNumber: true })} data-testid="input-employee-count" /></label><label><span className={label}>Years operating</span><input className={field} type="number" min="0" {...val('yearsOperating', { valueAsNumber: true })} data-testid="input-years-operating" /></label></fieldset>
-        <label className="block"><span className={label}>Short business description</span><textarea required minLength={10} className={area} {...val('shortDescription', { required: true, minLength: 10 })} data-testid="input-description" /></label>
-        <label className="block"><span className={label}>Why this fits the buyer's criteria</span><textarea required minLength={10} className={area} {...val('matchRationale', { required: true, minLength: 10 })} data-testid="input-match-rationale" /></label>
-        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">Your relationship</legend><label><span className={label}>Your relationship to the opportunity</span><input className={field} placeholder="Broker, advisor, owner, other" {...val('relationship')} data-testid="input-relationship" /></label><label><span className={label}>Owner contact status</span><input className={field} placeholder="Describe current contact" {...val('ownerContactStatus')} data-testid="input-owner-contact" /></label><label><span className={label}>Broker status</span><input className={field} placeholder="Describe representation, if any" {...val('brokerStatus')} data-testid="input-broker-status" /></label></fieldset>
-        <label className="flex items-start gap-3 text-[12px] leading-5 text-[#625d53]"><input type="checkbox" className="mt-1" checked={form.watch('confidentialIdentity')} onChange={e => form.setValue('confidentialIdentity', e.target.checked)} data-testid="checkbox-confidential-identity" />Keep the business identity confidential in this initial submission.</label>
-        {submit.isError && <p className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm leading-6 text-[#815d4f]" role="alert">{submissionLimitReached ? <>The Free plan includes 1 matching business submission per UTC calendar month, and you have used it. Your allowance renews next month. <Link href="/pricing" className="underline underline-offset-2" data-testid="link-submission-limit-pricing">View plan options</Link>. Paid checkout is currently unavailable.</> : 'We could not submit this introduction. Review the form and try again.'}</p>}
-        <button disabled={submit.isPending} className="flex h-12 w-full items-center justify-center gap-2 bg-[#38352f] text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50 sm:w-auto sm:px-8" type="submit" data-testid="button-submit-match">{submit.isPending ? 'Submitting securely…' : 'Submit private introduction'} <ArrowRight size={14} /></button>
+        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('submitMatch.businessOverview')}</legend><label><span className={label}>{t('submitMatch.businessName')} <span className="normal-case text-[#918a7c]">{t('submitMatch.businessNameOptional')}</span></span><input className={field} {...val('businessName')} data-testid="input-business-name" /></label><label><span className={label}>{t('submitMatch.industry')}</span><input required className={field} {...val('industry', { required: true })} data-testid="input-business-industry" /></label><label><span className={label}>{t('submitMatch.location')}</span><input required className={field} {...val('location', { required: true })} data-testid="input-business-location" /></label><label><span className={label}>{t('submitMatch.askingPrice')}</span><input className={field} type="number" min="0" {...val('askingPrice', { valueAsNumber: true })} data-testid="input-asking-price" /></label><label><span className={label}>{t('submitMatch.annualRevenue')}</span><input className={field} type="number" min="0" {...val('annualRevenue', { valueAsNumber: true })} data-testid="input-revenue" /></label><label><span className={label}>{t('submitMatch.ebitda')}</span><input className={field} type="number" {...val('ebitda', { valueAsNumber: true })} data-testid="input-ebitda" /></label><label><span className={label}>{t('submitMatch.cashFlow')}</span><input className={field} type="number" {...val('cashFlow', { valueAsNumber: true })} data-testid="input-cash-flow" /></label><label><span className={label}>{t('submitMatch.employees')}</span><input className={field} type="number" min="0" {...val('employeeCount', { valueAsNumber: true })} data-testid="input-employee-count" /></label><label><span className={label}>{t('submitMatch.yearsOperating')}</span><input className={field} type="number" min="0" {...val('yearsOperating', { valueAsNumber: true })} data-testid="input-years-operating" /></label></fieldset>
+        <label className="block"><span className={label}>{t('submitMatch.shortDesc')}</span><textarea required minLength={10} className={area} {...val('shortDescription', { required: true, minLength: 10 })} data-testid="input-description" /></label>
+        <label className="block"><span className={label}>{t('submitMatch.matchRationale')}</span><textarea required minLength={10} className={area} {...val('matchRationale', { required: true, minLength: 10 })} data-testid="input-match-rationale" /></label>
+        <fieldset className="grid gap-4 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('submitMatch.yourRelationship')}</legend><label><span className={label}>{t('submitMatch.relationship')}</span><input className={field} placeholder="Broker, advisor, owner, other" {...val('relationship')} data-testid="input-relationship" /></label><label><span className={label}>{t('submitMatch.ownerContact')}</span><input className={field} placeholder="Describe current contact" {...val('ownerContactStatus')} data-testid="input-owner-contact" /></label><label><span className={label}>{t('submitMatch.brokerStatus')}</span><input className={field} placeholder="Describe representation, if any" {...val('brokerStatus')} data-testid="input-broker-status" /></label></fieldset>
+        <label className="flex items-start gap-3 text-[12px] leading-5 text-[#625d53]"><input type="checkbox" className="mt-1" checked={form.watch('confidentialIdentity')} onChange={e => form.setValue('confidentialIdentity', e.target.checked)} data-testid="checkbox-confidential-identity" />{t('submitMatch.confidential')}</label>
+        {submit.isError && <p className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm leading-6 text-[#815d4f]" role="alert">{submissionLimitReached ? <>{t('submitMatch.submittedBody')} <Link href="/pricing" className="underline underline-offset-2" data-testid="link-submission-limit-pricing">{t('requestDetail.viewPlans')}</Link></> : t('error.unableToLoad')}</p>}
+        <button disabled={submit.isPending} className="flex h-12 w-full items-center justify-center gap-2 bg-[#38352f] text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50 sm:w-auto sm:px-8" type="submit" data-testid="button-submit-match">{submit.isPending ? t('submitMatch.submitting') : t('submitMatch.submit')} <ArrowRight size={14} /></button>
       </form></Form>
       </div>
-      <aside className="lg:pt-12"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5"><Eyebrow>Buyer criteria</Eyebrow><h2 className="font-editorial mt-3 text-2xl">{request.title}</h2>{request.isExample && <div className="mt-3 inline-block border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">SAMPLE BUYER REQUEST</div>}<p className="mt-3 text-xs leading-5 text-[#6b665d]">{request.industry} · {request.businessCategory}</p><Link href={`/requests/${id}`} className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-wider">See full criteria <ArrowRight size={13} /></Link></div><div className="mt-4"><PrivacyNote>Potential finder rewards are subject to the request's disclosure, eligibility, buyer acceptance and any separate agreement. No reward is guaranteed.</PrivacyNote></div></aside>
+      <aside className="lg:pt-12"><div className="border border-[#d4cdc1] bg-[#f8f6f0] p-5"><Eyebrow>{t('submitMatch.requestDetails')}</Eyebrow><h2 className="font-editorial mt-3 text-2xl">{request.title}</h2>{request.isExample && <div className="mt-3 inline-block border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">{t('submitMatch.sampleRequest')}</div>}<p className="mt-3 text-xs leading-5 text-[#6b665d]">{request.industry} · {request.businessCategory}</p><Link href={`/requests/${id}`} className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-wider">{t('submitMatch.seeFullCriteria')} <ArrowRight size={13} /></Link></div><div className="mt-4"><PrivacyNote>{t('privacy.noteReward')}</PrivacyNote></div></aside>
     </div><Compliance /></div></PageFrame>;
 }
 
@@ -246,133 +321,151 @@ function EditorialBlock({ n, title, children, dark = false }: { n: string; title
 }
 
 export function ForBuyersPage() {
-  return <EditorialPage eyebrow="For acquisition buyers" title="Make your criteria work harder." intro="BuySide gives serious buyers a clear, discreet way to describe the businesses they want to acquire—and a place for relevant opportunities to find them." cta={{ label: 'Publish acquisition criteria', href: '/post-request' }}>
-    <EditorialBlock n="01" title="Be specific, not exposed">Set the sectors, business profile, geography, financial parameters and timing you are genuinely prepared to consider. Publish only at the privacy level that fits.</EditorialBlock>
-    <EditorialBlock n="02" title="Receive context with the introduction">Submissions can include the business profile, fit rationale and the submitter's relationship to the opportunity. Review what is shared before deciding whether to engage.</EditorialBlock>
-    <EditorialBlock n="03" title="Stay in control">Your mandate is not a public listing of your identity or investment capacity. You decide whether a potential fit should move forward, and what information to request next.</EditorialBlock>
-    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-xs leading-6 text-[#625d53]">BuySide does not represent buyers, negotiate transactions, or provide investment, legal, tax or accounting advice. All acquisition decisions remain yours.</div>
+  const { t } = useLanguage();
+  useSeo('forBuyers');
+  return <EditorialPage eyebrow={t('forBuyers.eyebrow')} title={t('forBuyers.title')} intro={t('forBuyers.intro')} cta={{ label: t('forBuyers.cta'), href: '/post-request' }}>
+    <EditorialBlock n="01" title={t('forBuyers.b1Title')}>{t('forBuyers.b1Body')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('forBuyers.b2Title')}>{t('forBuyers.b2Body')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('forBuyers.b3Title')}>{t('forBuyers.b3Body')}</EditorialBlock>
+    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-xs leading-6 text-[#625d53]">{t('forBuyers.disclaimer')}</div>
   </EditorialPage>;
 }
 
 export function ForFindersPage() {
-  return <EditorialPage eyebrow="For brokers, owners & deal finders" title="A well-placed introduction can matter." intro="Bring forward opportunities that fit a buyer's stated criteria. BuySide is designed for informed, relationship-aware introductions—not anonymous lead generation." cta={{ label: 'Explore buyer demand', href: '/requests' }}>
-    <EditorialBlock n="01" title="Who may submit">Business owners, brokers, M&A advisors, accountants, attorneys and other deal finders may submit a potential match when they are authorized to share the information and can explain their connection.</EditorialBlock>
-    <EditorialBlock n="02" title="Confidentiality comes first">Start with non-identifying business context unless the owner has authorized disclosure. Avoid sharing personal information, client materials or confidential documents without permission.</EditorialBlock>
-    <EditorialBlock n="03" title="A potential success-based reward">Qualified introductions that result in completed transactions may earn a success-based reward of up to 8% of the final transaction value, subject to applicable terms, transaction structure, licensing requirements, and jurisdiction.</EditorialBlock>
-    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm font-semibold leading-6 text-[#625d53]">No closing. No finder reward.</div>
-    <p className="text-xs leading-6 text-[#6b665d]">Reward eligibility, amount, payment timing, and legal requirements vary by transaction, structure, jurisdiction, and participant status. Terms must be confirmed before an introduction or submission.</p>
-    <p className="text-xs leading-6 text-[#6b665d]">No reward is promised or guaranteed. Any compensation depends on applicable terms, transaction structure, licensing requirements, jurisdiction and a separate agreement.</p>
+  const { t } = useLanguage();
+  useSeo('forFinders');
+  return <EditorialPage eyebrow={t('forFinders.eyebrow')} title={t('forFinders.title')} intro={t('forFinders.intro')} cta={{ label: t('forFinders.cta'), href: '/requests' }}>
+    <EditorialBlock n="01" title={t('forFinders.b1Title')}>{t('forFinders.b1Body')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('forFinders.b2Title')}>{t('forFinders.b2Body')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('forFinders.b3Title')}>{t('forFinders.b3Body')}</EditorialBlock>
+    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm font-semibold leading-6 text-[#625d53]">{t('forFinders.noClosing')}</div>
+    <p className="text-xs leading-6 text-[#6b665d]">{t('forFinders.caution1')}</p>
+    <p className="text-xs leading-6 text-[#6b665d]">{t('forFinders.caution2')}</p>
   </EditorialPage>;
 }
 
 export function HowItWorksPage() {
-  return <EditorialPage eyebrow="How it works" title="A measured path from criteria to conversation." intro="The process begins with a buyer's actual acquisition intent. Each party can assess relevance before deciding whether to share more." cta={{ label: 'See current buyer demand', href: '/requests' }}>
-    <EditorialBlock n="01" title="A buyer publishes a mandate">Buyers define the industry, business profile, geographic preference, financial range and timing. Privacy settings determine how the request is presented.</EditorialBlock>
-    <EditorialBlock n="02" title="A finder submits a possible match">The submitter provides business context, explains why the opportunity may fit and states their relationship to it. Initial identity details can be kept confidential.</EditorialBlock>
-    <EditorialBlock n="03" title="The buyer reviews the submission">Buyers review potential matches against the criteria they published. Submissions are not endorsements, verified financials or a promise of follow-up.</EditorialBlock>
-    <EditorialBlock n="04" title="Participants decide what comes next">If there is mutual interest, the parties can establish appropriate confidentiality, confirm representation and agree directly on next steps. BuySide does not negotiate the transaction.</EditorialBlock>
+  const { t } = useLanguage();
+  useSeo('howItWorks');
+  return <EditorialPage eyebrow={t('howItWorks.eyebrow')} title={t('howItWorks.title')} intro={t('howItWorks.intro')} cta={{ label: t('howItWorks.cta'), href: '/requests' }}>
+    <EditorialBlock n="01" title={t('home.step1TitleNew')}>{t('home.step1DescNew')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('home.step2TitleNew')}>{t('home.step2DescNew')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('home.step3TitleNew')}>{t('home.step3DescNew')}</EditorialBlock>
+    <EditorialBlock n="04" title={t('home.step4TitleNew')}>{t('home.step4DescNew')}</EditorialBlock>
+    <div className="border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-[13px] leading-6 text-[#625d53]">{t('home.introFeeNote')}</div>
   </EditorialPage>;
 }
 
 export function PrivateNetworkPage() {
-  return <EditorialPage eyebrow="A private network" title="A better setting for serious intent." intro="BuySide connects stated acquisition demand with people who may know a relevant business. It is not an open directory of businesses, buyers or intermediaries." cta={{ label: 'Review published criteria', href: '/requests' }} tone="dark">
-    <EditorialBlock dark n="01" title="Acquisition buyers">Strategic acquirers, individual buyers, private equity firms, search funds and other qualified buyers may describe their criteria, subject to platform access and request settings.</EditorialBlock>
-    <EditorialBlock dark n="02" title="Owners and operators">Owners can learn whether a buyer's stated criteria align before choosing to share information or enter a conversation.</EditorialBlock>
-    <EditorialBlock dark n="03" title="Brokers and advisors">Intermediaries can surface a relevant mandate to a client opportunity when authorized, while keeping roles and relationships clear.</EditorialBlock>
-    <EditorialBlock dark n="04" title="Connected deal finders">People with a legitimate connection to a business may submit a potential match when they have permission to share appropriate information.</EditorialBlock>
+  const { t } = useLanguage();
+  useSeo('privateNetwork');
+  return <EditorialPage eyebrow={t('privateNetwork.eyebrow')} title={t('privateNetwork.title')} intro={t('privateNetwork.intro')} cta={{ label: t('privateNetwork.cta'), href: '/requests' }} tone="dark">
+    <EditorialBlock dark n="01" title={t('privateNetwork.b1Title')}>{t('privateNetwork.b1Body')}</EditorialBlock>
+    <EditorialBlock dark n="02" title={t('privateNetwork.b2Title')}>{t('privateNetwork.b2Body')}</EditorialBlock>
+    <EditorialBlock dark n="03" title={t('privateNetwork.b3Title')}>{t('privateNetwork.b3Body')}</EditorialBlock>
+    <EditorialBlock dark n="04" title={t('privateNetwork.b4Title')}>{t('privateNetwork.b4Body')}</EditorialBlock>
   </EditorialPage>;
 }
 
 export function ConfidentialityPage() {
-  return <EditorialPage eyebrow="Confidentiality" title="Share deliberately. Keep control of identity." intro="Private introductions only work when information is handled with care. BuySide is designed to support selective disclosure—not to replace consent, legal agreements or professional judgment." cta={{ label: 'Explore buyer demand', href: '/requests' }}>
-    <EditorialBlock n="01" title="Start with non-identifying context">A first submission can describe the sector, location, business scale and fit without naming a company or owner. Only include information you are authorized to share.</EditorialBlock>
-    <EditorialBlock n="02" title="Consent before sensitive disclosure">Do not upload or transmit trade secrets, personal data, financial records or confidential client materials without the necessary permission and safeguards. Use an NDA when appropriate.</EditorialBlock>
-    <EditorialBlock n="03" title="Privacy settings have limits">Public, members-only, NDA-required and private request settings affect visibility. They do not guarantee anonymity or replace a signed confidentiality agreement.</EditorialBlock>
-    <EditorialBlock n="04" title="Make introductions with care">Participants are responsible for confirming authority, representation, permissions and applicable disclosure obligations before sharing information or proceeding.</EditorialBlock>
+  const { t } = useLanguage();
+  useSeo('confidentiality');
+  return <EditorialPage eyebrow={t('confidentiality.eyebrow')} title={t('confidentiality.title')} intro={t('confidentiality.intro')} cta={{ label: t('confidentiality.cta'), href: '/requests' }}>
+    <EditorialBlock n="01" title={t('confidentiality.b1Title')}>{t('confidentiality.b1Body')}</EditorialBlock>
+    <EditorialBlock n="02" title={t('confidentiality.b2Title')}>{t('confidentiality.b2Body')}</EditorialBlock>
+    <EditorialBlock n="03" title={t('confidentiality.b3Title')}>{t('confidentiality.b3Body')}</EditorialBlock>
+    <EditorialBlock n="04" title={t('confidentiality.b4Title')}>{t('confidentiality.b4Body')}</EditorialBlock>
     <Compliance />
   </EditorialPage>;
 }
 
 function Compliance() {
-  return <section className="mx-auto max-w-[1280px] px-5 pb-12 pt-4 md:px-10 md:pb-16"><div className="border-t border-[#d8d1c5] pt-5"><p className="max-w-4xl text-[11px] leading-5 text-[#847d70]">BuySide is a technology and introduction platform. Certain activities, transactions, referral compensation, business brokerage, real estate transactions, securities transactions, financing activities, and other regulated activities may require licensed professionals depending on the transaction structure and jurisdiction. BuySide does not represent that every user or transaction is eligible for finder compensation.</p></div></section>;
+  const { t } = useLanguage();
+  return <section className="mx-auto max-w-[1280px] px-5 pb-12 pt-4 md:px-10 md:pb-16"><div className="border-t border-[#d8d1c5] pt-5"><p className="max-w-4xl text-[11px] leading-5 text-[#847d70]">{t('compliance.text')}</p></div></section>;
 }
 
 const platformDisclaimer = 'BuySide is a technology and introduction platform. Certain activities, transactions, referral compensation, business brokerage, real estate transactions, securities transactions, financing activities, and other regulated activities may require licensed professionals depending on the transaction structure and jurisdiction. BuySide does not represent that every user or transaction is eligible for finder compensation.';
 const draftStatus = 'This page is an initial draft and should be reviewed by counsel where appropriate before being relied upon as a complete policy or agreement.';
 
 function LegalDocument({ eyebrow, title, intro, sections, showDisclaimer = true }: { eyebrow: string; title: string; intro: string; sections: { title: string; text: string }[]; showDisclaimer?: boolean }) {
+  const { t } = useLanguage();
   return <PageFrame><div className="mx-auto max-w-[980px] px-5 py-14 md:px-10 md:py-20">
     <Eyebrow>{eyebrow}</Eyebrow><h1 className="font-editorial mt-5 text-5xl tracking-[-.03em] md:text-7xl">{title}</h1><p className="mt-6 max-w-3xl text-sm leading-7 text-[#b9b5aa]">{intro}</p>
-    <div className="mt-8 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm leading-6 text-[#625d53]"><strong className="font-mono-label text-[10px] uppercase tracking-wider">Draft status</strong><p className="mt-2">{draftStatus}</p></div>
+    <div className="mt-8 border-l-2 border-[#b9a16d] bg-[#eeebe3] p-5 text-sm leading-6 text-[#625d53]"><strong className="font-mono-label text-[10px] uppercase tracking-wider">{t('legal.draftStatus')}</strong><p className="mt-2">{t('legal.draftStatusText')}</p></div>
     <div className="mt-10 divide-y divide-[#46453e] border-y border-[#46453e]">{sections.map((section, i) => <section key={section.title} className="grid gap-4 py-6 md:grid-cols-[190px_1fr]"><h2 className="font-editorial text-2xl">{section.title}</h2><p className="max-w-2xl text-sm leading-7 text-[#b9b5aa]">{section.text}</p></section>)}</div>
-    {showDisclaimer && <div className="mt-10 border border-[#46453e] p-5"><Eyebrow>Platform disclaimer</Eyebrow><p className="mt-3 text-sm leading-7 text-[#b9b5aa]">{platformDisclaimer}</p></div>}
+    {showDisclaimer && <div className="mt-10 border border-[#46453e] p-5"><Eyebrow>{t('legal.platformDisclaimer')}</Eyebrow><p className="mt-3 text-sm leading-7 text-[#b9b5aa]">{t('legal.platformDisclaimerText')}</p></div>}
   </div></PageFrame>;
 }
 
 export function TermsOfUsePage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Terms of Use" intro="A high-level draft for the BuySide technology and introduction platform. It is not a complete set of user terms." sections={[
-    { title: 'Platform purpose', text: 'BuySide lets buyers publish acquisition criteria and lets other participants submit potential business matches. The current interface supports public request browsing, private submissions, request visibility settings and member workspaces.' },
-    { title: 'Participant decisions', text: 'The product does not promise a response, transaction, verification, eligibility decision or outcome. The scope and conditions of a complete user agreement remain to be established and reviewed.' },
-    { title: 'Completion needed', text: 'Operator identity, account rules, content handling, dispute procedures, governing law and other legal terms have not been drafted here. No additional terms are implied by this summary.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('terms.eyebrow')} title={t('terms.title')} intro={t('terms.intro')} sections={[
+    { title: t('terms.s1Title'), text: t('terms.s1Text') },
+    { title: t('terms.s2Title'), text: t('terms.s2Text') },
+    { title: t('terms.s3Title'), text: t('terms.s3Text') },
   ]} />;
 }
 
 export function PrivacyPolicyPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Privacy Policy" intro="This draft intentionally does not make claims about data practices that are not specified in the product brief." sections={[
-    { title: 'Information in the product', text: 'The interface collects the mandate and opportunity details participants submit, along with account access managed through Clerk. Request visibility and identity-confidentiality choices appear in the product.' },
-    { title: 'Details still to be confirmed', text: 'The operator must document actual data retention, processors, sharing, deletion, security controls, jurisdictional rights and contact procedures before this draft can serve as a complete privacy policy.' },
-    { title: 'No certification claims', text: 'This draft makes no representation about certifications, security standards, storage locations, encryption practices or compliance status.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('privacy.eyebrow')} title={t('privacy.title')} intro={t('privacy.intro')} sections={[
+    { title: t('privacy.s1Title'), text: t('privacy.s1Text') },
+    { title: t('privacy.s2Title'), text: t('privacy.s2Text') },
+    { title: t('privacy.s3Title'), text: t('privacy.s3Text') },
   ]} />;
 }
 
 export function FinderTermsPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Finder Terms" intro="A concise draft for people introducing potential business opportunities to a buyer request." sections={[
-    { title: 'Authorized introductions', text: 'A finder should submit only information they are authorized to share and should describe their relationship to the opportunity. The platform does not determine licensing eligibility or approve a participant to perform regulated activity.' },
-    { title: 'Potential reward', text: 'Qualified introductions that result in completed transactions may earn a success-based reward of up to 8% of the final transaction value, subject to applicable terms, transaction structure, licensing requirements, and jurisdiction.' },
-    { title: 'Caution', text: 'Reward eligibility, amount, payment timing, and legal requirements vary by transaction, structure, jurisdiction, and participant status. Terms must be confirmed before an introduction or submission. No closing. No finder reward.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('finderTerms.eyebrow')} title={t('finderTerms.title')} intro={t('finderTerms.intro')} sections={[
+    { title: t('finderTerms.s1Title'), text: t('finderTerms.s1Text') },
+    { title: t('finderTerms.s2Title'), text: t('finderTerms.s2Text') },
+    { title: t('finderTerms.s3Title'), text: t('finderTerms.s3Text') },
   ]} />;
 }
 
 export function BuyerTermsPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Buyer Terms" intro="A high-level draft for buyers publishing acquisition criteria and reviewing potential introductions." sections={[
-    { title: 'Buyer criteria', text: 'A buyer provides acquisition criteria and selects the request visibility available in the product. Buyers are responsible for the criteria and other information they submit.' },
-    { title: 'Review and next steps', text: 'A submission is a potential match, not a verification, endorsement or promise of follow-up. Buyers decide whether to engage and are responsible for their own diligence and professional advice.' },
-    { title: 'Completion needed', text: 'Eligibility, account responsibilities, information use, transaction process and other complete buyer terms remain to be established and reviewed. No additional obligations are implied by this summary.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('buyerTerms.eyebrow')} title={t('buyerTerms.title')} intro={t('buyerTerms.intro')} sections={[
+    { title: t('buyerTerms.s1Title'), text: t('buyerTerms.s1Text') },
+    { title: t('buyerTerms.s2Title'), text: t('buyerTerms.s2Text') },
+    { title: t('buyerTerms.s3Title'), text: t('buyerTerms.s3Text') },
   ]} />;
 }
 
 export function DisclaimerPage() {
-  return <LegalDocument eyebrow="Legal · initial draft" title="Disclaimer" intro="Important context about the scope of the BuySide platform." sections={[
-    { title: 'Technology and introductions', text: 'BuySide provides a technology and introduction platform. It does not promise transaction outcomes or determine whether an activity is legally permitted for a particular participant.' },
-    { title: 'Independent review', text: 'Participants should assess their own circumstances, transaction structure and jurisdiction and seek advice from qualified professionals where appropriate.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('disclaimer.eyebrow')} title={t('disclaimer.title')} intro={t('disclaimer.intro')} sections={[
+    { title: t('disclaimer.s1Title'), text: t('disclaimer.s1Text') },
+    { title: t('disclaimer.s2Title'), text: t('disclaimer.s2Text') },
   ]} />;
 }
 
 export function ContactPage() {
-  return <LegalDocument eyebrow="Platform information" title="Contact" intro="Official contact details are not published on this page." sections={[
-    { title: 'Contact route', text: 'A verified contact channel has not been provided for this product. This page does not invent an email address, telephone number or contact form. It will need an official platform contact route before publication.' },
-    { title: 'Sensitive information', text: 'Do not send confidential business, personal, financial or transaction information to an unverified address or channel.' },
+  const { t } = useLanguage();
+  return <LegalDocument eyebrow={t('contact.eyebrow')} title={t('contact.title')} intro={t('contact.intro')} sections={[
+    { title: t('contact.s1Title'), text: t('contact.s1Text') },
+    { title: t('contact.s2Title'), text: t('contact.s2Text') },
   ]} showDisclaimer={false} />;
 }
 
 export function PostRequestPage() {
-  const [step, setStep] = useState(1);
+  const { t } = useLanguage();
+  useSeo('requests');
   const [error, setError] = useState('');
-  const [businessProfileDetails, setBusinessProfileDetails] = useState('');
-  const [dealPreferences, setDealPreferences] = useState('');
-  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [step, setStep] = useState(1);
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
   const create = useCreateBuyerRequest();
-  const form = useForm<BuyerRequestInput>({ defaultValues: { title: '', industry: '', businessCategory: '', buyerType: 'individual', country: '', region: '', city: '', radiusMiles: null, remoteAccepted: false, minimumPurchasePrice: null, maximumPurchasePrice: null, minimumRevenue: null, minimumEbitda: null, minimumCashFlow: null, preferredProfile: '', dealExclusions: '', timeline: '', rewardDisclosure: '', privacy: 'members_only' } });
+  const categoryParam = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('category') : null;
+  const defaultIndustry = categoryParam === 'business' ? 'Business' : categoryParam === 'service' ? 'Service' : categoryParam === 'product' ? 'Product' : '';
+  const form = useForm<BuyerRequestInput>({ defaultValues: { title: '', industry: defaultIndustry, businessCategory: '', buyerType: 'individual', country: '', region: '', city: '', radiusMiles: null, remoteAccepted: false, minimumPurchasePrice: null, maximumPurchasePrice: null, minimumRevenue: null, minimumEbitda: null, minimumCashFlow: null, preferredProfile: '', dealExclusions: '', timeline: '', rewardDisclosure: '', privacy: 'members_only' } });
   const r = form.register;
   const send = form.handleSubmit(values => {
     const numberOrNull = (v: unknown) => v === '' || v === null || v === undefined || (typeof v === 'number' && Number.isNaN(v)) ? null : Number(v);
-    const compose = (base: string, heading: string, extra: string) => [base.trim(), extra.trim() ? `${heading}\n${extra.trim()}` : ''].filter(Boolean).join('\n\n');
     const data: BuyerRequestInput = {
       ...values,
-      preferredProfile: compose(values.preferredProfile, 'Additional business-profile details', businessProfileDetails) + (additionalNotes.trim() ? `\n\nAdditional notes\n${additionalNotes.trim()}` : ''),
-      dealExclusions: compose(values.dealExclusions, 'Deal preferences', dealPreferences),
+      businessCategory: values.businessCategory || values.industry,
       radiusMiles: numberOrNull(values.radiusMiles),
       minimumPurchasePrice: numberOrNull(values.minimumPurchasePrice),
       maximumPurchasePrice: numberOrNull(values.maximumPurchasePrice),
@@ -386,65 +479,63 @@ export function PostRequestPage() {
       queryClient.invalidateQueries({ queryKey: getListBuyerRequestsQueryKey() });
       queryClient.invalidateQueries({ queryKey: getGetMySummaryQueryKey() });
       setLocation(`/requests/${created.id}`);
-    }, onError: () => setError('Your request could not be published. Please review the fields and try again.') });
+    }, onError: () => setError(t('postRequest.error')) });
   });
-  const stepLabels = ['Acquisition Type', 'Location', 'Financial Criteria', 'Business Profile', 'Deal Preferences', 'Additional Notes', 'Finder Reward', 'Privacy'];
-  const next = async () => {
-    const names: (keyof BuyerRequestInput)[] = step === 1
-      ? ['title', 'industry', 'businessCategory', 'buyerType', 'timeline']
-      : step === 2 ? ['country'] : step === 4 ? ['preferredProfile'] : [];
-    if (names.length && !(await form.trigger(names))) return;
-    setStep(Math.min(8, step + 1));
+
+  const stepLabels = [t('postRequest.step1'), t('postRequest.step2'), t('postRequest.step3')];
+  const canProceed = () => {
+    if (step === 1) return form.getValues('title')?.trim()?.length >= 3;
+    return true;
   };
-  return <PageFrame><div className="mx-auto max-w-[960px] px-5 py-10 md:px-10 md:py-16"><div className="flex items-center justify-between"><Link href="/for-buyers" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> For buyers</Link><span className="font-mono-label text-[10px] uppercase tracking-wider text-[#8f8675]">Mandate · 0{step} / 08</span></div>
-    <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_275px]"><div><Eyebrow>Publish acquisition criteria</Eyebrow><p className="mt-4 font-mono-label text-[10px] uppercase tracking-[.16em] text-[#a58f5c]">{stepLabels[step - 1]}</p><h1 className="font-editorial mt-3 text-5xl tracking-[-.03em] md:text-6xl">{stepLabels[step - 1]}</h1><p className="mt-4 max-w-xl text-sm leading-7 text-[#6b665d]">A useful mandate is specific about fit and thoughtful about what it discloses.</p>
-      <Form {...form}><form onSubmit={step === 8 ? send : event => event.preventDefault()} className="mt-8 space-y-6">
-        {step === 1 && <div className="grid gap-5 sm:grid-cols-2">
-          <label className="sm:col-span-2"><span className={label}>Mandate title</span><input className={field} required {...r('title', { required: 'Add a short title', minLength: 3, maxLength: 120 })} placeholder="For example: Established regional services company" data-testid="input-request-title" /></label>
-          <label><span className={label}>Industry</span><input className={field} required {...r('industry', { required: true })} data-testid="input-industry" /></label>
-          <label><span className={label}>Business category</span><input className={field} required {...r('businessCategory', { required: true })} data-testid="input-business-category" /></label>
-          <label><span className={label}>Buyer type</span><select className={field} {...r('buyerType')} data-testid="select-buyer-type"><option value="individual">Individual buyer</option><option value="strategic">Strategic buyer</option><option value="private_equity">Private equity</option><option value="search_fund">Search fund</option><option value="other">Other</option></select></label>
-          <label><span className={label}>Acquisition timeline</span><input className={field} required {...r('timeline', { required: true })} placeholder="For example: Actively evaluating" data-testid="input-timeline" /></label>
+
+  return <PageFrame><div className="mx-auto max-w-[960px] px-5 py-10 md:px-10 md:py-16"><Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('postRequest.backHome')}</Link>
+    <div className="mt-10 grid gap-10 lg:grid-cols-[1fr_275px]"><div><Eyebrow>{t('postRequest.eyebrow')}</Eyebrow><h1 className="font-editorial mt-3 text-5xl tracking-[-.03em] md:text-6xl">{t('postRequest.title')}</h1><p className="mt-4 max-w-xl text-sm leading-7 text-[#6b665d]">{t('postRequest.intro')}</p>
+
+      {/* Step indicator */}
+      <div className="mt-8 flex items-center gap-3">
+        {stepLabels.map((label, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className={`flex size-8 items-center justify-center border font-mono-label text-[11px] ${step > i + 1 ? 'border-[#b9a16d] bg-[#b9a16d] text-[#25241f]' : step === i + 1 ? 'border-[#b9a16d] text-[#b9a16d]' : 'border-[#cfc8bc] text-[#918a7c]'}`} data-testid={`step-indicator-${i + 1}`}>
+              {step > i + 1 ? <Check size={14} /> : i + 1}
+            </div>
+            <span className={`text-[12px] ${step === i + 1 ? 'text-[#38352f]' : 'text-[#918a7c]'}`}>{label}</span>
+            {i < stepLabels.length - 1 && <div className={`h-px w-8 ${step > i + 1 ? 'bg-[#b9a16d]' : 'bg-[#d4cdc1]'}`} />}
+          </div>
+        ))}
+      </div>
+      <p className="mt-3 font-mono-label text-[10px] uppercase tracking-[.12em] text-[#918a7c]">{t('postRequest.stepLabel')} {step} {t('postRequest.of')} 3 — {stepLabels[step - 1]}</p>
+
+      <Form {...form}><form onSubmit={send} className="mt-6 space-y-7">
+        {/* Step 1: What do you need? */}
+        {step === 1 && <div className="space-y-5">
+          <label className="block"><span className={label}>{t('postRequest.titleLabel')}</span><input className={field} required {...r('title', { required: 'Add a short title', minLength: 3, maxLength: 120 })} placeholder={t('postRequest.titlePlaceholder')} data-testid="input-request-title" /></label>
+          <label className="block"><span className={label}>{t('postRequest.category')}</span><select className={field} {...r('industry')} data-testid="input-category"><option value="">{t('postRequest.selectCategory')}</option><option value="Business">Business</option><option value="Service">Service</option><option value="Product">Product</option><option value="Other">Other</option></select></label>
+          <button type="button" onClick={() => { if (canProceed()) setStep(2); }} className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] transition hover:bg-[#504b40]" data-testid="button-step-next">{t('postRequest.next')} <ArrowRight size={14} /></button>
         </div>}
-        {step === 2 && <div className="grid gap-5 sm:grid-cols-2">
-          <label><span className={label}>Country</span><input className={field} required {...r('country', { required: true })} data-testid="input-country" /></label>
-          <label><span className={label}>Region or state</span><input className={field} {...r('region')} data-testid="input-region" /></label>
-          <label><span className={label}>City</span><input className={field} {...r('city')} data-testid="input-city" /></label>
-          <label><span className={label}>Preferred radius in miles</span><input className={field} type="number" min="0" max="5000" {...r('radiusMiles', { valueAsNumber: true })} data-testid="input-radius" /></label>
-          <label className="flex items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" {...r('remoteAccepted')} data-testid="checkbox-remote" /> Consider remote or location-flexible businesses</label>
+
+        {/* Step 2: Details */}
+        {step === 2 && <div className="space-y-7">
+          <fieldset className="grid gap-5 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('postRequest.location')}</legend><label><span className={label}>{t('postRequest.country')}</span><input className={field} {...r('country')} data-testid="input-country" /></label><label><span className={label}>{t('postRequest.region')}</span><input className={field} {...r('region')} data-testid="input-region" /></label><label><span className={label}>{t('postRequest.city')}</span><input className={field} {...r('city')} data-testid="input-city" /></label><label className="flex items-center gap-3 text-sm sm:col-span-2"><input type="checkbox" {...r('remoteAccepted')} data-testid="checkbox-remote" /> {t('postRequest.remote')}</label></fieldset>
+          <fieldset className="grid gap-5 sm:grid-cols-2"><legend className="mb-4 font-editorial text-2xl">{t('postRequest.budget')}</legend><label><span className={label}>{t('postRequest.minimum')}</span><input className={field} type="number" min="0" {...r('minimumPurchasePrice', { valueAsNumber: true })} data-testid="input-min-price" /></label><label><span className={label}>{t('postRequest.maximum')}</span><input className={field} type="number" min="0" {...r('maximumPurchasePrice', { valueAsNumber: true })} data-testid="input-max-price" /></label></fieldset>
+          <label className="block"><span className={label}>{t('postRequest.description')}</span><textarea className={area} required minLength={10} maxLength={1600} {...r('preferredProfile', { required: true, minLength: 10, maxLength: 1600 })} placeholder={t('postRequest.descriptionPlaceholder')} data-testid="input-description" /></label>
+          <label className="block"><span className={label}>{t('postRequest.timeline')}</span><input className={field} {...r('timeline')} placeholder={t('postRequest.timelinePlaceholder')} data-testid="input-timeline" /></label>
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setStep(1)} className="inline-flex h-12 items-center gap-2 border border-[#cfc8bc] px-6 text-xs uppercase tracking-wider text-[#38352f] transition hover:border-[#9a8352]" data-testid="button-step-back">{t('postRequest.back')}</button>
+            <button type="button" onClick={() => setStep(3)} className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] transition hover:bg-[#504b40]" data-testid="button-step-next-2">{t('postRequest.next')} <ArrowRight size={14} /></button>
+          </div>
         </div>}
-        {step === 3 && <div className="grid gap-5 sm:grid-cols-2">
-          <label><span className={label}>Minimum purchase price (USD)</span><input className={field} type="number" min="0" {...r('minimumPurchasePrice', { valueAsNumber: true })} data-testid="input-min-price" /></label>
-          <label><span className={label}>Maximum purchase price (USD)</span><input className={field} type="number" min="0" {...r('maximumPurchasePrice', { valueAsNumber: true })} data-testid="input-max-price" /></label>
-          <label><span className={label}>Minimum annual revenue</span><input className={field} type="number" min="0" {...r('minimumRevenue', { valueAsNumber: true })} data-testid="input-min-revenue" /></label>
-          <label><span className={label}>Minimum EBITDA</span><input className={field} type="number" {...r('minimumEbitda', { valueAsNumber: true })} data-testid="input-min-ebitda" /></label>
-          <label><span className={label}>Minimum cash flow</span><input className={field} type="number" {...r('minimumCashFlow', { valueAsNumber: true })} data-testid="input-min-cashflow" /></label>
+
+        {/* Step 3: Contact */}
+        {step === 3 && <div className="space-y-7">
+          <label className="block"><span className={label}>{t('postRequest.contactPrefs')}</span><select className={field} {...r('privacy')} data-testid="select-privacy"><option value="public">{t('postRequest.privacyPublic')}</option><option value="members_only">{t('postRequest.privacyMembers')}</option><option value="nda_required">{t('postRequest.privacyNda')}</option><option value="private">{t('postRequest.privacyPrivate')}</option></select></label>
+          {error && <p role="alert" className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm text-[#815d4f]">{error}</p>}
+          <div className="flex gap-3">
+            <button type="button" onClick={() => setStep(2)} className="inline-flex h-12 items-center gap-2 border border-[#cfc8bc] px-6 text-xs uppercase tracking-wider text-[#38352f] transition hover:border-[#9a8352]" data-testid="button-step-back-2">{t('postRequest.back')}</button>
+            <button disabled={create.isPending} type="submit" className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50" data-testid="button-publish-request">{create.isPending ? t('postRequest.publishing') : form.watch('privacy') === 'private' ? t('postRequest.submitPrivate') : t('postRequest.publish')} <ArrowRight size={14} /></button>
+          </div>
         </div>}
-        {step === 4 && <div className="space-y-5">
-          <label className="block"><span className={label}>Preferred business profile</span><textarea className={area} required minLength={10} maxLength={1600} {...r('preferredProfile', { required: true, minLength: 10, maxLength: 1600 })} placeholder="Describe the business that best fits your acquisition." data-testid="input-profile" /></label>
-          <label className="block"><span className={label}>Additional business-profile details</span><textarea className={area} maxLength={700} value={businessProfileDetails} onChange={e => setBusinessProfileDetails(e.target.value)} placeholder="Operating model, customer mix, team, owner involvement, or other fit details" data-testid="input-business-profile-details" /></label>
-        </div>}
-        {step === 5 && <div className="space-y-5">
-          <label className="block"><span className={label}>Deal exclusions</span><textarea className={area} maxLength={1000} {...r('dealExclusions', { maxLength: 1000 })} placeholder="Industries, operating models, or circumstances that are not a fit" data-testid="input-exclusions" /></label>
-          <label className="block"><span className={label}>Deal preferences</span><textarea className={area} maxLength={700} value={dealPreferences} onChange={e => setDealPreferences(e.target.value)} placeholder="Preferred deal structure, transition, seller involvement, or other deal preferences" data-testid="input-deal-preferences" /></label>
-        </div>}
-        {step === 6 && <div className="space-y-4">
-          <label className="block"><span className={label}>Additional notes</span><textarea className={area} maxLength={500} value={additionalNotes} onChange={e => setAdditionalNotes(e.target.value)} placeholder="Anything else a potential introduction should know?" data-testid="input-additional-notes" /></label>
-          <p className="text-xs leading-5 text-[#81796c]">Notes are saved with your preferred business profile. Keep sensitive information out of the mandate.</p>
-        </div>}
-        {step === 7 && <div className="space-y-5">
-          <label className="block"><span className={label}>Potential finder reward disclosure <span className="normal-case text-[#918a7c]">(optional)</span></span><textarea className={area} maxLength={500} {...r('rewardDisclosure', { maxLength: 500 })} placeholder="Describe any potential reward and its conditions. A reward is not guaranteed." data-testid="input-reward" /></label>
-          <PrivacyNote>Any reward is potential only and subject to applicable terms, transaction structure, licensing requirements and jurisdiction.</PrivacyNote>
-        </div>}
-        {step === 8 && <div className="space-y-5">
-          <label className="block"><span className={label}>Request visibility</span><select className={field} {...r('privacy')} data-testid="select-privacy"><option value="public">Public — appears in marketplace</option><option value="members_only">Members only</option><option value="nda_required">NDA required</option><option value="private">Private — not listed publicly</option></select></label>
-          <PrivacyNote>Publishing does not verify the buyer or guarantee a transaction. Do not include personal contact details or confidential material in the mandate.</PrivacyNote>
-        </div>}
-        {error && <p role="alert" className="border border-[#d7c3b8] bg-[#f8f2ed] p-3 text-sm text-[#815d4f]">{error}</p>}
-        <div className="flex flex-wrap justify-between gap-3 border-t border-[#d4cdc1] pt-5">{step > 1 ? <button type="button" onClick={() => setStep(step - 1)} className="inline-flex h-12 items-center gap-2 border border-[#cfc8bc] px-5 text-xs uppercase tracking-wider" data-testid="button-previous"><ArrowLeft size={14} /> Previous</button> : <span />}
-          {step < 8 ? <button type="button" onClick={next} className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb]" data-testid="button-next">Continue <ArrowRight size={14} /></button> : <button disabled={create.isPending} type="submit" className="inline-flex h-12 items-center gap-2 bg-[#38352f] px-6 text-xs uppercase tracking-wider text-[#f5f2eb] disabled:opacity-50" data-testid="button-publish-request">{create.isPending ? 'Publishing…' : 'Publish mandate'} <ArrowRight size={14} /></button>}</div>
       </form></Form>
-    </div><aside className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 lg:mt-12"><Eyebrow>Mandate notes</Eyebrow><ul className="mt-4 space-y-4 text-xs leading-5 text-[#6b665d]"><li className="flex gap-2"><ShieldCheck size={15} className="shrink-0 text-[#887649]" />Choose a visibility level that fits your search.</li><li className="flex gap-2"><CircleHelp size={15} className="shrink-0 text-[#887649]" />You can leave financial thresholds blank if flexible.</li><li className="flex gap-2"><LockKeyhole size={15} className="shrink-0 text-[#887649]" />Avoid including personal or confidential information.</li></ul><div className="mt-6 border-t border-[#d4cdc1] pt-4 text-[10px] uppercase leading-5 tracking-wider text-[#827968]">Progress is saved when you publish.</div></aside></div></div></PageFrame>;
+    </div><aside className="border border-[#d4cdc1] bg-[#f8f6f0] p-5 lg:mt-12"><Eyebrow>{t('postRequest.tips')}</Eyebrow><ul className="mt-4 space-y-4 text-xs leading-5 text-[#6b665d]"><li className="flex gap-2"><ShieldCheck size={15} className="shrink-0 text-[#887649]" />{t('postRequest.tip1')}</li><li className="flex gap-2"><CircleHelp size={15} className="shrink-0 text-[#887649]" />{t('postRequest.tip2')}</li><li className="flex gap-2"><LockKeyhole size={15} className="shrink-0 text-[#887649]" />{t('postRequest.tip3')}</li></ul></aside></div></div></PageFrame>;
 }
 
 function Metric({ title, value, note }: { title: string; value?: number | string; note: string }) {
@@ -453,19 +544,21 @@ function Metric({ title, value, note }: { title: string; value?: number | string
 
 function MatchReview({ request }: { request: BuyerRequest }) {
   const matches = useListRequestMatches(request.id, { query: { queryKey: getListRequestMatchesQueryKey(request.id) } });
+  const { t } = useLanguage();
   return <div className="mt-4 border-l border-[#c9bea9] pl-4">
-    <div className="flex items-center justify-between gap-3"><p className="font-mono-label text-[9px] uppercase tracking-[.14em] text-[#81796c]">Private introductions</p><span className="font-mono-label text-[10px] text-[#827968]">{matches.isLoading ? '…' : matches.data?.length ?? 0}</span></div>
-    {matches.isLoading ? <div className="mt-3 h-8 animate-pulse bg-[#e9e4da]" /> : matches.isError ? <button onClick={() => matches.refetch()} className="mt-3 text-xs text-[#8c624f]" data-testid={`button-retry-matches-${request.id}`}>Could not load introductions. Retry.</button> : matches.data?.length ? <div className="mt-3 space-y-3">{matches.data.map(m => <div key={m.id} className="border-t border-[#e0d9ce] pt-3"><div className="flex justify-between gap-3"><span className="text-sm">{m.confidentialIdentity ? 'Identity withheld' : m.businessName || 'Identity withheld'}</span><span className="font-mono-label text-[9px] uppercase text-[#857b69]">{m.status.replaceAll('_', ' ')}</span></div><p className="mt-1 text-xs leading-5 text-[#6d675d]">{m.matchRationale}</p><p className="mt-2 text-[10px] text-[#8a8274]">{m.industry}{m.confidentialIdentity ? '' : ` · ${m.location}`}</p></div>)}</div> : <p className="mt-2 text-xs leading-5 text-[#81796c]">No introductions are available for review yet.</p>}
+    <div className="flex items-center justify-between gap-3"><p className="font-mono-label text-[9px] uppercase tracking-[.14em] text-[#81796c]">{t('dashReview.privateIntroductions')}</p><span className="font-mono-label text-[10px] text-[#827968]">{matches.isLoading ? '…' : matches.data?.length ?? 0}</span></div>
+    {matches.isLoading ? <div className="mt-3 h-8 animate-pulse bg-[#e9e4da]" /> : matches.isError ? <button onClick={() => matches.refetch()} className="mt-3 text-xs text-[#8c624f]" data-testid={`button-retry-matches-${request.id}`}>{t('dashReview.couldNotLoad')}</button> : matches.data?.length ? <div className="mt-3 space-y-3">{matches.data.map(m => <div key={m.id} className="border-t border-[#e0d9ce] pt-3"><div className="flex justify-between gap-3"><span className="text-sm">{m.confidentialIdentity ? t('dashReview.identityWithheld') : m.businessName || t('dashReview.identityWithheld')}</span><span className="font-mono-label text-[9px] uppercase text-[#857b69]">{m.status.replaceAll('_', ' ')}</span></div><p className="mt-1 text-xs leading-5 text-[#6d675d]">{m.matchRationale}</p><p className="mt-2 text-[10px] text-[#8a8274]">{m.industry}{m.confidentialIdentity ? '' : ` · ${m.location}`}</p></div>)}</div> : <p className="mt-2 text-xs leading-5 text-[#81796c]">{t('dashReview.noIntroductions')}</p>}
   </div>;
 }
 
 function SavedRequestRow({ request }: { request: BuyerRequest }) {
   const save = useSaveBuyerRequest();
   const client = useQueryClient();
+  const { t } = useLanguage();
   return <div><RequestCard request={request} compact /><div className="-mt-3 flex justify-end pb-5"><button type="button" disabled={save.isPending} onClick={() => save.mutate({ requestId: request.id, data: { saved: false } }, { onSuccess: () => {
     client.invalidateQueries({ queryKey: getListMySavedRequestsQueryKey() });
     client.invalidateQueries({ queryKey: getGetMySummaryQueryKey() });
-  } })} className="border border-[#cfc8bc] px-3 py-2 text-[10px] uppercase tracking-wider text-[#6b665d] disabled:opacity-50" data-testid={`button-unsave-${request.id}`}>{save.isPending ? 'Removing…' : 'Remove saved'}</button></div></div>;
+  } })} className="border border-[#cfc8bc] px-3 py-2 text-[10px] uppercase tracking-wider text-[#6b665d] disabled:opacity-50" data-testid={`button-unsave-${request.id}`}>{save.isPending ? t('dashReview.removing') : t('dashReview.removeSaved')}</button></div></div>;
 }
 
 export function DashboardPage() {
@@ -474,19 +567,22 @@ export function DashboardPage() {
   const submissions = useListMySubmissions();
   const saved = useListMySavedRequests();
   const [tab, setTab] = useState<'buyer' | 'finder' | 'saved'>('buyer');
-  return <PageFrame><div className="mx-auto max-w-[1280px] px-5 py-10 md:px-10 md:py-16">
-    <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><Eyebrow>Member dashboard</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-6xl">Your workspace.</h1><p className="mt-3 text-sm text-[#6b665d]">Buyer mandates, private introductions and saved criteria.</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">Publish criteria <ArrowRight size={14} /></Link></div>
+  const { t } = useLanguage();
+  return <PageFrame>
+    <DemoShowcase />
+    <div className="mx-auto max-w-[1280px] px-5 py-10 md:px-10 md:py-16">
+    <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end"><div><Eyebrow>{t('dash.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-6xl">{t('dash.title')}</h1><p className="mt-3 text-sm text-[#6b665d]">{t('dash.subtitle')}</p></div><Link href="/post-request" className="inline-flex h-12 items-center justify-center gap-2 bg-[#38352f] px-5 text-xs uppercase tracking-wider text-[#f5f2eb]">{t('dash.createRequest')} <ArrowRight size={14} /></Link></div>
     {summary.isError && <div className="mt-8"><ErrorState onRetry={() => summary.refetch()} /></div>}
-    <div className="mt-9 grid grid-cols-2 gap-7 border-y border-[#d4cdc1] py-6 md:grid-cols-5">{summary.isLoading ? Array.from({ length: 5 }, (_, i) => <div key={i} className="animate-pulse"><div className="h-2 w-20 bg-[#e4ded3]" /><div className="mt-4 h-8 w-12 bg-[#e4ded3]" /></div>) : <><Metric title="Buyer requests" value={summary.data?.requestCount} note="Published criteria" /><Metric title="Submissions" value={summary.data?.submissionCount} note="Introductions shared" /><Metric title="Saved" value={summary.data?.savedCount} note="Buyer criteria" /><Metric title="Reviews" value={summary.data?.reviewCount} note="Items needing attention" /><Metric title="Accepted introductions" value="—" note="Not tracked until billing is active" /></>}</div>
+    <div className="mt-9 grid grid-cols-2 gap-7 border-y border-[#d4cdc1] py-6 md:grid-cols-5">{summary.isLoading ? Array.from({ length: 5 }, (_, i) => <div key={i} className="animate-pulse"><div className="h-2 w-20 bg-[#e4ded3]" /><div className="mt-4 h-8 w-12 bg-[#e4ded3]" /></div>) : <><Metric title={t('dash.metricRequests')} value={summary.data?.requestCount} note={t('dash.metricRequestsNote')} /><Metric title={t('dash.metricMatches')} value={summary.data?.submissionCount} note={t('dash.metricMatchesNote')} /><Metric title={t('dash.metricSaved')} value={summary.data?.savedCount} note={t('dash.metricSavedNote')} /><Metric title={t('dash.metricReviews')} value={summary.data?.reviewCount} note={t('dash.metricReviewsNote')} /><Metric title={t('dash.metricIntroductions')} value="—" note={t('dash.metricIntroductionsNote')} /></>}</div>
     <AccountPlanPanel requestViewsUsed={summary.data?.requestViewsUsedThisMonth} submissionsUsed={summary.data?.submissionsUsedThisMonth} />
     <div className="mt-10 flex flex-wrap gap-2 border-b border-[#d4cdc1]">
-      {([['buyer', 'Buyer mandates'], ['finder', 'My submissions'], ['saved', 'Saved criteria']] as const).map(([key, text]) => <button type="button" onClick={() => setTab(key)} key={key} className={`border-b-2 px-4 py-3 text-xs uppercase tracking-wider ${tab === key ? 'border-[#a58f5c] text-[#4b453a]' : 'border-transparent text-[#8b8478]'}`} data-testid={`tab-${key}`}>{text}</button>)}
+      {([['buyer', t('dash.tabMyRequests')], ['finder', t('dash.tabMyMatches')], ['saved', t('dash.tabSaved')]] as const).map(([key, text]) => <button type="button" onClick={() => setTab(key)} key={key} className={`border-b-2 px-4 py-3 text-xs uppercase tracking-wider ${tab === key ? 'border-[#a58f5c] text-[#4b453a]' : 'border-transparent text-[#8b8478]'}`} data-testid={`tab-${key}`}>{text}</button>)}
     </div>
     {tab === 'buyer' && <section className="mt-8">
-      {requests.isLoading ? <LoadingRows /> : requests.isError ? <ErrorState onRetry={() => requests.refetch()} /> : requests.data?.length ? <div className="divide-y divide-[#d4cdc1]">{requests.data.map(request => <div key={request.id} className="grid gap-5 py-6 md:grid-cols-[1fr_320px]"><div><div className="flex flex-wrap gap-2">{request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">SAMPLE BUYER REQUEST</span>}<span className="font-mono-label text-[9px] uppercase tracking-wider text-[#827968]">{request.privacy.replaceAll('_', ' ')}</span></div><Link href={`/requests/${request.id}`} className="font-editorial mt-3 block text-2xl hover:text-[#806c42]">{request.title}</Link><p className="mt-2 text-xs text-[#777064]">{request.industry} · {request.businessCategory} · {request.country}</p><p className="mt-3 line-clamp-2 text-sm leading-6 text-[#6b665d]">{request.preferredProfile}</p><Link href={`/requests/${request.id}`} className="mt-4 inline-flex items-center gap-2 text-[10px] uppercase tracking-wider">View request <ArrowRight size={13} /></Link></div><MatchReview request={request} /></div>)}</div> : <EmptyState title="No buyer mandates yet" body="Publish acquisition criteria when you are ready to receive relevant opportunities." action={<ButtonLink href="/post-request">Publish criteria</ButtonLink>} />}
+      {requests.isLoading ? <LoadingRows /> : requests.isError ? <ErrorState onRetry={() => requests.refetch()} /> : requests.data?.length ? <div className="divide-y divide-[#d4cdc1]">{requests.data.map(request => <div key={request.id} className="grid gap-5 py-6 md:grid-cols-[1fr_320px]"><div><div className="flex flex-wrap gap-2">{request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-wider text-[#78643a]">{t('dashReview.submitted')}</span>}<span className="font-mono-label text-[9px] uppercase tracking-wider text-[#827968]">{request.privacy.replaceAll('_', ' ')}</span></div><Link href={`/requests/${request.id}`} className="font-editorial mt-3 block text-2xl hover:text-[#806c42]">{request.title}</Link><p className="mt-2 text-xs text-[#777064]">{request.industry} · {request.businessCategory} · {request.country}</p><p className="mt-3 line-clamp-2 text-sm leading-6 text-[#6b665d]">{request.preferredProfile}</p><Link href={`/requests/${request.id}`} className="mt-4 inline-flex items-center gap-2 text-[10px] uppercase tracking-wider">{t('dashReview.viewRequest')} <ArrowRight size={13} /></Link></div><MatchReview request={request} /></div>)}</div> : <EmptyState title={t('dash.noRequests')} body={t('dash.noRequestsBody')} action={<ButtonLink href="/post-request">{t('dash.createRequest')}</ButtonLink>} />}
     </section>}
-    {tab === 'finder' && <section className="mt-8">{submissions.isLoading ? <LoadingRows /> : submissions.isError ? <ErrorState onRetry={() => submissions.refetch()} /> : submissions.data?.length ? <div className="divide-y divide-[#d4cdc1]">{submissions.data.map(item => <div key={item.id} className="py-6"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-editorial text-2xl">{item.businessName || 'Confidential opportunity'}</h2><span className="border border-[#cfc8bc] px-2 py-1 font-mono-label text-[9px] uppercase tracking-wider text-[#726956]">{item.status.replaceAll('_', ' ')}</span></div><p className="mt-2 text-xs text-[#777064]">{item.industry} · {item.location} · Submitted {new Date(item.createdAt).toLocaleDateString()}</p><p className="mt-3 max-w-3xl text-sm leading-6 text-[#6b665d]">{item.matchRationale}</p><p className="mt-2 text-xs text-[#847d70]">Buyer request: <Link href={`/requests/${item.requestId}`} className="underline underline-offset-2">View criteria</Link></p></div>)}</div> : <EmptyState title="No introductions submitted" body="Find a request that fits an opportunity you are authorized to share." action={<ButtonLink href="/requests">Explore buyer demand</ButtonLink>} />}</section>}
-    {tab === 'saved' && <section className="mt-8">{saved.isLoading ? <LoadingRows /> : saved.isError ? <ErrorState onRetry={() => saved.refetch()} /> : saved.data?.length ? saved.data.map(request => <SavedRequestRow key={request.id} request={request} />) : <EmptyState title="No saved criteria" body="Save a buyer request when you want to return to it later." action={<ButtonLink href="/requests">Browse criteria</ButtonLink>} />}</section>}
-    <section className="mt-12"><PrivacyNote>Request visibility and submission statuses are shown as returned by the platform. Any progress depends on participants and is not guaranteed.</PrivacyNote></section>
+    {tab === 'finder' && <section className="mt-8">{submissions.isLoading ? <LoadingRows /> : submissions.isError ? <ErrorState onRetry={() => submissions.refetch()} /> : submissions.data?.length ? <div className="divide-y divide-[#d4cdc1]">{submissions.data.map(item => <div key={item.id} className="py-6"><div className="flex flex-wrap items-center justify-between gap-3"><h2 className="font-editorial text-2xl">{item.businessName || t('dashReview.confidentialOpp')}</h2><span className="border border-[#cfc8bc] px-2 py-1 font-mono-label text-[9px] uppercase tracking-wider text-[#726956]">{item.status.replaceAll('_', ' ')}</span></div><p className="mt-2 text-xs text-[#777064]">{item.industry} · {item.location} · {t('dashReview.submitted')} {new Date(item.createdAt).toLocaleDateString()}</p><p className="mt-3 max-w-3xl text-sm leading-6 text-[#6b665d]">{item.matchRationale}</p><p className="mt-2 text-xs text-[#847d70]">{t('dashReview.request')} <Link href={`/requests/${item.requestId}`} className="underline underline-offset-2">{t('dashReview.viewRequest')}</Link></p></div>)}</div> : <EmptyState title={t('dash.noMatches')} body={t('dash.noMatchesBody')} action={<ButtonLink href="/requests">{t('forFinders.cta')}</ButtonLink>} />}</section>}
+    {tab === 'saved' && <section className="mt-8">{saved.isLoading ? <LoadingRows /> : saved.isError ? <ErrorState onRetry={() => saved.refetch()} /> : saved.data?.length ? saved.data.map(request => <SavedRequestRow key={request.id} request={request} />) : <EmptyState title={t('dash.noSaved')} body={t('dash.noSavedBody')} action={<ButtonLink href="/requests">{t('forFinders.cta')}</ButtonLink>} />}</section>}
+    <section className="mt-12"><PrivacyNote>{t('privacy.noteDashboard')}</PrivacyNote></section>
   </div></PageFrame>;
 }

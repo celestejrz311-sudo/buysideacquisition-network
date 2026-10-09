@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { seedSampleBuyerRequests } from "./lib/seed-sample-buyer-requests";
+import { seedBusinessListings } from "./lib/seed-business-listings";
 
 const rawPort = process.env["PORT"];
 
@@ -17,7 +18,14 @@ if (Number.isNaN(port) || port <= 0) {
 }
 
 async function startServer(): Promise<void> {
-  await seedSampleBuyerRequests();
+  // Seed sample data on boot
+  try {
+    await seedSampleBuyerRequests();
+    await seedBusinessListings();
+    logger.info("Sample data seeded");
+  } catch (err) {
+    logger.error({ err }, "Failed to seed sample data");
+  }
 
   app.listen(port, (err) => {
     if (err) {
@@ -30,6 +38,6 @@ async function startServer(): Promise<void> {
 }
 
 void startServer().catch((err: unknown) => {
-  logger.error({ err }, "Unable to seed sample buyer requests");
+  logger.error({ err }, "Unable to start server");
   process.exit(1);
 });

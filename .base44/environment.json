@@ -1,0 +1,55 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "CLERK_PUBLISHABLE_KEY",
+      "description": "Clerk publishable key (pk_test_ or pk_live_) from the Clerk dashboard → API Keys. Used by the Express API server.",
+      "requiredAtBoot": true,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "CLERK_SECRET_KEY",
+      "description": "Clerk secret key (sk_test_ or sk_live_) from the Clerk dashboard → API Keys. Used by the Express API server to verify auth tokens.",
+      "requiredAtBoot": true,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "VITE_CLERK_PUBLISHABLE_KEY",
+      "description": "Same Clerk publishable key as CLERK_PUBLISHABLE_KEY, prefixed with VITE_ so Vite exposes it to the frontend. Required — the React app throws at startup without it.",
+      "requiredAtBoot": true,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "STRIPE_SECRET_KEY",
+      "description": "Stripe secret key (sk_test_ or sk_live_) from https://dashboard.stripe.com → Developers → API Keys. Used by the API server to create checkout sessions and verify webhooks.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "STRIPE_WEBHOOK_SECRET",
+      "description": "Stripe webhook signing secret (whsec_...) from https://dashboard.stripe.com → Developers → Webhooks (or from `stripe listen --forward-to` when using Stripe CLI locally).",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "STRIPE_PRICE_BUYER_PRO",
+      "description": "Stripe Price ID for the Buyer Pro plan ($79/month). Create a Product + recurring Price in https://dashboard.stripe.com → Products, then copy the price_ ID.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "STRIPE_PRICE_PROFESSIONAL",
+      "description": "Stripe Price ID for the Professional plan ($149/month). Create in Stripe Dashboard → Products and copy the price_ ID.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    },
+    {
+      "name": "STRIPE_PRICE_PRIVATE_NETWORK",
+      "description": "Stripe Price ID for the Private Network plan ($299/month). Create in Stripe Dashboard → Products and copy the price_ ID.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": false
+    }
+  ]
+}

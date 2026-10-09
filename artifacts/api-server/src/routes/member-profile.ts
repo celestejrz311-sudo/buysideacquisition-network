@@ -32,13 +32,18 @@ router.get("/me/profile", requireMember, async (req, res): Promise<void> => {
   const [profile] = await db
     .select({
       role: memberProfilesTable.role,
+      interests: memberProfilesTable.interests,
       plan: memberProfilesTable.plan,
     })
     .from(memberProfilesTable)
     .where(eq(memberProfilesTable.userId, memberId(req)!));
 
   res.json(
-    GetMyProfileResponse.parse(profile ?? { role: "unset", plan: "free" }),
+    GetMyProfileResponse.parse(
+      profile
+        ? { ...profile, interests: profile.interests ?? undefined }
+        : { role: "unset", plan: "free" },
+    ),
   );
 });
 
@@ -54,20 +59,25 @@ router.patch("/me/profile", requireMember, async (req, res): Promise<void> => {
     .values({
       userId: memberId(req)!,
       role: parsed.data.role,
+      interests: parsed.data.interests ?? null,
     })
     .onConflictDoUpdate({
       target: memberProfilesTable.userId,
       set: {
         role: parsed.data.role,
+        interests: parsed.data.interests ?? null,
         updatedAt: new Date(),
       },
     })
     .returning({
       role: memberProfilesTable.role,
+      interests: memberProfilesTable.interests,
       plan: memberProfilesTable.plan,
     });
 
-  res.json(UpdateMyProfileResponse.parse(profile));
+  res.json(UpdateMyProfileResponse.parse(
+    profile ? { ...profile, interests: profile.interests ?? undefined } : profile,
+  ));
 });
 
 export default router;

@@ -12,4 +12,9 @@ export interface MemberProfile {
   /** Self-selected primary account role. */
   role: MemberProfileRole;
   plan: MemberProfilePlan;
+  /**
+     * Comma-separated list of member interests (buy, sell, service, products, broker, investor).
+     * @nullable
+     */
+  interests?: string | null;
 }
