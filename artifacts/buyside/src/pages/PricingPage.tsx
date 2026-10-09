@@ -12,7 +12,7 @@ type BillingPeriod = 'monthly' | 'annual';
 const plans = [
   {
     id: 'explorer',
-    name: { en: 'Explorer', es: 'Explorer' },
+    name: { en: 'Free', es: 'Free' },
     price: { monthly: 0, annual: 0 },
     description: {
       en: 'A clear first step into the network.',
@@ -35,18 +35,48 @@ const plans = [
     action: { en: 'Create a free account', es: 'Crear una cuenta gratuita' },
     free: true,
     popular: false,
+    requestAccess: false,
   },
   {
     id: 'buyer-pro',
-    name: { en: 'Buyer Pro', es: 'Buyer Pro' },
-    price: { monthly: 79, annual: 63 },
+    name: { en: 'Starter', es: 'Starter' },
+    price: { monthly: 19, annual: 15 },
+    description: {
+      en: 'For active buyers getting started.',
+      es: 'Para compradores activos que empiezan.',
+    },
+    benefits: {
+      en: [
+        'Everything in Free',
+        'Open 25 buyer request details per month',
+        'Submit 5 matching businesses per month',
+        'Email notifications for new matching requests',
+        'Standard profile',
+      ],
+      es: [
+        'Todo lo de Free',
+        'Abrir 25 detalles de solicitudes por mes',
+        'Enviar 5 negocios coincidentes por mes',
+        'Notificaciones por correo de nuevas solicitudes coincidentes',
+        'Perfil estándar',
+      ],
+    },
+    action: { en: 'Start with Starter', es: 'Comenzar con Starter' },
+    free: false,
+    popular: false,
+    requestAccess: false,
+  },
+  {
+    id: 'professional',
+    name: { en: 'Finder Pro', es: 'Finder Pro' },
+    price: { monthly: 49, annual: 39 },
     description: {
       en: 'For active buyers and deal finders.',
       es: 'Para compradores activos y buscadores de oportunidades.',
     },
     benefits: {
       en: [
-        'Full access to buyer requests',
+        'Everything in Starter',
         'Unlimited matching submissions',
         'Direct introductions',
         'Saved requests',
@@ -54,7 +84,7 @@ const plans = [
         'Professional profile',
       ],
       es: [
-        'Acceso completo a solicitudes de compra',
+        'Todo lo de Starter',
         'Envíos de coincidencias ilimitados',
         'Presentaciones directas',
         'Solicitudes guardadas',
@@ -62,53 +92,22 @@ const plans = [
         'Perfil profesional',
       ],
     },
-    action: { en: 'Start with Buyer Pro', es: 'Comenzar con Buyer Pro' },
+    action: { en: 'Start with Finder Pro', es: 'Comenzar con Finder Pro' },
     free: false,
     popular: true,
-  },
-  {
-    id: 'professional',
-    name: { en: 'Professional', es: 'Professional' },
-    price: { monthly: 149, annual: 119 },
-    description: {
-      en: 'For intermediaries building a consistent pipeline.',
-      es: 'Para intermediarios que construyen un flujo constante.',
-    },
-    benefits: {
-      en: [
-        'Everything in Buyer Pro',
-        'Verified Partner badge',
-        'Priority placement',
-        'Featured profile',
-        'Early access to new buyer requests',
-        'Advanced analytics',
-        'Priority support',
-      ],
-      es: [
-        'Todo lo de Buyer Pro',
-        'Insignia de Socio Verificado',
-        'Colocación prioritaria',
-        'Perfil destacado',
-        'Acceso anticipado a nuevas solicitudes',
-        'Analíticas avanzadas',
-        'Soporte prioritario',
-      ],
-    },
-    action: { en: 'Choose Professional', es: 'Elegir Professional' },
-    free: false,
-    popular: false,
+    requestAccess: false,
   },
   {
     id: 'private-network',
     name: { en: 'Private Network', es: 'Private Network' },
-    price: { monthly: 299, annual: 239 },
+    price: { monthly: 0, annual: 0 },
     description: {
       en: 'For principals seeking private, off-market deal flow.',
       es: 'Para principales que buscan oportunidades privadas fuera de mercado.',
     },
     benefits: {
       en: [
-        'Everything in Professional',
+        'Everything in Finder Pro',
         'Private Network membership',
         'Exclusive off-market opportunities',
         'Private deal rooms',
@@ -116,7 +115,7 @@ const plans = [
         'Invitation-only introductions',
       ],
       es: [
-        'Todo lo de Professional',
+        'Todo lo de Finder Pro',
         'Membresía a Private Network',
         'Oportunidades exclusivas fuera de mercado',
         'Salas de negociación privadas',
@@ -124,9 +123,10 @@ const plans = [
         'Presentaciones solo por invitación',
       ],
     },
-    action: { en: 'Apply for Private Network', es: 'Solicitar Private Network' },
+    action: { en: 'Request Access', es: 'Solicitar Acceso' },
     free: false,
     popular: false,
+    requestAccess: true,
   },
 ] as const;
 
@@ -328,10 +328,16 @@ export function PricingPage() {
                   <p className="mt-3 text-[13px] leading-5 text-[#a39e91]">{plan.description[lang]}</p>
                 </div>
                 <div className="flex items-baseline gap-2 border-b border-[#41423b] pb-6">
-                  <span className="font-editorial text-[52px] leading-none tracking-[-.045em] text-[#eee9de]" data-testid={`text-price-${index}`}>{formatPrice(plan.price[billing])}</span>
-                  <span className="font-mono-label text-[10px] uppercase tracking-[.08em] text-[#a39e91]">{ui.cadence[lang]}</span>
-                  {billing === 'annual' && plan.price.annual > 0 && (
-                    <span className="ml-auto font-mono-label text-[9px] uppercase tracking-[.1em] text-[#b9a16d]" data-testid={`text-annual-savings-${index}`}>{ui.off20[lang]}</span>
+                  {plan.requestAccess ? (
+                    <span className="font-editorial text-[28px] leading-none tracking-[-.02em] text-[#c6b17b]" data-testid={`text-price-${index}`}>{plan.action[lang]}</span>
+                  ) : (
+                    <>
+                      <span className="font-editorial text-[52px] leading-none tracking-[-.045em] text-[#eee9de]" data-testid={`text-price-${index}`}>{formatPrice(plan.price[billing])}</span>
+                      <span className="font-mono-label text-[10px] uppercase tracking-[.08em] text-[#a39e91]">{ui.cadence[lang]}</span>
+                      {billing === 'annual' && plan.price.annual > 0 && (
+                        <span className="ml-auto font-mono-label text-[9px] uppercase tracking-[.1em] text-[#b9a16d]" data-testid={`text-annual-savings-${index}`}>{ui.off20[lang]}</span>
+                      )}
+                    </>
                   )}
                 </div>
                 <ul className="mt-6 flex-1 space-y-4">
@@ -347,6 +353,14 @@ export function PricingPage() {
                     href="/sign-up"
                     className="mt-8 inline-flex min-h-12 items-center justify-center gap-3 bg-[#b9a16d] px-4 text-[11px] uppercase tracking-[.1em] text-[#25241f] transition-colors hover:bg-[#c6b17b]"
                     data-testid="link-sign-up-free"
+                  >
+                    {plan.action[lang]}<ArrowRight size={15} />
+                  </Link>
+                ) : plan.requestAccess ? (
+                  <Link
+                    href="/private-network"
+                    className="mt-8 inline-flex min-h-12 items-center justify-center gap-3 border border-[#85734c] px-4 text-[11px] uppercase tracking-[.1em] text-[#c6b17b] transition-colors hover:bg-[#302f29]"
+                    data-testid={`link-request-access-${index}`}
                   >
                     {plan.action[lang]}<ArrowRight size={15} />
                   </Link>

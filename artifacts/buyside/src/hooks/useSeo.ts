@@ -8,45 +8,45 @@ type SeoKey =
 
 const seoData: Record<SeoKey, { title: { en: string; es: string }; description: { en: string; es: string } }> = {
   home: {
-    title: { en: 'BuySide — Buy and Sell Florida Businesses Without Middlemen', es: 'BuySide — Compra y Vende Negocios en Florida Sin Intermediarios' },
+    title: { en: 'BuySide — Buy and Sell Businesses Without Middlemen', es: 'BuySide — Compra y Vende Negocios Sin Intermediarios' },
     description: {
-      en: 'A private marketplace for buying and selling Florida businesses. Discreet, qualified introductions — no expensive brokers required.',
-      es: 'Un mercado privado para comprar y vender negocios en Florida. Presentaciones discretas y calificadas — sin corredores caros.',
+      en: 'A private marketplace for buying and selling businesses. Discreet, qualified introductions — no expensive brokers required.',
+      es: 'Un mercado privado para comprar y vender negocios. Presentaciones discretas y calificadas — sin corredores caros.',
     },
   },
   marketplace: {
-    title: { en: 'Marketplace — Browse Florida Business Opportunities | BuySide', es: 'Mercado — Explora Oportunidades de Negocios en Florida | BuySide' },
+    title: { en: 'Marketplace — Browse Business Opportunities | BuySide', es: 'Mercado — Explora Oportunidades de Negocios | BuySide' },
     description: {
-      en: 'Browse buyer requests and business opportunities across Florida. Submit a match or post your own request.',
-      es: 'Explora solicitudes de compradores y oportunidades de negocios en Florida. Envía una coincidencia o publica tu propia solicitud.',
+      en: 'Browse buyer requests and business opportunities across the United States. Submit a match or post your own request.',
+      es: 'Explora solicitudes de compradores y oportunidades de negocios en todo Estados Unidos. Envía una coincidencia o publica tu propia solicitud.',
     },
   },
   membership: {
     title: { en: 'Membership Plans — Transparent Pricing | BuySide', es: 'Planes de Membresía — Precios Transparentes | BuySide' },
     description: {
-      en: 'Choose from four plans: Free, Buyer Pro ($79/mo), Professional ($149/mo), and Private Network ($299/mo). No transaction percentages.',
-      es: 'Elige entre cuatro planes: Gratis, Buyer Pro ($79/mes), Professional ($149/mes) y Private Network ($299/mes). Sin porcentajes de transacción.',
+      en: 'Choose from four plans: Free, Starter ($19/mo), Finder Pro ($49/mo), and Private Network (Request Access). No transaction percentages.',
+      es: 'Elige entre cuatro planes: Gratis, Starter ($19/mes), Finder Pro ($49/mes) y Private Network (Solicitar Acceso). Sin porcentajes de transacción.',
     },
   },
   services: {
-    title: { en: 'Services — Find Business Services in Florida | BuySide', es: 'Servicios — Encuentra Servicios Empresariales en Florida | BuySide' },
+    title: { en: 'Services — Find Business Services | BuySide', es: 'Servicios — Encuentra Servicios Empresariales | BuySide' },
     description: {
-      en: 'Find professional and business services in Florida. Post a request and connect with qualified providers.',
-      es: 'Encuentra servicios profesionales y empresariales en Florida. Publica una solicitud y conéctate con proveedores calificados.',
+      en: 'Find professional and business services. Post a request and connect with qualified providers.',
+      es: 'Encuentra servicios profesionales y empresariales. Publica una solicitud y conéctate con proveedores calificados.',
     },
   },
   howItWorks: {
     title: { en: 'How It Works — Discover, Connect, Close | BuySide', es: 'Cómo Funciona — Descubre, Conecta, Cierra | BuySide' },
     description: {
-      en: 'Four simple steps: Discover, Request Introduction, Accept Match, Connect Privately. The $99 fee applies only when you accept a match.',
-      es: 'Cuatro pasos simples: Descubre, Solicitar Presentación, Aceptar Coincidencia, Conectar Privadamente. La tarifa de $99 aplica solo al aceptar una coincidencia.',
+      en: 'Four simple steps: Discover Opportunities, Request Introduction, Get Approved, Connect Privately. The $99 fee applies only when you accept a match.',
+      es: 'Cuatro pasos simples: Descubrir Oportunidades, Solicitar Presentación, Ser Aprobado, Conectar Privadamente. La tarifa de $99 aplica solo al aceptar una coincidencia.',
     },
   },
   opportunities: {
-    title: { en: 'Opportunities — Florida Business Acquisition Opportunities | BuySide', es: 'Oportunidades — Oportunidades de Adquisición de Negocios en Florida | BuySide' },
+    title: { en: 'Opportunities — Business Acquisition Opportunities | BuySide', es: 'Oportunidades — Oportunidades de Adquisición de Negocios | BuySide' },
     description: {
-      en: 'Browse Florida business acquisition opportunities and buyer requests. Find your next deal.',
-      es: 'Explora oportunidades de adquisición de negocios en Florida y solicitudes de compradores. Encuentra tu próxima oportunidad.',
+      en: 'Browse business acquisition opportunities and buyer requests. Find your next deal.',
+      es: 'Explora oportunidades de adquisición de negocios y solicitudes de compradores. Encuentra tu próxima oportunidad.',
     },
   },
   requests: {
