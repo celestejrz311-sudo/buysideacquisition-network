@@ -13,22 +13,28 @@ import {
 
 const router: IRouter = Router();
 
-/** GET /api/business-listings — public list of all listings */
+/** GET /api/business-listings — public list of approved listings */
 router.get("/business-listings", async (_req, res): Promise<void> => {
   const rows = await db
     .select()
     .from(businessListingsTable)
+    .where(
+      and(
+        eq(businessListingsTable.isApproved, true),
+        eq(businessListingsTable.isRejected, false),
+      ),
+    )
     .orderBy(desc(businessListingsTable.createdAt));
   res.json(rows);
 });
 
-/** GET /api/business-listings/:id — public detail */
+/** GET /api/business-listings/:id — public detail (approved only) */
 router.get("/business-listings/:id", async (req, res): Promise<void> => {
   const [listing] = await db
     .select()
     .from(businessListingsTable)
     .where(eq(businessListingsTable.id, req.params.id));
-  if (!listing) {
+  if (!listing || !listing.isApproved || listing.isRejected) {
     res.status(404).json({ error: "Listing not found." });
     return;
   }

@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
-import { ArrowLeft, Check, Search, X, LockKeyhole } from 'lucide-react';
+import { ArrowLeft, Check, Search, X, LockKeyhole, Pencil } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { PublicLayout, Eyebrow } from '@/components/site';
+import { AdminEditModal, type EditableRequest, type EditableListing } from '@/components/AdminEditModal';
 
 const ADMIN_SESSION_KEY = 'buyside_admin_session';
 const ADMIN_PASSWORD = '12345678';
@@ -24,8 +25,26 @@ type AdminRequest = {
   id: string;
   title: string;
   industry: string;
+  businessCategory: string;
+  buyerType: string;
+  country: string;
+  region: string | null;
+  city: string | null;
+  radiusMiles: number | null;
+  remoteAccepted: boolean;
+  minimumPurchasePrice: number | null;
+  maximumPurchasePrice: number | null;
+  minimumRevenue: number | null;
+  minimumEbitda: number | null;
+  minimumCashFlow: number | null;
+  preferredProfile: string;
+  dealExclusions: string;
+  timeline: string;
+  rewardDisclosure: string;
   privacy: string;
   isVerified: boolean;
+  isApproved: boolean;
+  isRejected: boolean;
   featured: boolean;
   finderRewardType: string | null;
   finderRewardValue: string | null;
@@ -69,6 +88,7 @@ type AdminListing = {
   imageUrl: string | null;
   isSample: boolean;
   isApproved: boolean;
+  isRejected: boolean;
   createdBy: string;
   createdAt: string;
 };
@@ -153,6 +173,7 @@ export function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [saving, setSaving] = useState<string | null>(null);
+  const [editModal, setEditModal] = useState<{ type: 'request' | 'listing'; data: EditableRequest | EditableListing } | null>(null);
 
   useEffect(() => {
     if (hasAdminSession()) { setIsAdmin(true); return; }
@@ -239,8 +260,17 @@ export function AdminPage() {
   const updateRequest = async (id: string, updates: Record<string, unknown>) => {
     setSaving(id);
     try {
-      await adminFetch(`/admin/requests/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
-      setRequests(prev => prev.map(r => r.id === id ? { ...r, ...updates } as AdminRequest : r));
+      const updated = await adminFetch<AdminRequest>(`/admin/requests/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
+      setRequests(prev => prev.map(r => r.id === id ? { ...r, ...updated } as AdminRequest : r));
+    } catch (e) { setError((e as Error).message); }
+    finally { setSaving(null); }
+  };
+
+  const deleteRequest = async (id: string) => {
+    setSaving(id);
+    try {
+      await adminFetch(`/admin/requests/${id}`, { method: 'DELETE' });
+      setRequests(prev => prev.filter(r => r.id !== id));
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(null); }
   };
@@ -266,8 +296,8 @@ export function AdminPage() {
   const updateListing = async (id: string, updates: Record<string, unknown>) => {
     setSaving(id);
     try {
-      await adminFetch(`/admin/listings/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
-      setListings(prev => prev.map(l => l.id === id ? { ...l, ...updates } as AdminListing : l));
+      const updated = await adminFetch<AdminListing>(`/admin/listings/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
+      setListings(prev => prev.map(l => l.id === id ? { ...l, ...updated } as AdminListing : l));
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(null); }
   };
@@ -389,19 +419,22 @@ export function AdminPage() {
       {!loading && tab === 'requests' && <div className="mt-6 overflow-x-auto">
         <table className="w-full text-left text-[13px]">
           <thead><tr className="border-b border-[#d4cdc1] text-[10px] uppercase tracking-wider text-[#948c7b]">
-            <th className="py-3 pr-4">{t('admin.requestTitle')}</th><th className="py-3 pr-4">{t('admin.privacy')}</th><th className="py-3 pr-4">{t('admin.verified')}</th><th className="py-3 pr-4">{t('admin.featured')}</th><th className="py-3 pr-4">{t('admin.rewardType')}</th><th className="py-3 pr-4">{t('admin.rewardValue')}</th><th className="py-3">{t('admin.actions')}</th>
+            <th className="py-3 pr-4">{t('admin.requestTitle')}</th><th className="py-3 pr-4">{t('admin.privacy')}</th><th className="py-3 pr-4">Status</th><th className="py-3 pr-4">{t('admin.verified')}</th><th className="py-3 pr-4">{t('admin.featured')}</th><th className="py-3 pr-4">{t('admin.rewardType')}</th><th className="py-3 pr-4">{t('admin.rewardValue')}</th><th className="py-3">{t('admin.actions')}</th>
           </tr></thead>
           <tbody className="divide-y divide-[#e0d9ce]">
             {filteredRequests.map(r => <tr key={r.id}>
               <td className="py-3 pr-4 max-w-[200px] truncate">{r.title}</td>
               <td className="py-3 pr-4 text-[12px]">{r.privacy}</td>
+              <td className="py-3 pr-4 text-[12px]">{r.isRejected ? <span className="text-[#bf7864]">Rejected</span> : r.isApproved ? <span className="text-[#557165]">Approved</span> : <span className="text-[#b9a16d]">Pending</span>}</td>
               <td className="py-3 pr-4">{r.isVerified ? <span className="text-[#557165]">✓</span> : <span className="text-[#918a7c]">—</span>}</td>
               <td className="py-3 pr-4">{r.featured ? <span className="text-[#557165]">✓</span> : <span className="text-[#918a7c]">—</span>}</td>
               <td className="py-3 pr-4"><select className={field} value={r.finderRewardType || ''} onChange={e => updateRequest(r.id, { finderRewardType: e.target.value || null })} disabled={saving === r.id}><option value="">{t('admin.rewardNone')}</option><option value="fixed">{t('admin.rewardFixed')}</option><option value="percentage">{t('admin.rewardPercentage')}</option><option value="custom">{t('admin.rewardCustom')}</option></select></td>
               <td className="py-3 pr-4"><input className={field} value={r.finderRewardValue || ''} placeholder="$5,000 / 2% / …" onChange={e => updateRequest(r.id, { finderRewardValue: e.target.value })} disabled={saving === r.id} /></td>
               <td className="py-3 flex flex-wrap gap-1">
-                <button onClick={() => updateRequest(r.id, { isVerified: !r.isVerified })} className={btnOutline} disabled={saving === r.id}>{r.isVerified ? t('admin.unverify') : t('admin.verify')}</button>
-                <button onClick={() => updateRequest(r.id, { featured: !r.featured })} className={btnOutline} disabled={saving === r.id}>{r.featured ? 'Unfeature' : 'Feature'}</button>
+                <button onClick={() => setEditModal({ type: 'request', data: r })} className={btnOutline} disabled={saving === r.id}><Pencil size={11} /> Edit</button>
+                {!r.isApproved && <button onClick={() => updateRequest(r.id, { isApproved: true })} className={btnOutline} disabled={saving === r.id}>Approve</button>}
+                {!r.isRejected && <button onClick={() => updateRequest(r.id, { isRejected: true })} className={btnOutline} disabled={saving === r.id}>Reject</button>}
+                <button onClick={() => deleteRequest(r.id)} className={btnDanger} disabled={saving === r.id}>{t('admin.delete')}</button>
               </td>
             </tr>)}
           </tbody>
@@ -423,9 +456,11 @@ export function AdminPage() {
               <td className="py-3 pr-4 text-[12px]">{money(l.askingPrice)}</td>
               <td className="py-3 pr-4 text-[12px]">{money(l.annualRevenue)}</td>
               <td className="py-3 pr-4 text-[12px]">{money(l.finderFee)}</td>
-              <td className="py-3 pr-4">{l.isApproved ? <span className="text-[#557165]">✓</span> : <span className="text-[#918a7c]">—</span>}</td>
+              <td className="py-3 pr-4 text-[12px]">{l.isRejected ? <span className="text-[#bf7864]">Rejected</span> : l.isApproved ? <span className="text-[#557165]">Approved</span> : <span className="text-[#b9a16d]">Pending</span>}</td>
               <td className="py-3 flex flex-wrap gap-1">
-                <button onClick={() => updateListing(l.id, { isApproved: !l.isApproved })} className={btnOutline} disabled={saving === l.id}>{l.isApproved ? t('admin.unapprove') : t('admin.approve')}</button>
+                <button onClick={() => setEditModal({ type: 'listing', data: l })} className={btnOutline} disabled={saving === l.id}><Pencil size={11} /> Edit</button>
+                {!l.isApproved && <button onClick={() => updateListing(l.id, { isApproved: true })} className={btnOutline} disabled={saving === l.id}>{t('admin.approve')}</button>}
+                {!l.isRejected && <button onClick={() => updateListing(l.id, { isRejected: true })} className={btnOutline} disabled={saving === l.id}>Reject</button>}
                 <button onClick={() => deleteListing(l.id)} className={btnDanger} disabled={saving === l.id}>{t('admin.delete')}</button>
               </td>
             </tr>)}
@@ -531,6 +566,15 @@ export function AdminPage() {
         </table>
         {!filteredIntroductions.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
       </div>}
+
+      {editModal && (
+        <AdminEditModal
+          type={editModal.type}
+          data={editModal.data}
+          onSave={editModal.type === 'request' ? updateRequest : updateListing}
+          onClose={() => setEditModal(null)}
+        />
+      )}
     </div>
   </PublicLayout>;
 }

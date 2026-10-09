@@ -22,6 +22,7 @@ export const businessListingsTable = pgTable(
     imageUrl: text("image_url"),
     isSample: boolean("is_sample").notNull().default(true),
     isApproved: boolean("is_approved").notNull().default(false),
+    isRejected: boolean("is_rejected").notNull().default(false),
     createdBy: text("created_by").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()

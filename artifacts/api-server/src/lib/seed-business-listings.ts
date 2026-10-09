@@ -14,7 +14,8 @@ const sampleListings = [
     finderFee: 22800,
     imageUrl: null,
     isSample: true,
-    isApproved: false,
+    isApproved: true,
+    isRejected: false,
     createdBy: "sample-listing-seed",
   },
   {
@@ -29,7 +30,8 @@ const sampleListings = [
     finderFee: 38000,
     imageUrl: null,
     isSample: true,
-    isApproved: false,
+    isApproved: true,
+    isRejected: false,
     createdBy: "sample-listing-seed",
   },
   {
@@ -44,7 +46,8 @@ const sampleListings = [
     finderFee: 15600,
     imageUrl: null,
     isSample: true,
-    isApproved: false,
+    isApproved: true,
+    isRejected: false,
     createdBy: "sample-listing-seed",
   },
   {
@@ -59,7 +62,8 @@ const sampleListings = [
     finderFee: 26000,
     imageUrl: null,
     isSample: true,
-    isApproved: false,
+    isApproved: true,
+    isRejected: false,
     createdBy: "sample-listing-seed",
   },
 ].map((listing, index) => ({
@@ -82,6 +86,8 @@ export async function seedBusinessListings(): Promise<void> {
         annualRevenue: sql`excluded.annual_revenue`,
         finderFee: sql`excluded.finder_fee`,
         isSample: sql`excluded.is_sample`,
+        isApproved: sql`excluded.is_approved`,
+        isRejected: sql`excluded.is_rejected`,
       },
     });
 }

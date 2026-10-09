@@ -95,7 +95,11 @@ router.get("/buyer-requests", async (req, res): Promise<void> => {
   }
 
   const filters = parsed.data;
-  const conditions = [eq(buyerRequestsTable.privacy, "public")];
+  const conditions = [
+    eq(buyerRequestsTable.privacy, "public"),
+    eq(buyerRequestsTable.isApproved, true),
+    eq(buyerRequestsTable.isRejected, false),
+  ];
 
   if (filters.industry) {
     conditions.push(ilike(buyerRequestsTable.industry, `%${filters.industry}%`));
@@ -195,6 +199,8 @@ router.post("/buyer-requests", requireMember, async (req, res): Promise<void> =>
       minimumCashFlow: body.minimumCashFlow ?? null,
       rewardDisclosure: body.rewardDisclosure ?? rewardTerms,
       isVerified: false,
+      isApproved: false,
+      isRejected: false,
       isExample: false,
       createdBy: memberId(req)!,
     })
@@ -214,17 +220,18 @@ router.get("/buyer-requests/:requestId", async (req, res): Promise<void> => {
     .from(buyerRequestsTable)
     .where(eq(buyerRequestsTable.id, params.data.requestId));
 
+  const userId = memberId(req);
   if (
     !request ||
-    (request.privacy !== "public" &&
-      request.privacy !== "nda_required" &&
-      request.createdBy !== memberId(req))
+    request.isRejected ||
+    (request.createdBy !== userId &&
+      (!request.isApproved ||
+        (request.privacy !== "public" && request.privacy !== "nda_required")))
   ) {
     res.status(404).json({ error: "Buyer request not found." });
     return;
   }
 
-  const userId = memberId(req);
   if (userId && request.createdBy !== userId) {
     const { monthStart } = utcMonthWindow();
     const canOpen = await db.transaction(async (tx) => {
@@ -301,7 +308,12 @@ router.post(
       .select()
       .from(buyerRequestsTable)
       .where(eq(buyerRequestsTable.id, params.data.requestId));
-    if (!request || !["public", "nda_required"].includes(request.privacy)) {
+    if (
+      !request ||
+      !request.isApproved ||
+      request.isRejected ||
+      !["public", "nda_required"].includes(request.privacy)
+    ) {
       res.status(404).json({ error: "Buyer request not found." });
       return;
     }
@@ -385,11 +397,18 @@ router.post(
       return;
     }
     const [request] = await db
-      .select({ id: buyerRequestsTable.id, privacy: buyerRequestsTable.privacy })
+      .select({
+        id: buyerRequestsTable.id,
+        privacy: buyerRequestsTable.privacy,
+        isApproved: buyerRequestsTable.isApproved,
+        isRejected: buyerRequestsTable.isRejected,
+      })
       .from(buyerRequestsTable)
       .where(eq(buyerRequestsTable.id, params.data.requestId));
     if (
       !request ||
+      !request.isApproved ||
+      request.isRejected ||
       (request.privacy !== "public" && request.privacy !== "nda_required")
     ) {
       res.status(404).json({ error: "Buyer request not found." });

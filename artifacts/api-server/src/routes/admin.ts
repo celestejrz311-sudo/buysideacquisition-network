@@ -109,11 +109,20 @@ router.get("/admin/requests", requireAdmin, async (req, res): Promise<void> => {
 
 router.patch("/admin/requests/:id", requireAdmin, async (req, res): Promise<void> => {
   const { id } = req.params;
-  const allowed = ["isVerified", "featured", "finderRewardType", "finderRewardValue", "privacy"];
+  const allowed = [
+    "title", "industry", "businessCategory", "buyerType", "country", "region", "city",
+    "radiusMiles", "remoteAccepted", "minimumPurchasePrice", "maximumPurchasePrice",
+    "minimumRevenue", "minimumEbitda", "minimumCashFlow", "preferredProfile",
+    "dealExclusions", "timeline", "rewardDisclosure", "privacy",
+    "isVerified", "isApproved", "isRejected", "featured", "finderRewardType", "finderRewardValue",
+  ];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
     if (key in req.body) updates[key] = req.body[key];
   }
+  // Approving clears rejection and vice versa
+  if (updates.isApproved === true) updates.isRejected = false;
+  if (updates.isRejected === true) updates.isApproved = false;
   if (Object.keys(updates).length === 0) {
     res.status(400).json({ error: "No valid fields to update." });
     return;
@@ -128,6 +137,14 @@ router.patch("/admin/requests/:id", requireAdmin, async (req, res): Promise<void
     return;
   }
   res.json(updated);
+});
+
+router.delete("/admin/requests/:id", requireAdmin, async (req, res): Promise<void> => {
+  const { id } = req.params;
+  await db
+    .delete(buyerRequestsTable)
+    .where(eq(buyerRequestsTable.id, id));
+  res.json({ success: true });
 });
 
 // --- Matches ---
@@ -300,11 +317,14 @@ router.get("/admin/listings", requireAdmin, async (req, res): Promise<void> => {
 
 router.patch("/admin/listings/:id", requireAdmin, async (req, res): Promise<void> => {
   const { id } = req.params;
-  const allowed = ["title", "description", "category", "location", "askingPrice", "annualRevenue", "finderFee", "isApproved", "isSample"];
+  const allowed = ["title", "description", "category", "location", "askingPrice", "annualRevenue", "finderFee", "isApproved", "isRejected", "isSample"];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
     if (key in req.body) updates[key] = req.body[key];
   }
+  // Approving clears rejection and vice versa
+  if (updates.isApproved === true) updates.isRejected = false;
+  if (updates.isRejected === true) updates.isApproved = false;
   if (Object.keys(updates).length === 0) {
     res.status(400).json({ error: "No valid fields to update." });
     return;

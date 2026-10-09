@@ -54,8 +54,12 @@ router.get("/search", async (req: Request, res: Response): Promise<void> => {
   const locTerm = location ? `%${location}%` : null;
   const indTerm = industry ? `%${industry}%` : null;
 
-  // --- Buyer Requests (public only) ---
-  const requestConditions = [eq(buyerRequestsTable.privacy, "public")];
+  // --- Buyer Requests (public, approved only) ---
+  const requestConditions = [
+    eq(buyerRequestsTable.privacy, "public"),
+    eq(buyerRequestsTable.isApproved, true),
+    eq(buyerRequestsTable.isRejected, false),
+  ];
 
   if (type === "business") {
     requestConditions.push(
@@ -139,8 +143,11 @@ router.get("/search", async (req: Request, res: Response): Promise<void> => {
     .orderBy(desc(buyerRequestsTable.createdAt))
     .limit(limit);
 
-  // --- Business Listings ---
-  const listingConditions: ReturnType<typeof eq>[] = [];
+  // --- Business Listings (approved only) ---
+  const listingConditions: ReturnType<typeof eq>[] = [
+    eq(businessListingsTable.isApproved, true),
+    eq(businessListingsTable.isRejected, false),
+  ];
 
   if (type === "business") {
     listingConditions.push(

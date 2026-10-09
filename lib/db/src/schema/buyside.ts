@@ -38,6 +38,8 @@ export const buyerRequestsTable = pgTable(
       ),
     privacy: text("privacy").notNull().default("public"),
     isVerified: boolean("is_verified").notNull().default(false),
+    isApproved: boolean("is_approved").notNull().default(false),
+    isRejected: boolean("is_rejected").notNull().default(false),
     isExample: boolean("is_example").notNull().default(false),
     featured: boolean("featured").notNull().default(false),
     finderRewardType: text("finder_reward_type"),
