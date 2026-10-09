@@ -10,6 +10,7 @@ import {
 import {
   buyerRequestsTable,
   db,
+  finderReferralsTable,
   matchSubmissionsTable,
   memberProfilesTable,
 } from "@workspace/db";
@@ -214,6 +215,13 @@ router.get("/admin/analytics", requireAdmin, async (_req, res): Promise<void> =>
     .select({ value: count() })
     .from(memberProfilesTable)
     .where(eq(memberProfilesTable.privateNetworkApproved, true));
+  const [totalReferrals] = await db
+    .select({ value: count() })
+    .from(finderReferralsTable);
+  const [newReferrals] = await db
+    .select({ value: count() })
+    .from(finderReferralsTable)
+    .where(eq(finderReferralsTable.status, "new"));
 
   res.json({
     users: { total: totalUsers.value, verified: verifiedUsers.value, suspended: suspendedUsers.value },
@@ -221,7 +229,52 @@ router.get("/admin/analytics", requireAdmin, async (_req, res): Promise<void> =>
     matches: { total: totalMatches.value, pending: pendingMatches.value },
     memberships: { pro: proMembers.value, partner: partnerMembers.value },
     privateNetwork: { approved: privateNetworkApproved.value },
+    referrals: { total: totalReferrals.value, new: newReferrals.value },
   });
+});
+
+// --- Finder Referrals ---
+
+router.get("/admin/finder-referrals", requireAdmin, async (req, res): Promise<void> => {
+  const search = (req.query.search as string | undefined)?.trim();
+  const conditions = search
+    ? or(
+        ilike(finderReferralsTable.finderName, `%${search}%`),
+        ilike(finderReferralsTable.buyerName, `%${search}%`),
+        ilike(finderReferralsTable.listingTitle, `%${search}%`),
+      )!
+    : undefined;
+  const rows = await db
+    .select()
+    .from(finderReferralsTable)
+    .where(conditions ? and(conditions) : undefined)
+    .orderBy(desc(finderReferralsTable.createdAt))
+    .limit(200);
+  res.json(rows);
+});
+
+router.patch("/admin/finder-referrals/:id", requireAdmin, async (req, res): Promise<void> => {
+  const { id } = req.params;
+  const allowed = ["status"];
+  const updates: Record<string, unknown> = {};
+  for (const key of allowed) {
+    if (key in req.body) updates[key] = req.body[key];
+  }
+  if (Object.keys(updates).length === 0) {
+    res.status(400).json({ error: "No valid fields to update." });
+    return;
+  }
+  updates.updatedAt = new Date();
+  const [updated] = await db
+    .update(finderReferralsTable)
+    .set(updates)
+    .where(eq(finderReferralsTable.id, id))
+    .returning();
+  if (!updated) {
+    res.status(404).json({ error: "Referral not found." });
+    return;
+  }
+  res.json(updated);
 });
 
 export default router;

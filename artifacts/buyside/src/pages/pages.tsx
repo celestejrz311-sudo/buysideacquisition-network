@@ -26,6 +26,7 @@ import { TrustSection } from '@/components/TrustSection';
 import { SocialProof } from '@/components/SocialProof';
 import { FinalCta } from '@/components/FinalCta';
 import { MembershipPreview } from '@/components/MembershipPreview';
+import { BusinessOpportunities } from '@/components/BusinessOpportunities';
 
 const field = 'h-12 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
 const area = 'min-h-28 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 py-3 text-[14px] outline-none transition focus:border-[#9a8352] focus:ring-1 focus:ring-[#9a8352]';
@@ -72,6 +73,9 @@ export function HomePage() {
     </section>
 
     <div className="lg:hidden"><HeroVisual /></div>
+
+    {/* Business Opportunities (for-sale listings) */}
+    <BusinessOpportunities />
 
     {/* Featured Opportunities */}
     <FeaturedOpportunities />

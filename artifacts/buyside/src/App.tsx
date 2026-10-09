@@ -12,6 +12,7 @@ import NotFound from '@/pages/not-found';
 import { PricingPage } from '@/pages/PricingPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
+import { BusinessListingDetail } from '@/pages/BusinessListingDetail';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
@@ -185,6 +186,7 @@ function RoutedPages() {
       <Route path="/post-request" component={PostRequestRoute} />
       <Route path="/submit/:requestId" component={SubmitMatchRoute} />
       <Route path="/dashboard" component={DashboardRoute} />
+      <Route path="/listings/:id" component={BusinessListingDetail} />
       <Route path="/admin" component={AdminRoute} />
       {/* This optional wildcard is required for Clerk OAuth callback paths. */}
       <Route path="/sign-in/*?" component={SignInPage} />

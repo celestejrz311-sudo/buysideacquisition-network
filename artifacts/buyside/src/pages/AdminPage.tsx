@@ -42,12 +42,28 @@ type AdminMatch = {
   createdAt: string;
 };
 
+type AdminReferral = {
+  id: string;
+  listingId: string;
+  listingTitle: string;
+  finderName: string;
+  finderEmail: string;
+  buyerName: string;
+  buyerContact: string;
+  notes: string | null;
+  consent: boolean;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 type Analytics = {
   users: { total: number; verified: number; suspended: number };
   requests: { total: number; public: number; featured: number };
   matches: { total: number; pending: number };
   memberships: { pro: number; partner: number };
   privateNetwork: { approved: number };
+  referrals: { total: number; new: number };
 };
 
 const field = 'h-10 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 text-[13px] outline-none transition focus:border-[#9a8352]';
@@ -71,11 +87,12 @@ async function adminFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
 export function AdminPage() {
   const { t } = useLanguage();
-  const [tab, setTab] = useState<'users' | 'requests' | 'matches' | 'analytics'>('analytics');
+  const [tab, setTab] = useState<'users' | 'requests' | 'matches' | 'referrals' | 'analytics'>('analytics');
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [requests, setRequests] = useState<AdminRequest[]>([]);
   const [matches, setMatches] = useState<AdminMatch[]>([]);
+  const [referrals, setReferrals] = useState<AdminReferral[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -115,13 +132,21 @@ export function AdminPage() {
     finally { setLoading(false); }
   }, []);
 
+  const loadReferrals = useCallback(async () => {
+    setLoading(true); setError('');
+    try { setReferrals(await adminFetch<AdminReferral[]>('/admin/finder-referrals')); }
+    catch (e) { setError((e as Error).message); }
+    finally { setLoading(false); }
+  }, []);
+
   useEffect(() => {
     if (isAdmin !== true) return;
     if (tab === 'users') loadUsers();
     else if (tab === 'requests') loadRequests();
     else if (tab === 'matches') loadMatches();
+    else if (tab === 'referrals') loadReferrals();
     else loadAnalytics();
-  }, [tab, isAdmin, loadUsers, loadRequests, loadMatches, loadAnalytics]);
+  }, [tab, isAdmin, loadUsers, loadRequests, loadMatches, loadReferrals, loadAnalytics]);
 
   const updateUser = async (uid: string, updates: Record<string, unknown>) => {
     setSaving(uid);
@@ -150,6 +175,15 @@ export function AdminPage() {
     finally { setSaving(null); }
   };
 
+  const updateReferral = async (id: string, updates: Record<string, unknown>) => {
+    setSaving(id);
+    try {
+      await adminFetch(`/admin/finder-referrals/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
+      setReferrals(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+    } catch (e) { setError((e as Error).message); }
+    finally { setSaving(null); }
+  };
+
   if (isAdmin === null) {
     return <PublicLayout><div className="mx-auto max-w-[1280px] px-5 py-20 text-center text-[#6b665d]">{t('admin.checkingAccess')}</div></PublicLayout>;
   }
@@ -167,8 +201,8 @@ export function AdminPage() {
   const filteredRequests = requests.filter(r => !search || r.title.toLowerCase().includes(search.toLowerCase()) || r.industry.toLowerCase().includes(search.toLowerCase()));
   const filteredMatches = matches.filter(m => !search || (m.businessName?.toLowerCase().includes(search.toLowerCase()) ?? false) || m.industry.toLowerCase().includes(search.toLowerCase()));
 
-  const tabs: ['analytics', 'users', 'requests', 'matches'] = ['analytics', 'users', 'requests', 'matches'];
-  const tabLabels: Record<string, string> = { analytics: t('admin.tabAnalytics'), users: t('admin.tabUsers'), requests: t('admin.tabRequests'), matches: t('admin.tabMatches') };
+  const tabs: ['analytics', 'users', 'requests', 'matches', 'referrals'] = ['analytics', 'users', 'requests', 'matches', 'referrals'];
+  const tabLabels: Record<string, string> = { analytics: t('admin.tabAnalytics'), users: t('admin.tabUsers'), requests: t('admin.tabRequests'), matches: t('admin.tabMatches'), referrals: t('admin.tabReferrals') };
 
   return <PublicLayout>
     <div className="mx-auto max-w-[1280px] px-5 py-10 md:px-10 md:py-16">
@@ -201,6 +235,8 @@ export function AdminPage() {
           { label: t('admin.proMembers'), value: analytics.memberships.pro },
           { label: t('admin.partnerMembers'), value: analytics.memberships.partner },
           { label: t('admin.networkApproved'), value: analytics.privateNetwork.approved },
+          { label: t('admin.totalReferrals'), value: analytics.referrals?.total ?? 0 },
+          { label: t('admin.newReferrals'), value: analytics.referrals?.new ?? 0 },
         ].map(m => <div key={m.label} className="border-t border-[#d4cdc1] pt-4"><div className="font-mono-label text-[9px] uppercase tracking-[.15em] text-[#8c8475]">{m.label}</div><div className="font-editorial mt-3 text-4xl">{m.value}</div></div>)}
       </div>}
 
@@ -270,6 +306,35 @@ export function AdminPage() {
           </tbody>
         </table>
         {!filteredMatches.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
+      </div>}
+
+      {/* Finder Referrals */}
+      {!loading && tab === 'referrals' && <div className="mt-6 overflow-x-auto">
+        <table className="w-full text-left text-[13px]">
+          <thead><tr className="border-b border-[#d4cdc1] text-[10px] uppercase tracking-wider text-[#948c7b]">
+            <th className="py-3 pr-4">{t('admin.referralListing')}</th><th className="py-3 pr-4">{t('admin.referralFinder')}</th><th className="py-3 pr-4">{t('admin.referralBuyer')}</th><th className="py-3 pr-4">{t('admin.referralContact')}</th><th className="py-3 pr-4">{t('admin.referralStatus')}</th><th className="py-3 pr-4">{t('admin.referralDate')}</th>
+          </tr></thead>
+          <tbody className="divide-y divide-[#e0d9ce]">
+            {referrals.filter(r => !search || r.finderName.toLowerCase().includes(search.toLowerCase()) || r.buyerName.toLowerCase().includes(search.toLowerCase()) || r.listingTitle.toLowerCase().includes(search.toLowerCase())).map(r => <tr key={r.id}>
+              <td className="py-3 pr-4 max-w-[180px] truncate">{r.listingTitle}</td>
+              <td className="py-3 pr-4">{r.finderName}<br/><span className="text-[10px] text-[#918a7c]">{r.finderEmail}</span></td>
+              <td className="py-3 pr-4">{r.buyerName}</td>
+              <td className="py-3 pr-4 text-[12px]">{r.buyerContact}</td>
+              <td className="py-3 pr-4"><select className={field} value={r.status} onChange={e => updateReferral(r.id, { status: e.target.value })} disabled={saving === r.id}>
+                <option value="new">{t('admin.referralStatusNew')}</option>
+                <option value="under_review">{t('admin.referralStatusReview')}</option>
+                <option value="qualified">{t('admin.referralStatusQualified')}</option>
+                <option value="introduction_made">{t('admin.referralStatusIntro')}</option>
+                <option value="deal_in_progress">{t('admin.referralStatusProgress')}</option>
+                <option value="closed_won">{t('admin.referralStatusWon')}</option>
+                <option value="closed_lost">{t('admin.referralStatusLost')}</option>
+                <option value="commission_paid">{t('admin.referralStatusPaid')}</option>
+              </select></td>
+              <td className="py-3 pr-4 text-[12px] text-[#827968]">{new Date(r.createdAt).toLocaleDateString()}</td>
+            </tr>)}
+          </tbody>
+        </table>
+        {!referrals.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
       </div>}
     </div>
   </PublicLayout>;
