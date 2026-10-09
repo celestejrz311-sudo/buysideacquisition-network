@@ -17,7 +17,7 @@ import {
 } from "@workspace/db";
 
 const router: IRouter = Router();
-const ADMIN_KEY = "1234578";
+const ADMIN_KEY = "12345678";
 
 function memberId(req: Request) {
   return getAuth(req).userId;

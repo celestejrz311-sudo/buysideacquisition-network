@@ -5,7 +5,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { PublicLayout, Eyebrow } from '@/components/site';
 
 const ADMIN_SESSION_KEY = 'buyside_admin_session';
-const ADMIN_PASSWORD = '1234578';
+const ADMIN_PASSWORD = '12345678';
 const hasAdminSession = () => sessionStorage.getItem(ADMIN_SESSION_KEY) === ADMIN_PASSWORD;
 
 type AdminUser = {

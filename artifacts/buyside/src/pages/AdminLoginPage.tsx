@@ -4,7 +4,7 @@ import { ArrowLeft, Lock } from 'lucide-react';
 import { PublicLayout, Eyebrow } from '@/components/site';
 
 const ADMIN_USERNAME = 'Admin';
-const ADMIN_PASSWORD = '1234578';
+const ADMIN_PASSWORD = '12345678';
 
 export function AdminLoginPage() {
   const [username, setUsername] = useState('');

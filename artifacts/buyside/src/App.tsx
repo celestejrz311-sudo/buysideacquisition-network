@@ -99,7 +99,7 @@ function PostRequestRoute() {
 
 function AdminRoute() {
   const adminSession = typeof window !== 'undefined' ? sessionStorage.getItem('buyside_admin_session') : null;
-  if (adminSession === '1234578') return <AdminPage />;
+  if (adminSession === '12345678') return <AdminPage />;
   return <AdminLoginPage />;
 }
 
