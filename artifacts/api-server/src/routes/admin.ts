@@ -65,7 +65,7 @@ router.get("/admin/users", requireAdmin, async (_req, res): Promise<void> => {
 });
 
 router.patch("/admin/users/:userId", requireAdmin, async (req, res): Promise<void> => {
-  const { userId } = req.params;
+  const userId = String(req.params.userId);
   const allowed = ["role", "plan", "suspended", "verified", "stripeSubscriptionStatus", "privateNetworkApproved"];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
@@ -108,7 +108,7 @@ router.get("/admin/requests", requireAdmin, async (req, res): Promise<void> => {
 });
 
 router.patch("/admin/requests/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const allowed = [
     "title", "industry", "businessCategory", "buyerType", "country", "region", "city",
     "radiusMiles", "remoteAccepted", "minimumPurchasePrice", "maximumPurchasePrice",
@@ -140,7 +140,7 @@ router.patch("/admin/requests/:id", requireAdmin, async (req, res): Promise<void
 });
 
 router.delete("/admin/requests/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   await db
     .delete(buyerRequestsTable)
     .where(eq(buyerRequestsTable.id, id));
@@ -167,7 +167,7 @@ router.get("/admin/matches", requireAdmin, async (req, res): Promise<void> => {
 });
 
 router.patch("/admin/matches/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const allowed = ["status"];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
@@ -272,7 +272,7 @@ router.get("/admin/finder-referrals", requireAdmin, async (req, res): Promise<vo
 });
 
 router.patch("/admin/finder-referrals/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const allowed = ["status"];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
@@ -316,7 +316,7 @@ router.get("/admin/listings", requireAdmin, async (req, res): Promise<void> => {
 });
 
 router.patch("/admin/listings/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const allowed = ["title", "description", "category", "location", "askingPrice", "annualRevenue", "finderFee", "isApproved", "isRejected", "isSample"];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
@@ -342,7 +342,7 @@ router.patch("/admin/listings/:id", requireAdmin, async (req, res): Promise<void
 });
 
 router.delete("/admin/listings/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   await db
     .delete(businessListingsTable)
     .where(eq(businessListingsTable.id, id));
@@ -392,7 +392,7 @@ router.get("/admin/introductions", requireAdmin, async (req, res): Promise<void>
 });
 
 router.patch("/admin/introductions/:id", requireAdmin, async (req, res): Promise<void> => {
-  const { id } = req.params;
+  const id = String(req.params.id);
   const allowed = ["status", "ownerContactStatus", "brokerStatus", "confidentialIdentity"];
   const updates: Record<string, unknown> = {};
   for (const key of allowed) {
