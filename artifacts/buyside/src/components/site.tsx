@@ -65,6 +65,9 @@ export function Footer() {
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">{t('footer.principles')}</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/confidentiality">{t('footer.confidentiality')}</Link><Link href="/for-buyers">{t('nav.forBuyers')}</Link><Link href="/for-finders">{t('nav.forFinders')}</Link></div></div>
       <div><p className="font-mono-label text-[10px] uppercase tracking-[.18em] text-[#b9a16d]">{t('footer.legalContact')}</p><div className="mt-5 grid gap-3 text-sm text-[#d5d0c6]"><Link href="/terms-of-use">{t('footer.termsOfUse')}</Link><Link href="/privacy-policy">{t('footer.privacyPolicy')}</Link><Link href="/finder-terms">{t('footer.finderTerms')}</Link><Link href="/buyer-terms">{t('footer.buyerTerms')}</Link><Link href="/disclaimer">{t('footer.disclaimer')}</Link><Link href="/contact">{t('footer.contact')}</Link></div></div>
     </div>
+    <div className="flex justify-center py-6">
+      <button type="button" onClick={() => { const api = (window as any).Tawk_API; if (api?.maximize) api.maximize(); }} className="border border-[#b9a16d] bg-transparent px-6 py-2.5 text-[12px] uppercase tracking-[.1em] text-[#b9a16d] transition hover:bg-[#b9a16d]/10">Live Chat</button>
+    </div>
     <div className="border-t border-[#504d45] px-5 py-5 md:px-10"><div className="mx-auto flex max-w-[1280px] flex-col justify-between gap-3 text-[11px] leading-5 text-[#aaa59a] md:flex-row"><span>{t('footer.platformDisclaimer')}</span><span>© {new Date().getFullYear()} BuySide</span></div></div>
   </footer>;
 }
