@@ -4,7 +4,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 type SeoKey =
   | 'home' | 'marketplace' | 'membership' | 'services' | 'howItWorks'
   | 'opportunities' | 'requests' | 'forBuyers' | 'forFinders'
-  | 'privateNetwork' | 'confidentiality' | 'contact';
+  | 'privateNetwork' | 'confidentiality' | 'contact' | 'search';
 
 const seoData: Record<SeoKey, { title: { en: string; es: string }; description: { en: string; es: string } }> = {
   home: {
@@ -89,6 +89,13 @@ const seoData: Record<SeoKey, { title: { en: string; es: string }; description: 
     description: {
       en: 'Get in touch with the BuySide team.',
       es: 'Ponte en contacto con el equipo de BuySide.',
+    },
+  },
+  search: {
+    title: { en: 'Smart Search — Find Businesses, Requests & Services | BuySide', es: 'Búsqueda Inteligente — Encuentra Negocios, Solicitudes y Servicios | BuySide' },
+    description: {
+      en: 'Search the entire BuySide network. Filter by industry, location, price, and opportunity type. Find businesses, buyer requests, and matches.',
+      es: 'Busca en toda la red BuySide. Filtra por industria, ubicación, precio y tipo de oportunidad. Encuentra negocios, solicitudes y coincidencias.',
     },
   },
 };

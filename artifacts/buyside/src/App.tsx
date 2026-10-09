@@ -13,6 +13,7 @@ import { PricingPage } from '@/pages/PricingPage';
 import { AdminPage } from '@/pages/AdminPage';
 import { AdminLoginPage } from '@/pages/AdminLoginPage';
 import { BusinessListingDetail } from '@/pages/BusinessListingDetail';
+import { SmartSearchPage } from '@/pages/SmartSearchPage';
 import {
   BuyerTermsPage, ConfidentialityPage, ContactPage, DashboardPage, DisclaimerPage,
   FinderTermsPage, ForBuyersPage, ForFindersPage,
@@ -168,6 +169,7 @@ function RoutedPages() {
     <ClerkQueryClientCacheInvalidator />
     <RoutedErrorBoundary><Switch>
       <Route path="/" component={HomeRedirect} />
+      <Route path="/search" component={SmartSearchPage} />
       <Route path="/opportunities" component={OpportunitiesPage} />
       <Route path="/requests" component={RequestMarketplace} />
       <Route path="/requests/:requestId" component={RequestDetail} />

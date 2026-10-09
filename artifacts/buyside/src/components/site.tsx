@@ -18,6 +18,7 @@ export function Brand({ inverse = false }: { inverse?: boolean }) {
 }
 
 const navLinks: [string, TranslationKey][] = [
+  ['/search', 'nav.search'],
   ['/opportunities', 'nav.opportunities'],
   ['/requests', 'nav.requests'],
   ['/for-buyers', 'nav.forBuyers'],

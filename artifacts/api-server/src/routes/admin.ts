@@ -9,6 +9,7 @@ import {
 } from "express";
 import {
   buyerRequestsTable,
+  businessListingsTable,
   db,
   finderReferralsTable,
   matchSubmissionsTable,
@@ -272,6 +273,122 @@ router.patch("/admin/finder-referrals/:id", requireAdmin, async (req, res): Prom
     .returning();
   if (!updated) {
     res.status(404).json({ error: "Referral not found." });
+    return;
+  }
+  res.json(updated);
+});
+
+// --- Business Listings ---
+
+router.get("/admin/listings", requireAdmin, async (req, res): Promise<void> => {
+  const search = (req.query.search as string | undefined)?.trim();
+  const conditions = search
+    ? or(
+        ilike(businessListingsTable.title, `%${search}%`),
+        ilike(businessListingsTable.category, `%${search}%`),
+        ilike(businessListingsTable.location, `%${search}%`),
+      )!
+    : undefined;
+  const rows = await db
+    .select()
+    .from(businessListingsTable)
+    .where(conditions ? and(conditions) : undefined)
+    .orderBy(desc(businessListingsTable.createdAt))
+    .limit(200);
+  res.json(rows);
+});
+
+router.patch("/admin/listings/:id", requireAdmin, async (req, res): Promise<void> => {
+  const { id } = req.params;
+  const allowed = ["title", "description", "category", "location", "askingPrice", "annualRevenue", "finderFee", "isApproved", "isSample"];
+  const updates: Record<string, unknown> = {};
+  for (const key of allowed) {
+    if (key in req.body) updates[key] = req.body[key];
+  }
+  if (Object.keys(updates).length === 0) {
+    res.status(400).json({ error: "No valid fields to update." });
+    return;
+  }
+  const [updated] = await db
+    .update(businessListingsTable)
+    .set(updates)
+    .where(eq(businessListingsTable.id, id))
+    .returning();
+  if (!updated) {
+    res.status(404).json({ error: "Listing not found." });
+    return;
+  }
+  res.json(updated);
+});
+
+router.delete("/admin/listings/:id", requireAdmin, async (req, res): Promise<void> => {
+  const { id } = req.params;
+  await db
+    .delete(businessListingsTable)
+    .where(eq(businessListingsTable.id, id));
+  res.json({ success: true });
+});
+
+// --- Payments / Memberships ---
+
+router.get("/admin/payments", requireAdmin, async (_req, res): Promise<void> => {
+  const rows = await db
+    .select({
+      userId: memberProfilesTable.userId,
+      role: memberProfilesTable.role,
+      plan: memberProfilesTable.plan,
+      stripeSubscriptionStatus: memberProfilesTable.stripeSubscriptionStatus,
+      stripeCustomerId: memberProfilesTable.stripeCustomerId,
+      stripeSubscriptionId: memberProfilesTable.stripeSubscriptionId,
+      privateNetworkApproved: memberProfilesTable.privateNetworkApproved,
+      verified: memberProfilesTable.verified,
+      suspended: memberProfilesTable.suspended,
+      createdAt: memberProfilesTable.createdAt,
+      updatedAt: memberProfilesTable.updatedAt,
+    })
+    .from(memberProfilesTable)
+    .orderBy(desc(memberProfilesTable.updatedAt));
+  res.json(rows);
+});
+
+// --- Introductions (matches ready for buyer connection) ---
+
+router.get("/admin/introductions", requireAdmin, async (req, res): Promise<void> => {
+  const search = (req.query.search as string | undefined)?.trim();
+  const conditions = search
+    ? or(
+        ilike(matchSubmissionsTable.businessName, `%${search}%`),
+        ilike(matchSubmissionsTable.industry, `%${search}%`),
+        ilike(matchSubmissionsTable.shortDescription, `%${search}%`),
+      )!
+    : undefined;
+  const rows = await db
+    .select()
+    .from(matchSubmissionsTable)
+    .where(conditions ? and(conditions) : undefined)
+    .orderBy(desc(matchSubmissionsTable.createdAt))
+    .limit(200);
+  res.json(rows);
+});
+
+router.patch("/admin/introductions/:id", requireAdmin, async (req, res): Promise<void> => {
+  const { id } = req.params;
+  const allowed = ["status", "ownerContactStatus", "brokerStatus", "confidentialIdentity"];
+  const updates: Record<string, unknown> = {};
+  for (const key of allowed) {
+    if (key in req.body) updates[key] = req.body[key];
+  }
+  if (Object.keys(updates).length === 0) {
+    res.status(400).json({ error: "No valid fields to update." });
+    return;
+  }
+  const [updated] = await db
+    .update(matchSubmissionsTable)
+    .set(updates)
+    .where(eq(matchSubmissionsTable.id, id))
+    .returning();
+  if (!updated) {
+    res.status(404).json({ error: "Introduction not found." });
     return;
   }
   res.json(updated);

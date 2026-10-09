@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'wouter';
-import { ArrowLeft, Check, Search, X } from 'lucide-react';
+import { ArrowLeft, Check, Search, X, LockKeyhole } from 'lucide-react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { PublicLayout, Eyebrow } from '@/components/site';
 
@@ -57,6 +57,54 @@ type AdminReferral = {
   updatedAt: string;
 };
 
+type AdminListing = {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  askingPrice: number;
+  annualRevenue: number;
+  finderFee: number;
+  imageUrl: string | null;
+  isSample: boolean;
+  isApproved: boolean;
+  createdBy: string;
+  createdAt: string;
+};
+
+type AdminPayment = {
+  userId: string;
+  role: string;
+  plan: string;
+  stripeSubscriptionStatus: string | null;
+  stripeCustomerId: string | null;
+  stripeSubscriptionId: string | null;
+  privateNetworkApproved: boolean;
+  verified: boolean;
+  suspended: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type AdminIntroduction = {
+  id: string;
+  requestId: string;
+  submittedBy: string;
+  businessName: string | null;
+  industry: string;
+  location: string;
+  askingPrice: number | null;
+  shortDescription: string;
+  matchRationale: string;
+  relationship: string;
+  ownerContactStatus: string;
+  brokerStatus: string;
+  confidentialIdentity: boolean;
+  status: string;
+  createdAt: string;
+};
+
 type Analytics = {
   users: { total: number; verified: number; suspended: number };
   requests: { total: number; public: number; featured: number };
@@ -68,16 +116,20 @@ type Analytics = {
 
 const field = 'h-10 w-full border border-[#cfc8bc] bg-[#fbfaf7] px-3 text-[13px] outline-none transition focus:border-[#9a8352]';
 const btn = 'inline-flex h-9 items-center gap-1.5 px-3 text-[11px] uppercase tracking-wider transition';
-const btnPrimary = `${btn} bg-[#38352f] text-[#f5f2eb] hover:bg-[#504b40]`;
 const btnOutline = `${btn} border border-[#cfc8bc] text-[#38352f] hover:border-[#9a8352]`;
+const btnDanger = `${btn} border border-[#d7c3b8] text-[#815d4f] hover:border-[#bf7864]`;
+
+function money(n: number | null): string {
+  if (n == null) return '—';
+  if (n >= 1_000_000) return `$${(n / 1_000_000).toFixed(1)}M`;
+  if (n >= 1_000) return `$${(n / 1_000).toFixed(0)}K`;
+  return `$${n.toLocaleString()}`;
+}
 
 async function adminFetch<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = { 'content-type': 'application/json', ...options?.headers as Record<string, string> };
   if (hasAdminSession()) headers['x-admin-key'] = ADMIN_PASSWORD;
-  const res = await fetch(`/api${path}`, {
-    ...options,
-    headers,
-  });
+  const res = await fetch(`/api${path}`, { ...options, headers });
   if (!res.ok) {
     const err = await res.json().catch(() => ({ error: res.statusText }));
     throw new Error(err.error || `HTTP ${res.status}`);
@@ -87,12 +139,15 @@ async function adminFetch<T>(path: string, options?: RequestInit): Promise<T> {
 
 export function AdminPage() {
   const { t } = useLanguage();
-  const [tab, setTab] = useState<'users' | 'requests' | 'matches' | 'referrals' | 'analytics'>('analytics');
+  const [tab, setTab] = useState<'analytics' | 'users' | 'requests' | 'listings' | 'matches' | 'referrals' | 'payments' | 'introductions'>('analytics');
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [requests, setRequests] = useState<AdminRequest[]>([]);
   const [matches, setMatches] = useState<AdminMatch[]>([]);
   const [referrals, setReferrals] = useState<AdminReferral[]>([]);
+  const [listings, setListings] = useState<AdminListing[]>([]);
+  const [payments, setPayments] = useState<AdminPayment[]>([]);
+  const [introductions, setIntroductions] = useState<AdminIntroduction[]>([]);
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
@@ -139,20 +194,44 @@ export function AdminPage() {
     finally { setLoading(false); }
   }, []);
 
+  const loadListings = useCallback(async () => {
+    setLoading(true); setError('');
+    try { setListings(await adminFetch<AdminListing[]>('/admin/listings')); }
+    catch (e) { setError((e as Error).message); }
+    finally { setLoading(false); }
+  }, []);
+
+  const loadPayments = useCallback(async () => {
+    setLoading(true); setError('');
+    try { setPayments(await adminFetch<AdminPayment[]>('/admin/payments')); }
+    catch (e) { setError((e as Error).message); }
+    finally { setLoading(false); }
+  }, []);
+
+  const loadIntroductions = useCallback(async () => {
+    setLoading(true); setError('');
+    try { setIntroductions(await adminFetch<AdminIntroduction[]>('/admin/introductions')); }
+    catch (e) { setError((e as Error).message); }
+    finally { setLoading(false); }
+  }, []);
+
   useEffect(() => {
     if (isAdmin !== true) return;
     if (tab === 'users') loadUsers();
     else if (tab === 'requests') loadRequests();
     else if (tab === 'matches') loadMatches();
     else if (tab === 'referrals') loadReferrals();
+    else if (tab === 'listings') loadListings();
+    else if (tab === 'payments') loadPayments();
+    else if (tab === 'introductions') loadIntroductions();
     else loadAnalytics();
-  }, [tab, isAdmin, loadUsers, loadRequests, loadMatches, loadReferrals, loadAnalytics]);
+  }, [tab, isAdmin, loadUsers, loadRequests, loadMatches, loadReferrals, loadListings, loadPayments, loadIntroductions, loadAnalytics]);
 
   const updateUser = async (uid: string, updates: Record<string, unknown>) => {
     setSaving(uid);
     try {
       await adminFetch(`/admin/users/${uid}`, { method: 'PATCH', body: JSON.stringify(updates) });
-      setUsers(prev => prev.map(u => u.userId === uid ? { ...u, ...updates } : u));
+      setUsers(prev => prev.map(u => u.userId === uid ? { ...u, ...updates } as AdminUser : u));
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(null); }
   };
@@ -161,7 +240,7 @@ export function AdminPage() {
     setSaving(id);
     try {
       await adminFetch(`/admin/requests/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
-      setRequests(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+      setRequests(prev => prev.map(r => r.id === id ? { ...r, ...updates } as AdminRequest : r));
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(null); }
   };
@@ -170,7 +249,7 @@ export function AdminPage() {
     setSaving(id);
     try {
       await adminFetch(`/admin/matches/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
-      setMatches(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
+      setMatches(prev => prev.map(m => m.id === id ? { ...m, ...updates } as AdminMatch : m));
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(null); }
   };
@@ -179,7 +258,34 @@ export function AdminPage() {
     setSaving(id);
     try {
       await adminFetch(`/admin/finder-referrals/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
-      setReferrals(prev => prev.map(r => r.id === id ? { ...r, ...updates } : r));
+      setReferrals(prev => prev.map(r => r.id === id ? { ...r, ...updates } as AdminReferral : r));
+    } catch (e) { setError((e as Error).message); }
+    finally { setSaving(null); }
+  };
+
+  const updateListing = async (id: string, updates: Record<string, unknown>) => {
+    setSaving(id);
+    try {
+      await adminFetch(`/admin/listings/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
+      setListings(prev => prev.map(l => l.id === id ? { ...l, ...updates } as AdminListing : l));
+    } catch (e) { setError((e as Error).message); }
+    finally { setSaving(null); }
+  };
+
+  const deleteListing = async (id: string) => {
+    setSaving(id);
+    try {
+      await adminFetch(`/admin/listings/${id}`, { method: 'DELETE' });
+      setListings(prev => prev.filter(l => l.id !== id));
+    } catch (e) { setError((e as Error).message); }
+    finally { setSaving(null); }
+  };
+
+  const updateIntroduction = async (id: string, updates: Record<string, unknown>) => {
+    setSaving(id);
+    try {
+      await adminFetch(`/admin/introductions/${id}`, { method: 'PATCH', body: JSON.stringify(updates) });
+      setIntroductions(prev => prev.map(i => i.id === id ? { ...i, ...updates } as AdminIntroduction : i));
     } catch (e) { setError((e as Error).message); }
     finally { setSaving(null); }
   };
@@ -200,17 +306,30 @@ export function AdminPage() {
   const filteredUsers = users.filter(u => !search || u.userId.toLowerCase().includes(search.toLowerCase()) || u.role.toLowerCase().includes(search.toLowerCase()));
   const filteredRequests = requests.filter(r => !search || r.title.toLowerCase().includes(search.toLowerCase()) || r.industry.toLowerCase().includes(search.toLowerCase()));
   const filteredMatches = matches.filter(m => !search || (m.businessName?.toLowerCase().includes(search.toLowerCase()) ?? false) || m.industry.toLowerCase().includes(search.toLowerCase()));
+  const filteredListings = listings.filter(l => !search || l.title.toLowerCase().includes(search.toLowerCase()) || l.category.toLowerCase().includes(search.toLowerCase()) || l.location.toLowerCase().includes(search.toLowerCase()));
+  const filteredPayments = payments.filter(p => !search || p.userId.toLowerCase().includes(search.toLowerCase()) || p.plan.toLowerCase().includes(search.toLowerCase()));
+  const filteredIntroductions = introductions.filter(i => !search || (i.businessName?.toLowerCase().includes(search.toLowerCase()) ?? false) || i.industry.toLowerCase().includes(search.toLowerCase()) || i.shortDescription.toLowerCase().includes(search.toLowerCase()));
 
-  const tabs: ['analytics', 'users', 'requests', 'matches', 'referrals'] = ['analytics', 'users', 'requests', 'matches', 'referrals'];
-  const tabLabels: Record<string, string> = { analytics: t('admin.tabAnalytics'), users: t('admin.tabUsers'), requests: t('admin.tabRequests'), matches: t('admin.tabMatches'), referrals: t('admin.tabReferrals') };
+  const tabs: Array<'analytics' | 'users' | 'requests' | 'listings' | 'matches' | 'referrals' | 'payments' | 'introductions'> = ['analytics', 'users', 'requests', 'listings', 'matches', 'referrals', 'payments', 'introductions'];
+  const tabLabels: Record<string, string> = {
+    analytics: t('admin.tabAnalytics'), users: t('admin.tabUsers'), requests: t('admin.tabRequests'),
+    listings: t('admin.tabListings'), matches: t('admin.tabMatches'), referrals: t('admin.tabReferrals'),
+    payments: t('admin.tabPayments'), introductions: t('admin.tabIntroductions'),
+  };
 
   return <PublicLayout>
     <div className="mx-auto max-w-[1280px] px-5 py-10 md:px-10 md:py-16">
       <Link href="/dashboard" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('admin.backToDashboard')}</Link>
       <div className="mt-6"><Eyebrow>{t('admin.eyebrow')}</Eyebrow><h1 className="font-editorial mt-4 text-5xl tracking-[-.03em] md:text-6xl">{t('admin.title')}</h1><p className="mt-3 text-sm text-[#6b665d]">{t('admin.subtitle')}</p></div>
 
+      {/* Privacy notice */}
+      <div className="mt-4 flex items-center gap-2 border border-[#e0d9ce] bg-[#f8f6f0] px-4 py-3">
+        <LockKeyhole size={14} className="text-[#b9a16d]" />
+        <span className="text-[11px] text-[#7a7468]">{t('admin.privacyNotice')}</span>
+      </div>
+
       {/* Tabs */}
-      <div className="mt-8 flex flex-wrap gap-2 border-b border-[#d4cdc1] pb-3">
+      <div className="mt-6 flex flex-wrap gap-2 border-b border-[#d4cdc1] pb-3">
         {tabs.map(tb => <button key={tb} onClick={() => setTab(tb)} className={`px-4 py-2 text-[12px] uppercase tracking-wider transition ${tab === tb ? 'bg-[#38352f] text-[#f5f2eb]' : 'text-[#625d54] hover:text-[#332f29]'}`}>{tabLabels[tb]}</button>)}
       </div>
 
@@ -290,6 +409,31 @@ export function AdminPage() {
         {!filteredRequests.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
       </div>}
 
+      {/* Listings */}
+      {!loading && tab === 'listings' && <div className="mt-6 overflow-x-auto">
+        <table className="w-full text-left text-[13px]">
+          <thead><tr className="border-b border-[#d4cdc1] text-[10px] uppercase tracking-wider text-[#948c7b]">
+            <th className="py-3 pr-4">{t('admin.listingTitle')}</th><th className="py-3 pr-4">{t('admin.listingCategory')}</th><th className="py-3 pr-4">{t('admin.listingLocation')}</th><th className="py-3 pr-4">{t('admin.listingPrice')}</th><th className="py-3 pr-4">{t('admin.listingRevenue')}</th><th className="py-3 pr-4">{t('admin.listingFee')}</th><th className="py-3 pr-4">{t('admin.listingApproved')}</th><th className="py-3">{t('admin.actions')}</th>
+          </tr></thead>
+          <tbody className="divide-y divide-[#e0d9ce]">
+            {filteredListings.map(l => <tr key={l.id}>
+              <td className="py-3 pr-4 max-w-[200px] truncate">{l.title}{l.isSample && <span className="ml-1 text-[9px] uppercase text-[#b9a16d]">sample</span>}</td>
+              <td className="py-3 pr-4 text-[12px]">{l.category}</td>
+              <td className="py-3 pr-4 text-[12px]">{l.location}</td>
+              <td className="py-3 pr-4 text-[12px]">{money(l.askingPrice)}</td>
+              <td className="py-3 pr-4 text-[12px]">{money(l.annualRevenue)}</td>
+              <td className="py-3 pr-4 text-[12px]">{money(l.finderFee)}</td>
+              <td className="py-3 pr-4">{l.isApproved ? <span className="text-[#557165]">✓</span> : <span className="text-[#918a7c]">—</span>}</td>
+              <td className="py-3 flex flex-wrap gap-1">
+                <button onClick={() => updateListing(l.id, { isApproved: !l.isApproved })} className={btnOutline} disabled={saving === l.id}>{l.isApproved ? t('admin.unapprove') : t('admin.approve')}</button>
+                <button onClick={() => deleteListing(l.id)} className={btnDanger} disabled={saving === l.id}>{t('admin.delete')}</button>
+              </td>
+            </tr>)}
+          </tbody>
+        </table>
+        {!filteredListings.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
+      </div>}
+
       {/* Matches */}
       {!loading && tab === 'matches' && <div className="mt-6 overflow-x-auto">
         <table className="w-full text-left text-[13px]">
@@ -319,7 +463,7 @@ export function AdminPage() {
               <td className="py-3 pr-4 max-w-[180px] truncate">{r.listingTitle}</td>
               <td className="py-3 pr-4">{r.finderName}<br/><span className="text-[10px] text-[#918a7c]">{r.finderEmail}</span></td>
               <td className="py-3 pr-4">{r.buyerName}</td>
-              <td className="py-3 pr-4 text-[12px]">{r.buyerContact}</td>
+              <td className="py-3 pr-4 text-[12px]">{r.status === 'introduction_made' || r.status === 'deal_in_progress' || r.status === 'closed_won' || r.status === 'commission_paid' ? r.buyerContact : <span className="text-[#b9a16d]"><LockKeyhole size={11} className="inline" /> {t('admin.protected')}</span>}</td>
               <td className="py-3 pr-4"><select className={field} value={r.status} onChange={e => updateReferral(r.id, { status: e.target.value })} disabled={saving === r.id}>
                 <option value="new">{t('admin.referralStatusNew')}</option>
                 <option value="under_review">{t('admin.referralStatusReview')}</option>
@@ -335,6 +479,57 @@ export function AdminPage() {
           </tbody>
         </table>
         {!referrals.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
+      </div>}
+
+      {/* Payments / Memberships */}
+      {!loading && tab === 'payments' && <div className="mt-6 overflow-x-auto">
+        <table className="w-full text-left text-[13px]">
+          <thead><tr className="border-b border-[#d4cdc1] text-[10px] uppercase tracking-wider text-[#948c7b]">
+            <th className="py-3 pr-4">{t('admin.userId')}</th><th className="py-3 pr-4">{t('admin.role')}</th><th className="py-3 pr-4">{t('admin.plan')}</th><th className="py-3 pr-4">{t('admin.stripeStatus')}</th><th className="py-3 pr-4">{t('admin.stripeCustomer')}</th><th className="py-3 pr-4">{t('admin.stripeSubId')}</th><th className="py-3 pr-4">{t('admin.verified')}</th><th className="py-3 pr-4">{t('admin.updated')}</th>
+          </tr></thead>
+          <tbody className="divide-y divide-[#e0d9ce]">
+            {filteredPayments.map(p => <tr key={p.userId}>
+              <td className="py-3 pr-4 font-mono-label text-[10px] text-[#827968]">{p.userId.slice(0, 12)}…</td>
+              <td className="py-3 pr-4 text-[12px]">{p.role}</td>
+              <td className="py-3 pr-4"><span className={`px-2 py-0.5 text-[10px] uppercase ${p.plan === 'free' ? 'bg-[#e8e2d4] text-[#827968]' : 'bg-[#e0dcc8] text-[#877446]'}`}>{p.plan}</span></td>
+              <td className="py-3 pr-4 text-[12px]">{p.stripeSubscriptionStatus || '—'}</td>
+              <td className="py-3 pr-4 font-mono-label text-[10px] text-[#827968]">{p.stripeCustomerId ? `${p.stripeCustomerId.slice(0, 10)}…` : '—'}</td>
+              <td className="py-3 pr-4 font-mono-label text-[10px] text-[#827968]">{p.stripeSubscriptionId ? `${p.stripeSubscriptionId.slice(0, 10)}…` : '—'}</td>
+              <td className="py-3 pr-4">{p.verified ? <span className="text-[#557165]">✓</span> : <span className="text-[#918a7c]">—</span>}</td>
+              <td className="py-3 pr-4 text-[12px] text-[#827968]">{new Date(p.updatedAt).toLocaleDateString()}</td>
+            </tr>)}
+          </tbody>
+        </table>
+        {!filteredPayments.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
+      </div>}
+
+      {/* Introductions */}
+      {!loading && tab === 'introductions' && <div className="mt-6 overflow-x-auto">
+        <table className="w-full text-left text-[13px]">
+          <thead><tr className="border-b border-[#d4cdc1] text-[10px] uppercase tracking-wider text-[#948c7b]">
+            <th className="py-3 pr-4">{t('admin.introBusiness')}</th><th className="py-3 pr-4">{t('admin.introIndustry')}</th><th className="py-3 pr-4">{t('admin.introLocation')}</th><th className="py-3 pr-4">{t('admin.introPrice')}</th><th className="py-3 pr-4">{t('admin.introStatus')}</th><th className="py-3 pr-4">{t('admin.introContact')}</th><th className="py-3 pr-4">{t('admin.introConfidential')}</th><th className="py-3">{t('admin.actions')}</th>
+          </tr></thead>
+          <tbody className="divide-y divide-[#e0d9ce]">
+            {filteredIntroductions.map(i => <tr key={i.id}>
+              <td className="py-3 pr-4 max-w-[180px] truncate">{i.businessName || <span className="text-[#918a7c]">{i.shortDescription.slice(0, 30)}…</span>}</td>
+              <td className="py-3 pr-4 text-[12px]">{i.industry}</td>
+              <td className="py-3 pr-4 text-[12px]">{i.location}</td>
+              <td className="py-3 pr-4 text-[12px]">{money(i.askingPrice)}</td>
+              <td className="py-3 pr-4"><select className={field} value={i.status} onChange={e => updateIntroduction(i.id, { status: e.target.value })} disabled={saving === i.id}>
+                <option value="submitted">submitted</option>
+                <option value="under_review">under_review</option>
+                <option value="qualified">qualified</option>
+                <option value="buyer_interested">buyer_interested</option>
+                <option value="declined">declined</option>
+                <option value="closed">closed</option>
+              </select></td>
+              <td className="py-3 pr-4 text-[12px]">{i.ownerContactStatus || '—'}</td>
+              <td className="py-3 pr-4">{i.confidentialIdentity ? <span className="text-[#b9a16d]"><LockKeyhole size={11} className="inline" /></span> : <span className="text-[#918a7c]">—</span>}</td>
+              <td className="py-3 text-[12px] text-[#827968]">{new Date(i.createdAt).toLocaleDateString()}</td>
+            </tr>)}
+          </tbody>
+        </table>
+        {!filteredIntroductions.length && <div className="mt-6 text-sm text-[#6b665d]">{t('admin.noData')}</div>}
       </div>}
     </div>
   </PublicLayout>;
