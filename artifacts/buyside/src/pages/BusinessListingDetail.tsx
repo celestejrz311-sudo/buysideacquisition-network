@@ -52,12 +52,6 @@ export function BusinessListingDetail() {
       <div className="mx-auto max-w-[1100px] px-5 py-10 md:px-10 md:py-16">
         <Link href="/" className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#716956]"><ArrowLeft size={14} /> {t('listings.backHome')}</Link>
 
-        {listing.isSample && (
-          <div className="mt-6 inline-flex items-center gap-2 border border-[#b9a16d] bg-[#f5efe0] px-3 py-1.5">
-            <span className="font-mono-label text-[9px] uppercase tracking-[.12em] text-[#78643a]">{t('listings.sampleLabel')}</span>
-          </div>
-        )}
-
         {/* Hero image */}
         <div
           className="mt-6 h-48 overflow-hidden md:h-72"

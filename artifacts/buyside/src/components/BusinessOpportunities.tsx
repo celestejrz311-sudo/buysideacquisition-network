@@ -68,11 +68,6 @@ export function BusinessOpportunities() {
                   style={{ background: gradients[listing.category] || 'linear-gradient(135deg, #3a3a3a, #2a2a2a)' }}
                 >
                   <div className="absolute inset-0 opacity-30" style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, rgba(185,161,109,.3), transparent 60%)' }} />
-                  {listing.isSample && (
-                    <span className="absolute left-3 top-3 border border-[#b9a16d] bg-[#f5f2eb]/90 px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">
-                      {t('listings.sampleLabel')}
-                    </span>
-                  )}
                   <span className="absolute bottom-3 right-3 font-mono-label text-[9px] uppercase tracking-[.12em] text-[#c6b17b]/80">
                     {listing.category}
                   </span>
