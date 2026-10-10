@@ -89,7 +89,6 @@ export function RequestStatusBadges({ request }: { request: BuyerRequest }) {
   const { t } = useLanguage();
   const isVerifiedBuyer = request.isVerified && !request.isExample;
   return <>
-    {request.isExample && <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.12em] text-[#78643a]">{t('card.sampleRequest')}</span>}
     {isVerifiedBuyer && <>
       <span className="inline-flex items-center gap-1.5 border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#78643a]"><ShieldCheck size={12} /> {t('card.activeBuyer')}</span>
       <span className="inline-flex items-center gap-1.5 border border-[#b8c5b8] bg-[#eef2ec] px-2 py-1 font-mono-label text-[9px] tracking-[.1em] text-[#557165]"><span className="size-1.5 rounded-full bg-[#557165]" />{t('card.activelySearching')}</span>
@@ -175,7 +174,6 @@ export function DemoOpportunityCard({ opportunity }: { opportunity: DemoOpportun
 
   return <article className="group border-t border-[#cfc8bc] py-6 transition-colors hover:border-[#a58f5c]" data-testid={`card-demo-opportunity-${opportunity.id}`}>
     <div className="flex flex-wrap items-center gap-2">
-      <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">{t('dash.demoLabel')}</span>
       <span className="font-mono-label ml-auto text-[10px] uppercase tracking-[.12em] text-[#938c7e]">{opportunity.industry}</span>
     </div>
     <h2 className="font-editorial mt-4 max-w-3xl text-[26px] leading-tight text-[#38352f] md:text-[30px]">{opportunity.title}</h2>

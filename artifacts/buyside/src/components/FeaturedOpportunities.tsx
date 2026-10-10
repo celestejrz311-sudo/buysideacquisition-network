@@ -80,9 +80,7 @@ export function FeaturedOpportunities() {
               className="flex flex-col border border-[#cfc8bc] bg-[#f8f6f0] p-6"
               data-testid={`card-featured-${item.id}`}
             >
-              <span className="inline-flex w-fit border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">
-                {item.isRequest ? t('home.sampleRequest') : t('home.sampleLabel')}
-              </span>
+              {!item.isRequest && <span className="inline-flex w-fit border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">{t('home.sampleLabel')}</span>}
               <p className="mt-4 font-mono-label text-[10px] uppercase tracking-[.14em] text-[#897649]">
                 {item.category[lang]}
               </p>

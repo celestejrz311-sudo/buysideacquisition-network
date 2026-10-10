@@ -34,11 +34,7 @@ export function DemoShowcase() {
                 className="flex flex-col border border-[#cfc8bc] bg-[#f8f6f0] p-6"
                 data-testid={`card-demo-${card.id}`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="border border-[#b9a16d] px-2 py-1 font-mono-label text-[9px] tracking-[.14em] text-[#78643a]">
-                    {t('dash.demoLabel')}
-                  </span>
-                </div>
+
                 <p className="mt-4 font-mono-label text-[10px] uppercase tracking-[.14em] text-[#897649]">
                   {d.category}
                 </p>
