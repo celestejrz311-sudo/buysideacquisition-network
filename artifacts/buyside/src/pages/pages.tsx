@@ -85,7 +85,7 @@ export function HomePage() {
       <SectionTitle eyebrow={t('home.whatEyebrow')} title={t('home.whatTitle')} description={t('home.whatDesc')} />
       <div className="mt-10 grid gap-5 md:grid-cols-3">
         {[
-          { num: '01', title: t('home.findBusiness'), desc: t('home.findBusinessDesc'), examples: ['HVAC company in Florida', 'Restaurant in Miami', 'E-commerce brand', 'Manufacturing company', 'Cash-flowing business'], cta: t('home.findBusiness'), href: '/post-request?category=business', testId: 'card-find-business' },
+          { num: '01', title: t('home.findBusiness'), desc: t('home.findBusinessDesc'), examples: ['HVAC company in Texas', 'Restaurant in Miami', 'E-commerce brand', 'Manufacturing company', 'Cash-flowing business'], cta: t('home.findBusiness'), href: '/post-request?category=business', testId: 'card-find-business' },
           { num: '02', title: t('home.findService'), desc: t('home.findServiceDesc'), examples: ['Business broker', 'Attorney', 'Accountant', 'Financing', 'Due diligence', 'Marketing', 'Cleaning company', 'Contractors', 'Consultants'], cta: t('home.findService'), href: '/post-request?category=service', testId: 'card-find-service' },
           { num: '03', title: t('home.findProduct'), desc: t('home.findProductDesc'), examples: ['Wholesale inventory', 'Electronics', 'Equipment', 'Commercial supplies', 'Bulk products', 'Manufacturers and suppliers'], cta: t('home.findProduct'), href: '/post-request?category=product', testId: 'card-find-product' },
         ].map(card => (

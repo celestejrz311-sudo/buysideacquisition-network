@@ -5,9 +5,9 @@ import { Eyebrow } from '@/components/site';
 
 const tiers = [
   { key: 'home.planFree', price: '$0' },
-  { key: 'home.planBuyerPro', price: '$79' },
-  { key: 'home.planProfessional', price: '$149' },
-  { key: 'home.planPrivateNetwork', price: '$299' },
+  { key: 'home.planStarter', price: '$19' },
+  { key: 'home.planFinderPro', price: '$49' },
+  { key: 'home.planPrivateNetwork', price: 'Request' },
 ] as const;
 
 export function MembershipPreview() {
@@ -30,7 +30,7 @@ export function MembershipPreview() {
             <div key={tier.key} className="border border-[#cfc8bc] bg-[#f8f6f0] p-6">
               <div className="flex items-baseline justify-between">
                 <p className="font-editorial text-xl">{t(tier.key)}</p>
-                <p className="font-editorial text-2xl text-[#897649]">{tier.price}<span className="text-[12px] text-[#918a7c]">/mo</span></p>
+                <p className="font-editorial text-2xl text-[#897649]">{tier.price}{tier.price.startsWith('$') && <span className="text-[12px] text-[#918a7c]">/mo</span>}</p>
               </div>
               <div className="mt-4 flex items-center gap-2 border-t border-[#e0d9ce] pt-3 text-[12px] text-[#706b61]">
                 <Check size={14} className="text-[#b9a16d]" />

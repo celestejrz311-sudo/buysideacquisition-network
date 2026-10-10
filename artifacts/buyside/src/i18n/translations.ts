@@ -194,7 +194,7 @@ export const translations = {
   'postRequest.intro': { en: 'Tell us what you need. The BuySide network will help you find it.', es: 'Dinos lo que necesitas. La red BuySide te ayudará a encontrarlo.' },
   'postRequest.backHome': { en: 'Back to home', es: 'Volver al inicio' },
   'postRequest.titleLabel': { en: 'What are you looking for?', es: '¿Qué estás buscando?' },
-  'postRequest.titlePlaceholder': { en: 'For example: HVAC company in Florida', es: 'Por ejemplo: Empresa HVAC en Florida' },
+  'postRequest.titlePlaceholder': { en: 'For example: HVAC company in Texas', es: 'Por ejemplo: Empresa HVAC en Texas' },
   'postRequest.category': { en: 'Category', es: 'Categoría' },
   'postRequest.selectCategory': { en: 'Select a category', es: 'Selecciona una categoría' },
   'postRequest.location': { en: 'Location', es: 'Ubicación' },
@@ -680,8 +680,8 @@ export const translations = {
   },
 
   // Hero (updated)
-  'home.heroTitleNew': { en: 'Buy and sell Florida businesses without expensive middlemen.', es: 'Compra y vende negocios en Florida sin intermediarios caros.' },
-  'home.heroSub': { en: 'Discreet, qualified introductions — connect directly with buyers, sellers, and deal finders.', es: 'Presentaciones discretas y calificadas — conéctate directamente con compradores, vendedores y buscadores de oportunidades.' },
+  'home.heroTitleNew': { en: 'Buy. Sell. Connect. Privately.', es: 'Compra. Vende. Conecta. Privadamente.' },
+  'home.heroSub': { en: 'Discover business opportunities, connect with qualified buyers and sellers, and access a private network across the United States.', es: 'Descubre oportunidades de negocio, conéctate con compradores y vendedores calificados, y accede a una red privada en todo Estados Unidos.' },
   'home.ctaExplore': { en: 'Explore Opportunities', es: 'Explorar Oportunidades' },
   'home.ctaPostNeed': { en: 'Post What You Need', es: 'Publicar lo que Necesitas' },
 
@@ -694,12 +694,12 @@ export const translations = {
   'home.viewAllOpportunities': { en: 'View All Opportunities', es: 'Ver Todas las Oportunidades' },
 
   // How it works (new 4 steps)
-  'home.step1TitleNew': { en: 'Discover', es: 'Descubre' },
+  'home.step1TitleNew': { en: 'Discover Opportunities', es: 'Descubrir Oportunidades' },
   'home.step1DescNew': { en: 'Browse opportunities and requests that match your acquisition goals.', es: 'Explora oportunidades y solicitudes que coincidan con tus objetivos de adquisición.' },
   'home.step2TitleNew': { en: 'Request Introduction', es: 'Solicitar Presentación' },
   'home.step2DescNew': { en: 'Found a match? Request an introduction to the other party.', es: '¿Encontraste una coincidencia? Solicita una presentación a la otra parte.' },
-  'home.step3TitleNew': { en: 'Accept Match', es: 'Aceptar Coincidencia' },
-  'home.step3DescNew': { en: 'Review the qualified match and accept to proceed.', es: 'Revisa la coincidencia calificada y acepta para continuar.' },
+  'home.step3TitleNew': { en: 'Get Approved', es: 'Ser Aprobado' },
+  'home.step3DescNew': { en: 'Review the qualified match and get approved to proceed.', es: 'Revisa la coincidencia calificada y obtén aprobación para continuar.' },
   'home.step4TitleNew': { en: 'Connect Privately', es: 'Conectar Privadamente' },
   'home.step4DescNew': { en: 'Connect directly and move the conversation forward on your terms.', es: 'Conéctate directamente y avanza la conversación a tu manera.' },
   'home.introFeeNote': { en: 'The $99 introduction fee is charged only when a buyer accepts a qualified match.', es: 'La tarifa de presentación de $99 se cobra solo cuando un comprador acepta una coincidencia calificada.' },
@@ -722,8 +722,8 @@ export const translations = {
   'home.membershipBody': { en: 'Transparent monthly pricing. No transaction percentages. The $99 introduction fee applies only when you accept a qualified match.', es: 'Precios mensuales transparentes. Sin porcentajes de transacción. La tarifa de presentación de $99 aplica solo cuando aceptas una coincidencia calificada.' },
   'home.membershipCta': { en: 'View Plans', es: 'Ver Planes' },
   'home.planFree': { en: 'Free', es: 'Gratis' },
-  'home.planBuyerPro': { en: 'Buyer Pro', es: 'Buyer Pro' },
-  'home.planProfessional': { en: 'Professional', es: 'Professional' },
+  'home.planStarter': { en: 'Starter', es: 'Starter' },
+  'home.planFinderPro': { en: 'Finder Pro', es: 'Finder Pro' },
   'home.planPrivateNetwork': { en: 'Private Network', es: 'Private Network' },
 
   // Social proof (hidden until data available)
@@ -828,8 +828,8 @@ export const translations = {
   'listings.eyebrow': { en: 'Business Opportunities', es: 'Oportunidades de Negocios' },
   'listings.title': { en: 'Explore Business Opportunities', es: 'Explora Oportunidades de Negocios' },
   'listings.subtitle': {
-    en: 'Browse businesses for sale across Florida and beyond. Refer a buyer and earn a finder fee when a deal closes.',
-    es: 'Explora negocios en venta en Florida y más allá. Refiere a un comprador y gana una comisión de buscador cuando se cierre el trato.',
+    en: 'Browse businesses for sale across the United States. Refer a buyer and earn a finder fee when a deal closes.',
+    es: 'Explora negocios en venta en todo Estados Unidos. Refiere a un comprador y gana una comisión de buscador cuando se cierre el trato.',
   },
   'listings.sampleLabel': { en: 'Sample Listing', es: 'Anuncio de Ejemplo' },
   'listings.askingPrice': { en: 'Asking Price', es: 'Precio de Venta' },
@@ -895,7 +895,7 @@ export const translations = {
   'search.filterIndustry': { en: 'Industry', es: 'Industria' },
   'search.filterIndustryPlaceholder': { en: 'e.g. HVAC, SaaS, Manufacturing', es: 'ej. HVAC, SaaS, Manufactura' },
   'search.filterLocation': { en: 'Location', es: 'Ubicación' },
-  'search.filterLocationPlaceholder': { en: 'e.g. Florida, Miami, TX', es: 'ej. Florida, Miami, TX' },
+  'search.filterLocationPlaceholder': { en: 'e.g. Texas, Miami, NY', es: 'ej. Texas, Miami, NY' },
   'search.filterMinPrice': { en: 'Min Price', es: 'Precio Mín' },
   'search.filterMaxPrice': { en: 'Max Price', es: 'Precio Máx' },
   'search.filterType': { en: 'Opportunity Type', es: 'Tipo de Oportunidad' },
